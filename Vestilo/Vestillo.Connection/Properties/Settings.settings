@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Vestillo.Connection.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Connection" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">8hYQEJyGbOAMOMeyP0mryGu3I3cBr9tBk8ZFZF4MFUzluRDGGeZsbPQhUNK8iBuPwee0+CNwynwDI3zGzsNBvg==</Value>
+    </Setting>
+    <Setting Name="Provider" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">T34vKo1kH1JDksRdCdKCvq0q0v3qkZ2axpKSGxKsKco=</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
