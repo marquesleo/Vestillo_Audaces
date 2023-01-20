@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TemplateAudacesApi.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -33,6 +29,7 @@ namespace TemplateAudacesApi
             services.AddHttpClient();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.IgnoreNullValues = true;
                 var settings = new JsonSerializerSettings();
 
                 settings.NullValueHandling = NullValueHandling.Ignore;
@@ -42,8 +39,8 @@ namespace TemplateAudacesApi
             var key = Encoding.ASCII.GetBytes(Settings.Secret);
             services.AddAuthentication(opt =>
             {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                //opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                //opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(opt =>
             {
                 opt.RequireHttpsMetadata = false;
@@ -71,7 +68,7 @@ namespace TemplateAudacesApi
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseMiddleware<DeChunkerMiddleware>(); // Idea nao aceita chunk response
             app.UseMvc();
             app.UseAuthentication();

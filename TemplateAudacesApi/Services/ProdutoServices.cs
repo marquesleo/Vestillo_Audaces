@@ -26,6 +26,18 @@ namespace TemplateAudacesApi.Services
             }
         }
 
+        private ProdutoRepository _produtoRepository;
+        private ProdutoRepository produtoRepository
+        {
+            get
+            {
+                if (_produtoRepository == null)
+                    _produtoRepository = new ProdutoRepository();
+
+                return _produtoRepository;
+            }
+        }
+
         private IProdutoDetalheService _produtoDetalheService;
         private IProdutoDetalheService produtoDetalheService
         {
@@ -122,7 +134,7 @@ namespace TemplateAudacesApi.Services
             List<Object>  lstMaterial = new List<Object>();
             try
             {
-                var lstProduto = produtoService.GetListGrupoDeProduto(descgrupo);
+                var lstProduto = produtoRepository.GetListGrupoDeProduto(descgrupo);
                 if (lstProduto != null && lstProduto.Any())
                 {
                     int codigoGrupo = lstProduto.First().IdGrupo;
@@ -190,8 +202,45 @@ namespace TemplateAudacesApi.Services
                 supplier =  fornecedor?.Id + "-" + fornecedor?.RazaoSocial,
                 notes = produto.Obs,
                 last_modified = produto.DataAlteracao.ToShortDateString(),
-                 
+                variants = RetornarVariants(produto)
+
             };
+        }
+
+        private ICollection<Variant> RetornarVariants(Produto produto)
+        {
+            List<Variant> variants = null;
+            try
+            {
+                var detalhe = produtoDetalheService.GetListViewByProduto(produto.Id, 1);
+                if (detalhe != null && detalhe.Any())
+                {
+                    variants = new List<Variant>();
+                    foreach (var det in detalhe)
+                    {
+                        var variant = new Variant()
+                        {
+                            name = det.Idcor.ToString(),
+                            description = det.DescCor,
+                            color = new Color()
+                            {
+                                description = det.DescCor,
+                                value = det.AbvCor,
+                                uid = det.Idcor.ToString()
+                            },
+                            size = det.DescTamanho,
+                        };
+                        variants.Add(variant);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            return variants;
+
         }
         private Garment RetornarGrupo(GrupProduto grupo)
         {
@@ -368,7 +417,7 @@ namespace TemplateAudacesApi.Services
         public IEnumerable<Object> GetListPorFiltros(int tipoItem, string referencia, string descricao, string colecao)
         {
             List<Object> lstGarment = new List<Object>();
-            var lstProduto =  produtoService.GetListPorFiltros(tipoItem, referencia, descricao, colecao);
+            var lstProduto = produtoRepository.GetListPorFiltros(tipoItem, referencia, descricao, colecao);
             if (lstProduto != null && lstProduto.Any())
             {
                 foreach (var item in lstProduto)
@@ -382,14 +431,14 @@ namespace TemplateAudacesApi.Services
         public IEnumerable<Object> GetListMaterialPorFiltros(int tipoItem, string referencia, string descricao, string grupo,string fornecedor)
         {
             List<Object> lstMaterial = new List<Object>();
-            var lstProduto = produtoService.GetListMaterialPorFiltros(tipoItem, referencia, descricao, grupo,fornecedor);
+            var lstProduto = produtoRepository.GetListMaterialPorFiltros(tipoItem, referencia, descricao, grupo,fornecedor);
           
             if (lstProduto != null && lstProduto.Any())
             {
                 foreach (var item in lstProduto)
                 {
-                    var garment = RetornarProduto(item);
-                    lstMaterial.Add(garment);
+                    var material = RetornarProduto(item);
+                    lstMaterial.Add(material);
                 }
             }
             return lstMaterial;

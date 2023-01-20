@@ -32,17 +32,7 @@
         "frameworks": {
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
-            "projectReferences": {
-              "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj": {
-                "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj"
-              },
-              "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj": {
-                "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj"
-              },
-              "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj": {
-                "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {
@@ -58,6 +48,10 @@
             "Dapper": {
               "target": "Package",
               "version": "[2.0.123, )"
+            },
+            "Microsoft.AspNetCore.Authentication.Certificate": {
+              "target": "Package",
+              "version": "[3.1.29, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
@@ -76,6 +70,10 @@
               "target": "Package",
               "version": "[6.25.1, )"
             },
+            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+              "target": "Package",
+              "version": "[1.14.0, )"
+            },
             "MySql.Data": {
               "target": "Package",
               "version": "[8.0.31, )"
@@ -83,10 +81,6 @@
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
               "version": "[6.25.1, )"
-            },
-            "System.Text.Json": {
-              "target": "Package",
-              "version": "[7.0.1, )"
             }
           },
           "imports": [
@@ -115,54 +109,6 @@
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
         }
-      }
-    },
-    "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj": {
-      "restore": {
-        "projectUniqueName": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj",
-        "projectName": "Vestillo.Business",
-        "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj",
-        "frameworks": {
-          "net46": {
-            "projectReferences": {
-              "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj": {
-                "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj"
-              }
-            }
-          }
-        }
-      },
-      "frameworks": {
-        "net46": {}
-      }
-    },
-    "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj": {
-      "restore": {
-        "projectUniqueName": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj",
-        "projectName": "Vestillo.Connection",
-        "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj",
-        "frameworks": {
-          "net46": {
-            "projectReferences": {
-              "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj": {
-                "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj"
-              }
-            }
-          }
-        }
-      },
-      "frameworks": {
-        "net46": {}
-      }
-    },
-    "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj": {
-      "restore": {
-        "projectUniqueName": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj",
-        "projectName": "Vestillo.Lib",
-        "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj"
-      },
-      "frameworks": {
-        "net46": {}
       }
     }
   }

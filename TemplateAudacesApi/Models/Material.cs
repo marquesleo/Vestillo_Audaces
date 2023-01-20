@@ -24,5 +24,6 @@ namespace TemplateAudacesApi.Models
         public double value { get; set; }
         public decimal amount { get; set; }
         public ICollection<Image> images { get; set; }
+        public ICollection<Variant> variants { get; set; } = new List<Variant>();
     }
 }

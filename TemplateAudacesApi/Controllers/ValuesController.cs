@@ -90,7 +90,8 @@ namespace TemplateAudacesApi.Controllers
             {
                 access_token = token,
                 expires_in = 3600,
-                token_type = "Bearer"
+                token_type = "Bearer",
+                
             };
         }
 

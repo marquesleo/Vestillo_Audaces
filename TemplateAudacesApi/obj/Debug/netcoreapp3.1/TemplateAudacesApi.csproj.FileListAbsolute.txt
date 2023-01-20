@@ -6,12 +6,6 @@ C:\Fontes\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.Assembly
 C:\Fontes\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.AssemblyInfo.cs
 C:\Fontes\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.csproj.CoreCompileInputs.cache
 C:\Fontes\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.MvcApplicationPartsAssemblyInfo.cache
-C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.csproj.AssemblyReference.cache
-C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.GeneratedMSBuildEditorConfig.editorconfig
-C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.AssemblyInfoInputs.cache
-C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.AssemblyInfo.cs
-C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.csproj.CoreCompileInputs.cache
-C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.MvcApplicationPartsAssemblyInfo.cache
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\appsettings.Development.json
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\appsettings.json
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\TemplateAudacesApi.exe
@@ -26,7 +20,6 @@ C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\K4os.Compres
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.Streams.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\K4os.Hash.xxHash.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Abstractions.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.JsonWebTokens.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Logging.dll
@@ -41,7 +34,6 @@ C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\System.Confi
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\System.IdentityModel.Tokens.Jwt.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\System.Runtime.CompilerServices.Unsafe.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
-C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\System.Text.Encodings.Web.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\System.Text.Json.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Vestillo.Business.dll
@@ -94,6 +86,9 @@ C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Vestillo.Con
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Vestillo.Connection.dll.config
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Vestillo.Lib.pdb
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Vestillo.Core.pdb
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\NotaFiscalEletronica.pdb
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\NotaFiscalEletronica.xml
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\NotaFiscalEletronica.dll.config
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\DevExpress.XtraEditors.v18.2.xml
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\DevExpress.XtraGrid.v18.2.xml
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\DevExpress.XtraReports.v18.2.xml
@@ -236,8 +231,16 @@ C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\de\DevExpres
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\es\DevExpress.Diagram.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\ja\DevExpress.Diagram.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\ru\DevExpress.Diagram.v18.2.Core.resources.dll
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\NotaFiscalEletronica.XmlSerializers.dll
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.GeneratedMSBuildEditorConfig.editorconfig
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.AssemblyInfoInputs.cache
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.AssemblyInfo.cs
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.csproj.CoreCompileInputs.cache
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.MvcApplicationPartsAssemblyInfo.cache
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.RazorTargetAssemblyInfo.cache
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.csproj.CopyComplete
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.dll
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.pdb
 C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.genruntimeconfig.cache
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\obj\Debug\netcoreapp3.1\TemplateAudacesApi.csproj.AssemblyReference.cache
+C:\Fontes\VesilloAudaces\TemplateAudacesApi\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.Certificate.dll
