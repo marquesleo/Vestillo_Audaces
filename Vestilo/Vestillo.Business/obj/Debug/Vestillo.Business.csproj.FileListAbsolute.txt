@@ -881,8 +881,10 @@ C:\Fontes\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.pdb
 C:\Fontes\Vestilo\Vestillo.Business\bin\Debug\System.Web.Extensions.dll
 C:\Fontes\TemplateAudacesApi\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.csproj.AssemblyReference.cache
 C:\Fontes\TemplateAudacesApi\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.csproj.CoreCompileInputs.cache
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.csproj.AssemblyReference.cache
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.csproj.CoreCompileInputs.cache
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.pdb
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.Pdf.v18.2.Core.dll
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.Printing.v18.2.Core.xml
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraDiagram.v18.2.xml
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\Vestillo.Business.dll.config
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\Vestillo.Business.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\Vestillo.Business.pdb
@@ -913,7 +915,6 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraChar
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraBars.v18.2.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.RichEdit.v18.2.Core.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraTreeList.v18.2.dll
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.Pdf.v18.2.Core.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraReports.v18.2.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.Xpo.v18.2.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraReports.v18.2.Extensions.dll
@@ -940,7 +941,6 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraChar
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraPivotGrid.v18.2.xml
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.Data.v18.2.xml
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraPrinting.v18.2.xml
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.Printing.v18.2.Core.xml
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraCharts.v18.2.xml
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.Utils.v18.2.xml
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.PivotGrid.v18.2.Core.xml
@@ -962,7 +962,6 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.DataAcce
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraGauges.v18.2.Core.xml
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.DataAccess.v18.2.UI.xml
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraRichEdit.v18.2.xml
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.XtraDiagram.v18.2.xml
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\DevExpress.Diagram.v18.2.Core.xml
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\de\DevExpress.XtraGrid.v18.2.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\es\DevExpress.XtraGrid.v18.2.resources.dll
@@ -1076,6 +1075,7 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\de\DevExpress.Diagr
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\es\DevExpress.Diagram.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\ja\DevExpress.Diagram.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\bin\Debug\ru\DevExpress.Diagram.v18.2.Core.resources.dll
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.csproj.AssemblyReference.cache
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.csproj.CoreCompileInputs.cache
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.csproj.CopyComplete
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.dll
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Business\obj\Debug\Vestillo.Business.pdb

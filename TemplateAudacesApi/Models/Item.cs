@@ -23,7 +23,7 @@ namespace TemplateAudacesApi.Models
         public double time { get; set; }
         public string sector { get; set; }
         public string machine { get; set; }
-        public ICollection<CustomField> custom_fields { get; set; } = new List<CustomField>();
+        public ICollection<CustomFields> custom_fields { get; set; } = new List<CustomFields>();
         public ICollection<Color> colors { get; set; } = new List<Color>();
         public ICollection<Size> sizes { get; set; } = new List<Size>();
         public ICollection<Price> prices { get; set; } = new List<Price>();

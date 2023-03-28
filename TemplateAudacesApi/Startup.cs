@@ -39,9 +39,10 @@ namespace TemplateAudacesApi
             var key = Encoding.ASCII.GetBytes(Settings.Secret);
             services.AddAuthentication(opt =>
             {
-                //opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                //opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(opt =>
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(opt =>
             {
                 opt.RequireHttpsMetadata = false;
                 opt.SaveToken = true;

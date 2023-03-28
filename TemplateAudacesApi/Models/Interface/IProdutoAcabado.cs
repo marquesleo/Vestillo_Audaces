@@ -14,9 +14,9 @@ namespace TemplateAudacesApi.Models.Interface
         ICollection<string> composition { get; set; }
         string currency { get; set; }
         ICollection<Color> colors { get; set; } 
-        ICollection<CustomField> custom_fields { get; set; }
+        CustomFields custom_fields { get; set; }
         ICollection<Size> sizes { get; set; }
-        ICollection<Variant> variants { get; set; }
+        List<Variant> variants { get; set; }
         ICollection<Price> prices { get; set; }
         ICollection<Image> images { get; set; }
         string usage { get; set; }

@@ -10,11 +10,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TemplateAudacesApi.Models;
 using TemplateAudacesApi.Utils;
-using Vestillo.Business.Models;
 using Vestillo.Business.Service;
-using Dapper;
-using MySql;
 using Microsoft.Extensions.Configuration;
+using Vestillo.Business.Models;
 
 namespace TemplateAudacesApi.Controllers
 {
@@ -62,8 +60,8 @@ namespace TemplateAudacesApi.Controllers
         {
             _httpClientFactory = httpClientFactory;
             _config = configuration;
-            Vestillo.Connection.ProviderFactory.StringConnection = _config.GetConnectionString("ExemplosDapper");
-            Vestillo.Lib.Funcoes.SetIdEmpresaLogada=1;
+            Vestillo.Connection.ProviderFactory.StringConnection = _config.GetConnectionString("db");
+            Vestillo.Lib.Funcoes.SetIdEmpresaLogada = 1;
         }
 
         [HttpPost]
@@ -91,7 +89,7 @@ namespace TemplateAudacesApi.Controllers
                 access_token = token,
                 expires_in = 3600,
                 token_type = "Bearer",
-                
+
             };
         }
 
@@ -112,49 +110,70 @@ namespace TemplateAudacesApi.Controllers
             , [FromQuery] string collection)
         {
             List<Object> items = new List<Object>();
-                                
+
             //busca so pelo uid
-            if (!string.IsNullOrEmpty(uid) && string.IsNullOrEmpty(type))
+
+
+            try
             {
-              var produto =  ProdutoServices.GetByReferencia(uid);
-                if (produto != null )
-                    items.Add(produto);
-            }
 
-            //busca pelo grupo
-            if (!string.IsNullOrEmpty(uid) && !string.IsNullOrEmpty(type) &&  type.Equals("group"))
+
+                if (!string.IsNullOrWhiteSpace(type) &&  type.Equals("activity"))
+                    throw new Exception("Rotina de Buscar por activity não implementada ainda!");
+
+
+
+                
+                if (!string.IsNullOrEmpty(uid) && string.IsNullOrEmpty(type))
+                {
+                    var produto = ProdutoServices.GetByReferencia(uid);
+
+                    if (produto != null)
+                        items.Add(produto);
+                }
+
+                //busca pelo grupo
+                if (!string.IsNullOrEmpty(reference) && !string.IsNullOrEmpty(type) && type.Equals("group"))
+                {
+
+                    var lstGrupos = ProdutoServices.GetProdutosByGrupo(reference,description);
+                    if (lstGrupos != null && lstGrupos.Any())
+                        items.AddRange(lstGrupos);
+                }
+
+                //busca pela referencia
+                if (!string.IsNullOrEmpty(reference) && string.IsNullOrEmpty(type))
+                {
+                    var lstProdutos = ProdutoServices.GetProdutosByGrupo(reference, description);
+                    if (lstProdutos != null)
+                        items.AddRange(lstProdutos);
+                }
+
+                //busca so pelo produto acabado
+                if (!string.IsNullOrEmpty(type) && type.Equals("finished_product"))
+                {
+                    
+                    
+                    
+                    var lstProdutos = ProdutoServices.GetListPorFiltros(0, reference, description, collection);
+                    if (lstProdutos != null)
+                        items.AddRange(lstProdutos);
+
+                }
+
+                //busca so pelo material
+                if (!string.IsNullOrEmpty(type) && type.Equals("raw_material"))
+                {
+                    var lstProdutos = ProdutoServices.GetListMaterialPorFiltros(1, reference, description, product_group, supplier);
+                    if (lstProdutos != null && lstProdutos.Any())
+                        items.AddRange(lstProdutos);
+                }
+            }
+            catch (Exception ex)
             {
-               
-                var produto = ProdutoServices.GetProdutosByGrupo(uid);
-                if (produto != null )
-                    items.Add(produto);
+
+                throw ex;
             }
-
-            //busca pela referencia
-            if (!string.IsNullOrEmpty(reference) && string.IsNullOrEmpty(type))
-            {
-                var produto = ProdutoServices.GetByReferencia(reference);
-                if (produto != null)
-                    items.Add(produto);
-            }
-
-            //busca so pelo produto acabado
-            if ( !string.IsNullOrEmpty(type) && type.Equals("finished_product") )
-            {
-                var lstProdutos = ProdutoServices.GetListPorFiltros(0, reference, description, collection);
-                if (lstProdutos != null)
-                    items.AddRange(lstProdutos);
-
-            }
-
-            //busca so pelo material
-            if ( !string.IsNullOrEmpty(type) && type.Equals("raw_material"))
-            {
-                var lstProdutos = ProdutoServices.GetListMaterialPorFiltros(1, reference, description, product_group, supplier);
-                if (lstProdutos != null && lstProdutos.Any())
-                    items.AddRange(lstProdutos);
-            }
-
             /*if (type == "raw_material")
             {
                
@@ -242,68 +261,81 @@ namespace TemplateAudacesApi.Controllers
                 return null;
 
             return items;
-          
+
         }
 
-       
 
-        
+
+
 
 
         [HttpPost]
         [Route("v1/garment")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public StatusRetorno Garment([FromBody] Garment value)
+        public StatusRetorno Garment([FromBody] Garment value, [FromQuery] string uid)
         {
             StatusRetorno ret = null;
 
             try
             {
-               ValidarProdutoParaGravacao(value);
-              var FichaTecnicaMaterial = FichaTecnicaService.Incluir(value);
+                ValidarProdutoParaGravacao(value, uid);
+                var FichaTecnicaMaterial = FichaTecnicaService.Incluir(value);
                 ret = new StatusRetorno()
                 {
                     uid = FichaTecnicaMaterial.ProdutoId.ToString(),
-                    status = "Ok",
+                    status = (string.IsNullOrWhiteSpace(uid)) ? "created" : "updated",
                     message = "Produto Incluido|Ficha:" + FichaTecnicaMaterial.Id + ",  incluida com sucesso."
                 };
                 return ret;
+
             }
-            catch (Vestillo.Lib.VestilloException ex)
+            catch (Exception ex)
             {
                 ret = new StatusRetorno()
-                {                  
+                {
                     status = "bad request",
-                    message = ex.Mensagem
+                    message = ex.Message
                 };
                 return ret;
             }
-           
+
         }
 
-        private void ValidarProdutoParaGravacao(Garment value)
+        private void ValidarProdutoParaGravacao(Garment value, string uid)
         {
             StringBuilder erro = new StringBuilder();
-           
-                if (string.IsNullOrEmpty(value.description))
-                    erro.AppendLine("Campo 'description' está em branco.");
 
-                if (string.IsNullOrEmpty(value.reference))
-                    erro.AppendLine("Campo 'reference' está em branco.");
+            if (string.IsNullOrEmpty(value.name))
+                erro.AppendLine("Campo 'name' está em branco.");
 
-                if (value.value.Equals(0))
-                    erro.AppendLine("Campo 'value' está em branco.");
 
-                if (string.IsNullOrEmpty(value.name))
-                    erro.AppendLine("Campo 'name' está em branco.");
+            if (value.variants == null || !value.variants.Any())
+                erro.AppendLine("Ficha Técnica sem itens");
 
-                 if  (value.variants == null || !value.variants.Any())
-                     erro.AppendLine("Ficha Técnicas sem itens");
+            if (value.variants.Any(p => p.materials.Any(m => m.amount == 0)))
+                erro.AppendLine("Algum dos itens está com a quantidade igual a zero!");
+
+
+            if (string.IsNullOrEmpty(uid) && RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(value))
+                erro.AppendLine($"Produto: { value.name } ja cadastrado!");
+
 
 
             if (erro.Length > 0)
-                    throw new Exception(erro.ToString());
-          
+                throw new Exception(erro.ToString());
+
+        }
+
+
+        private bool RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(Garment value)
+        {
+            string referencia = string.Empty;
+            string descricao = string.Empty;
+            var produtoService = new TemplateAudacesApi.Services.ProdutoServices();
+
+            Produto produto = produtoService.RetornarProduto(value, ref referencia, ref descricao);
+
+            return (produto != null && produto.Id > 0);
         }
 
         [HttpGet]

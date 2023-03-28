@@ -14,12 +14,12 @@ namespace TemplateAudacesApi.Services
         {
             try
             {
-                
-                var service = new Vestillo.Business.Service.UsuarioService().GetServiceFactory();
+
+                var usuarioService = new Vestillo.Business.Repositories.UsuarioRepository();
                 IEnumerable<Empresa> empresasUsuario = null;
                 IEnumerable<ModuloSistema> modulosUsuario = null;
 
-                var user = service.GetByLogin(usuario, ref empresasUsuario, ref modulosUsuario);
+                var user = usuarioService.GetByLogin(usuario);
                 
                            
                 if (user != null && user.Senha==senha)

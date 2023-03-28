@@ -843,8 +843,9 @@ C:\Fontes\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.dll
 C:\Fontes\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.pdb
 C:\Fontes\TemplateAudacesApi\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.csproj.AssemblyReference.cache
 C:\Fontes\TemplateAudacesApi\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.csproj.CoreCompileInputs.cache
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.csproj.AssemblyReference.cache
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.csproj.CoreCompileInputs.cache
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\DevExpress.Images.v18.2.dll
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\de\DevExpress.Printing.v18.2.Core.resources.dll
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\de\DevExpress.Utils.v18.2.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\Vestillo.Connection.dll.config
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\Vestillo.Connection.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\Vestillo.Connection.pdb
@@ -885,7 +886,6 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\DevExpress.XtraCh
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\DevExpress.XtraRichEdit.v18.2.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\DevExpress.XtraCharts.v18.2.Extensions.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\DevExpress.Pdf.v18.2.Core.dll
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\DevExpress.Images.v18.2.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\DevExpress.XtraDiagram.v18.2.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\DevExpress.Diagram.v18.2.Core.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\Vestillo.Lib.pdb
@@ -944,7 +944,6 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\de\DevExpress.Dat
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\es\DevExpress.Data.v18.2.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\ja\DevExpress.Data.v18.2.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\ru\DevExpress.Data.v18.2.resources.dll
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\de\DevExpress.Printing.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\es\DevExpress.Printing.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\ja\DevExpress.Printing.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\ru\DevExpress.Printing.v18.2.Core.resources.dll
@@ -956,7 +955,6 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\de\DevExpress.Xtr
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\es\DevExpress.XtraPrinting.v18.2.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\ja\DevExpress.XtraPrinting.v18.2.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\ru\DevExpress.XtraPrinting.v18.2.resources.dll
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\de\DevExpress.Utils.v18.2.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\es\DevExpress.Utils.v18.2.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\ja\DevExpress.Utils.v18.2.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\ru\DevExpress.Utils.v18.2.resources.dll
@@ -1032,6 +1030,8 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\de\DevExpress.Dia
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\es\DevExpress.Diagram.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\ja\DevExpress.Diagram.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\bin\Debug\ru\DevExpress.Diagram.v18.2.Core.resources.dll
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.csproj.AssemblyReference.cache
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.csproj.CoreCompileInputs.cache
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.csproj.CopyComplete
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Connection\obj\Debug\Vestillo.Connection.pdb

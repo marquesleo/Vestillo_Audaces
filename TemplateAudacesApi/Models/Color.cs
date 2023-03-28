@@ -10,7 +10,10 @@ namespace TemplateAudacesApi.Models
         public string code { get; set; }
         public string description { get; set; }
         public string uid { get; set; }
-        public string rgb { get; set; }
+       // public string rgb { get; set; }
         public string value { get; set; }
+        public ICollection<string> Options { get; set; }  = new List<string>();
+
+     
     }
 }

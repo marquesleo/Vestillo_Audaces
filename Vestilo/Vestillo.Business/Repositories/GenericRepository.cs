@@ -288,7 +288,7 @@ namespace Vestillo.Business.Repositories
                     if (!ProviderFactory.IsAPI)
                         log.UsuarioId = VestilloSession.UsuarioLogado.Id;
                     else
-                        log.UsuarioId = 1;
+                        log.UsuarioId = 2;
 
                     foreach (Tabela table in entity.GetType().GetCustomAttributes(typeof(Tabela), false))
                     {

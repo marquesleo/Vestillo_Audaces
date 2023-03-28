@@ -11,6 +11,8 @@ namespace TemplateAudacesApi.Models
         {
             type = "raw_material";
         }
+
+        public string nome { get; set; }
         public string type { get; set; }
         public string uid { get; set; }
         public string name { get; set; }
@@ -23,7 +25,18 @@ namespace TemplateAudacesApi.Models
         public string supplier { get; set; }
         public double value { get; set; }
         public decimal amount { get; set; }
+        public decimal cost { get; set; }
+        public string size { get; set; }
+        public decimal total { get; set; }
+        public string group { get; set; }
+        public string um { get; set; }
+        public string desc { get; set; }
+        public object color { get; set; }
+        public string variant { get; set; }
+        public CustomFields custom_fields { get; set; }
         public ICollection<Image> images { get; set; }
-        public ICollection<Variant> variants { get; set; } = new List<Variant>();
+        public List<Variant> variants { get; set; } = new List<Variant>();
+        public ICollection<Size> sizes { get; set; } = new List<Size>();
+        public ICollection<Color> colors { get; set; } = new List<Color>();
     }
 }

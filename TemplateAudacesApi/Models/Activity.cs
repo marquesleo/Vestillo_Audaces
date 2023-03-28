@@ -27,7 +27,7 @@ namespace TemplateAudacesApi.Models
         public string product_group { get; set; }
         public string currency { get; set; }
         public string supplier { get; set; }
-        public ICollection<CustomField> custom_fields { get; set; }
+        public ICollection<CustomFields> custom_fields { get; set; }
         public ICollection<Color> colors { get; set; }
         public ICollection<Size> sizes { get; set; }
         public ICollection<Price> prices { get; set; }

@@ -869,9 +869,7 @@ C:\Fontes\TemplateAudacesApi\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.
 C:\Fontes\TemplateAudacesApi\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.frmProcessamento.resources
 C:\Fontes\TemplateAudacesApi\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.GenerateResource.cache
 C:\Fontes\TemplateAudacesApi\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.CoreCompileInputs.cache
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.frmProcessamento.resources
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.GenerateResource.cache
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.CoreCompileInputs.cache
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\DevExpress.Images.v18.2.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\Vestillo.Lib.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\Vestillo.Lib.pdb
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\DevExpress.Data.v18.2.dll
@@ -895,7 +893,6 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\DevExpress.CodeParser.v1
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\DevExpress.XtraRichEdit.v18.2.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\DevExpress.Printing.v18.2.Core.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\DevExpress.Pdf.v18.2.Core.dll
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\DevExpress.Images.v18.2.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\DevExpress.Sparkline.v18.2.Core.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\DevExpress.XtraCharts.v18.2.UI.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\DevExpress.XtraPivotGrid.v18.2.dll
@@ -1060,7 +1057,10 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\de\DevExpress.Diagram.v1
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\es\DevExpress.Diagram.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\ja\DevExpress.Diagram.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\ru\DevExpress.Diagram.v18.2.Core.resources.dll
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.AssemblyReference.cache
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.frmProcessamento.resources
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.GenerateResource.cache
+C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.CoreCompileInputs.cache
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.CopyComplete
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.pdb
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.AssemblyReference.cache

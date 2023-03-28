@@ -21,19 +21,24 @@ namespace TemplateAudacesApi.Services
                 return _produtoDetalheService;
             }
         }
-              
 
-        public void IncluirDetalhe(Produto produto,Cor cor, Tamanho tamanho)
+        public List<ProdutoDetalhe> lstDetalhe = new List<ProdutoDetalhe>();
+        public void IncluirDetalhe(Produto produto, Cor cor, Tamanho tamanho)
         {
             try
-            {         
-               var detalhe = new ProdutoDetalhe();
-               detalhe.DataAlteracao = DateTime.Now;
-               detalhe.Idcor = cor.Id;
-               detalhe.IdProduto = produto.Id;
-               detalhe.IdTamanho = tamanho.Id;
-               produtoDetalheService.Save(ref detalhe);
-        
+            {
+                if (!lstDetalhe.Any(p => p.Idcor == cor.Id && p.IdTamanho == tamanho.Id))
+                {
+                    var detalhe = new ProdutoDetalhe();
+                    detalhe.DataAlteracao = DateTime.Now;
+                    detalhe.Idcor = cor.Id;
+                    detalhe.IdProduto = produto.Id;
+                    detalhe.IdTamanho = tamanho.Id;
+                    detalhe.custo = produto.Custo;
+
+                    produtoDetalheService.Save(ref detalhe);
+                    lstDetalhe.Add(detalhe);
+                }
             }
             catch (Exception ex)
             {
@@ -42,7 +47,7 @@ namespace TemplateAudacesApi.Services
             }
         }
 
-       public void ExcluirDetalhes(Produto produto)
+        public void ExcluirDetalhes(Produto produto)
         {
             try
             {

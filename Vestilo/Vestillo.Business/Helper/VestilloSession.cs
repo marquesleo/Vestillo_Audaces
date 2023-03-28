@@ -116,7 +116,7 @@ namespace Vestillo.Business
                     }
                 }
                 else
-                    return TipoAcessoDados.BD;
+                    _tipoAcesso = TipoAcessoDados.BD;
                 
                 return _tipoAcesso;
             }

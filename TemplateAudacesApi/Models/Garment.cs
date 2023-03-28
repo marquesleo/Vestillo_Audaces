@@ -28,15 +28,17 @@ namespace TemplateAudacesApi.Models
         public string product_group { get; set; }
         public string supplier { get; set; }
         public string usage { get; set; }
+        public Color color { get; set; } = new Color();
         public ICollection<Color> colors { get; set; } = new List<Color>();
         public ICollection<Image> images { get; set; } = new List<Image>();
         public string currency { get; set; }
         public ICollection<string> composition { get; set; }
         public string responsible { get; set; }
-        public ICollection<CustomField> custom_fields { get; set; } = new List<CustomField>();
+        public CustomFields custom_fields { get; set; } = new CustomFields();
         public ICollection<Size> sizes { get; set; } = new List<Size>();
         public ICollection<Price> prices { get; set; } = new List<Price>();
-        public ICollection<Variant> variants { get; set; } = new List<Variant>();
+        public List<Variant> variants { get; set; } = new List<Variant>();
+        public List<Variation> variations { get; set; } 
         public ICollection<Item> items { get; set; } = new List<Item>();
         public string color_1 { get; set; }
         public string color_2 { get; set; }
