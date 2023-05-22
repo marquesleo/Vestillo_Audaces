@@ -1194,6 +1194,39 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlDocument.dll": {}
         }
+      },
+      "Vestillo.Business/1.0.0": {
+        "type": "project",
+        "dependencies": {
+          "Vestillo.Connection": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Vestillo.Business.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Vestillo.Business.dll": {}
+        }
+      },
+      "Vestillo.Connection/1.0.0": {
+        "type": "project",
+        "dependencies": {
+          "Vestillo.Lib": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Vestillo.Connection.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Vestillo.Connection.dll": {}
+        }
+      },
+      "Vestillo.Lib/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/Vestillo.Lib.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Vestillo.Lib.dll": {}
+        }
       }
     }
   },
@@ -4752,6 +4785,21 @@
         "system.xml.xmldocument.4.3.0.nupkg.sha512",
         "system.xml.xmldocument.nuspec"
       ]
+    },
+    "Vestillo.Business/1.0.0": {
+      "type": "project",
+      "path": "../Vestilo/Vestillo.Business/Vestillo.Business.csproj",
+      "msbuildProject": "../Vestilo/Vestillo.Business/Vestillo.Business.csproj"
+    },
+    "Vestillo.Connection/1.0.0": {
+      "type": "project",
+      "path": "../Vestilo/Vestillo.Connection/Vestillo.Connection.csproj",
+      "msbuildProject": "../Vestilo/Vestillo.Connection/Vestillo.Connection.csproj"
+    },
+    "Vestillo.Lib/1.0.0": {
+      "type": "project",
+      "path": "../Vestilo/Vestillo.Lib/Vestillo.Lib.csproj",
+      "msbuildProject": "../Vestilo/Vestillo.Lib/Vestillo.Lib.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -4764,7 +4812,10 @@
       "Microsoft.IdentityModel.Tokens >= 6.25.1",
       "Microsoft.VisualStudio.Azure.Containers.Tools.Targets >= 1.14.0",
       "MySql.Data >= 8.0.31",
-      "System.IdentityModel.Tokens.Jwt >= 6.25.1"
+      "System.IdentityModel.Tokens.Jwt >= 6.25.1",
+      "Vestillo.Business >= 1.0.0",
+      "Vestillo.Connection >= 1.0.0",
+      "Vestillo.Lib >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -4799,7 +4850,17 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj": {
+              "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj"
+            },
+            "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj": {
+              "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj"
+            },
+            "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj": {
+              "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -4868,7 +4929,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.115\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.116\\RuntimeIdentifierGraph.json"
       }
     }
   }
