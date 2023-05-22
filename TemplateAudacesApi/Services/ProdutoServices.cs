@@ -203,6 +203,8 @@ namespace TemplateAudacesApi.Services
 
         private Material RetornarMaterial(Produto produto)
         {
+            try
+            {
 
             var unidadeDeMedida = UniMedidaRepository.GetById(produto.IdUniMedida);
             var grupoDeProduto = GrupoProdutoRepository.GetById(produto.IdGrupo);
@@ -230,6 +232,13 @@ namespace TemplateAudacesApi.Services
                 colors = colors,
                 sizes = sizes
             };
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
 

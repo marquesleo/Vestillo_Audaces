@@ -4,21 +4,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using TemplateAudacesApi.Models;
 using Vestillo.Business.Models;
+using Vestillo.Business.Repositories;
 using Vestillo.Business.Service;
 
 namespace TemplateAudacesApi.Services
 {
     public class GradeDeProdutoService
     {
-        private IProdutoDetalheService _produtoDetalheService;
-        private IProdutoDetalheService produtoDetalheService
+        private  ProdutoDetalheRepository _produtoDetalheRepository;
+        private ProdutoDetalheRepository produtoDetalheRepository
         {
             get
             {
-                if (_produtoDetalheService == null)
-                    _produtoDetalheService = new ProdutoDetalheService().GetServiceFactory();
+                if (_produtoDetalheRepository == null)
+                    _produtoDetalheRepository = new ProdutoDetalheRepository();
 
-                return _produtoDetalheService;
+                return _produtoDetalheRepository;
             }
         }
 
@@ -36,7 +37,7 @@ namespace TemplateAudacesApi.Services
                     detalhe.IdTamanho = tamanho.Id;
                     detalhe.custo = produto.Custo;
 
-                    produtoDetalheService.Save(ref detalhe);
+                    produtoDetalheRepository.Save(ref detalhe);
                     lstDetalhe.Add(detalhe);
                 }
             }
@@ -51,10 +52,10 @@ namespace TemplateAudacesApi.Services
         {
             try
             {
-                var lstDetalhe = produtoDetalheService.GetListByProduto(produto.Id, 1);
+                var lstDetalhe = produtoDetalheRepository.GetListByProduto(produto.Id, 1);
                 foreach (var detalhe in lstDetalhe)
                 {
-                    produtoDetalheService.Delete(detalhe.Id);
+                    produtoDetalheRepository.Delete(detalhe.Id);
                 }
             }
             catch (Exception ex)

@@ -33,37 +33,47 @@ namespace TemplateAudacesApi.Services
         public decimal RetornarPrecoDoMaterial(Produto Material)
         {
             decimal retorno = 0;
-            IEnumerable<ProdutoFornecedorPreco> ret = new ProdutoFornecedorPrecoRepository().GetValoresSemInativos(Material.Id).ToList(); ;
-
-            if (Material.TipoCalculoPreco == 2) //Pega a media
+            IEnumerable<ProdutoFornecedorPreco> ret = null;
+            try
             {
-                if (Material.TipoCustoFornecedor == 2)// Cor
-                {
-                    int count = ret.Where(x => x.PrecoCor > 0).ToList().Count();
-                    if (count == 0) count = 1;
-                    retorno = (ret.Sum(x => x.PrecoCor) / count);
-                }
-                else if (Material.TipoCustoFornecedor == 3)// Tamanho
-                {
-                    int count = ret.Where(x => x.PrecoTamanho > 0).ToList().Count();
-                    if (count == 0) count = 1;
-                    retorno = (ret.Sum(x => x.PrecoTamanho) / count);
-                }
-                else // Fornecedor
-                {
-                    int count = ret.Where(x => x.PrecoFornecedor > 0).ToList().Count();
-                    if (count == 0) count = 1;
-                    retorno = (ret.Sum(x => x.PrecoFornecedor) / count);
-                }
+                ret = new ProdutoFornecedorPrecoRepository().GetValoresSemInativos(Material.Id).ToList(); ;
             }
-            else // Pega  o maior valor
+            catch (System.Exception)
+            {              
+            }
+
+            if (ret != null && ret.Any())
             {
-                if (Material.TipoCustoFornecedor == 2)// Cor
-                    retorno = ret.Max(x => x.PrecoCor);
-                else if (Material.TipoCustoFornecedor == 3)// Tamanho
-                    retorno = ret.Max(x => x.PrecoTamanho);
-                else if (ret.Any())
-                    retorno = ret.Max(x => x.PrecoFornecedor);
+                if (Material.TipoCalculoPreco == 2) //Pega a media
+                {
+                    if (Material.TipoCustoFornecedor == 2)// Cor
+                    {
+                        int count = ret.Where(x => x.PrecoCor > 0).ToList().Count();
+                        if (count == 0) count = 1;
+                        retorno = (ret.Sum(x => x.PrecoCor) / count);
+                    }
+                    else if (Material.TipoCustoFornecedor == 3)// Tamanho
+                    {
+                        int count = ret.Where(x => x.PrecoTamanho > 0).ToList().Count();
+                        if (count == 0) count = 1;
+                        retorno = (ret.Sum(x => x.PrecoTamanho) / count);
+                    }
+                    else // Fornecedor
+                    {
+                        int count = ret.Where(x => x.PrecoFornecedor > 0).ToList().Count();
+                        if (count == 0) count = 1;
+                        retorno = (ret.Sum(x => x.PrecoFornecedor) / count);
+                    }
+                }
+                else // Pega  o maior valor
+                {
+                    if (Material.TipoCustoFornecedor == 2)// Cor
+                        retorno = ret.Max(x => x.PrecoCor);
+                    else if (Material.TipoCustoFornecedor == 3)// Tamanho
+                        retorno = ret.Max(x => x.PrecoTamanho);
+                    else if (ret.Any())
+                        retorno = ret.Max(x => x.PrecoFornecedor);
+                }
             }
             return retorno;
         }

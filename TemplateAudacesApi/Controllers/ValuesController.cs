@@ -60,8 +60,15 @@ namespace TemplateAudacesApi.Controllers
         {
             _httpClientFactory = httpClientFactory;
             _config = configuration;
+            SetarPadroes();
+        }
+
+        private void SetarPadroes()
+        {
             Vestillo.Connection.ProviderFactory.StringConnection = _config.GetConnectionString("db");
-            Vestillo.Lib.Funcoes.SetIdEmpresaLogada = 1;
+            var valor = Vestillo.Connection.ProviderFactory.IsAPI;
+            Vestillo.Lib.Funcoes.SetIdEmpresaLogada = Convert.ToInt32(_config.GetSection("parametros").GetSection("empresa").Value);
+            Vestillo.Lib.Funcoes.UtilizaAPI = true;
         }
 
         [HttpPost]

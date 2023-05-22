@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="biblioteca\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -31,6 +32,9 @@
     </Reference>
     <Reference Include="Vestillo.Connection">
       <HintPath>biblioteca\Vestillo.Connection.dll</HintPath>
+    </Reference>
+    <Reference Include="Vestillo.Core">
+      <HintPath>biblioteca\Vestillo.Core.dll</HintPath>
     </Reference>
     <Reference Include="Vestillo.Lib">
       <HintPath>biblioteca\Vestillo.Lib.dll</HintPath>

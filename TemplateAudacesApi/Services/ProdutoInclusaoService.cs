@@ -8,15 +8,15 @@ namespace TemplateAudacesApi.Services
 {
     public class ProdutoInclusaoService
     {
-        private IProdutoService _produtoService;
-        private IProdutoService produtoService
+        private ProdutoRepository _produtoRepository;
+        private ProdutoRepository produtoRepository
         {
             get
             {
-                if (_produtoService == null)
-                    _produtoService = new ProdutoService().GetServiceFactory();
+                if (_produtoRepository == null)
+                    _produtoRepository = new ProdutoRepository();
 
-                return _produtoService;
+                return _produtoRepository;
             }
         }
 
@@ -104,7 +104,7 @@ namespace TemplateAudacesApi.Services
                 }
 
                 produto.IdEmpresa = 1;
-                produtoService.Save(ref produto);
+                produtoRepository.Save(ref produto);
 
             }
             catch (Exception ex)
@@ -140,7 +140,7 @@ namespace TemplateAudacesApi.Services
 
 
             produto.Colecao = garment.collection;
-            produtoService.Save(ref produto);
+            produtoRepository.Save(ref produto);
                                               
             return produto;
         }
@@ -163,7 +163,7 @@ namespace TemplateAudacesApi.Services
             produto.DataCadastro = DateTime.Now;
             produto.Ativo = true;
             produto.IdUniMedida = uniMedida.Id;
-            produtoService.Save(ref produto);
+            produtoRepository.Save(ref produto);
           
             return produto;
         }
@@ -179,7 +179,7 @@ namespace TemplateAudacesApi.Services
             produto.IdGrupo = grupo.Id;
 
             produto.IdUniMedida = uniMedida.Id;
-            produtoService.Save(ref produto);
+            produtoRepository.Save(ref produto);
 
             return produto;
         }
