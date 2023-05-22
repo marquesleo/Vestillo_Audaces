@@ -27,18 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Vestillo.Business">
-      <HintPath>biblioteca\Vestillo.Business.dll</HintPath>
-    </Reference>
-    <Reference Include="Vestillo.Connection">
-      <HintPath>biblioteca\Vestillo.Connection.dll</HintPath>
-    </Reference>
-    <Reference Include="Vestillo.Core">
-      <HintPath>biblioteca\Vestillo.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Vestillo.Lib">
-      <HintPath>biblioteca\Vestillo.Lib.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\Vestilo\Vestillo.Business\Vestillo.Business.csproj" />
+    <ProjectReference Include="..\Vestilo\Vestillo.Connection\Vestillo.Connection.csproj" />
+    <ProjectReference Include="..\Vestilo\Vestillo.Lib\Vestillo.Lib.csproj" />
   </ItemGroup>
 
 </Project>
