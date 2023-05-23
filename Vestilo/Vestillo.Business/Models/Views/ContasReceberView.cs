@@ -12,6 +12,8 @@ namespace Vestillo.Business.Models
         [NaoMapeado]
         public string TipoCobrancaDescricao {get;set;}
         [NaoMapeado]
+        public string TipoDocumento { get; set; }
+        [NaoMapeado]
         public string NomeBanco { get; set; }
         [NaoMapeado]
         public string RefCliente { get; set; }

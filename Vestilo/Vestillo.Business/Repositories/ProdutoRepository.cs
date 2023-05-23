@@ -12,18 +12,18 @@ using System.Data;
 
 namespace Vestillo.Business.Repositories
 {
-    public class ProdutoRepository: GenericRepository<Produto> 
+    public class ProdutoRepository : GenericRepository<Produto>
     {
         public ProdutoRepository()
-            :base(new DapperConnection<Produto>()) 
-        {         
-   
+            : base(new DapperConnection<Produto>())
+        {
+
         }
 
         public Produto GetByReferencia(string referencia)
         {
             var p = new Produto();
-            _cn.ExecuteToModel("Referencia = '" + referencia + "'",ref p);
+            _cn.ExecuteToModel("Referencia = '" + referencia + "'", ref p);
             return p;
         }
 
@@ -36,7 +36,7 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("        AND " + FiltroEmpresa("", "P"));
             SQL.AppendLine("        AND (SELECT COUNT(*) FROM fichatecnica F WHERE F.ProdutoId = P.Id) ");
 
-           
+
 
             if (fichaTecnicaCompleta)
             {
@@ -102,7 +102,7 @@ namespace Vestillo.Business.Repositories
 
         public IEnumerable<Produto> GetListPorReferencia(string referencia)
         {
-           
+
 
             var SQL = new StringBuilder();
             SQL.AppendLine("SELECT   produtos.*,");
@@ -122,7 +122,7 @@ namespace Vestillo.Business.Repositories
             var SQL = new StringBuilder();
             SQL.AppendLine("SELECT  P.*");
             SQL.AppendLine("FROM 	produtos P");
-            SQL.AppendLine("WHERE "  + FiltroEmpresa("P.IdEmpresa") + " AND P.referencia like '%" + referencia + "%' And P.Ativo = 1");
+            SQL.AppendLine("WHERE " + FiltroEmpresa("P.IdEmpresa") + " AND P.referencia like '%" + referencia + "%' And P.Ativo = 1");
             SQL.AppendLine("        AND (SELECT COUNT(*) FROM fichatecnica F WHERE F.ProdutoId = P.Id) ");
 
             if (fichaTecnicaCompleta)
@@ -146,7 +146,7 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("FROM 	produtos P");
             SQL.AppendLine("WHERE " + FiltroEmpresa("P.IdEmpresa") + " AND  P.referencia like '%" + referencia + "%' And P.Ativo = 1");
             SQL.AppendLine("        AND (SELECT COUNT(*) FROM fichatecnica F WHERE F.ProdutoId = P.Id) ");
-                SQL.Append(" = 0 ");
+            SQL.Append(" = 0 ");
 
             SQL.AppendLine("ORDER BY P.Referencia");
 
@@ -229,7 +229,7 @@ namespace Vestillo.Business.Repositories
 
         public IEnumerable<Produto> GetListPorDescricao(string desc)
         {
-     
+
             var SQL = new StringBuilder();
             SQL.AppendLine("SELECT   produtos.*,");
             SQL.AppendLine(" IFNULL(colecoes.descricao,'') as Colecao,IFNULL(segmentos.descricao,'') as Segmento,IFNULL(grupoprodutos.descricao,'') as Grupo ");
@@ -252,7 +252,7 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("FROM 	produtos P");
             SQL.AppendLine("WHERE " + FiltroEmpresa("P.IdEmpresa") + " AND  P.descricao like '%" + desc + "%' And P.Ativo = 1");
             SQL.AppendLine("        AND (SELECT COUNT(*) FROM fichatecnica F WHERE F.ProdutoId = P.Id) ");
-                SQL.Append(" = 0 ");
+            SQL.Append(" = 0 ");
 
             SQL.AppendLine("ORDER BY P.Referencia");
 
@@ -417,11 +417,11 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("        T.Id As TamanhoId,");
             SQL.AppendLine("        T.Abreviatura As TamanhoAbreviatura,");
             SQL.AppendLine("        C.Id AS CorId,");
-            SQL.AppendLine("        C.Abreviatura As CorAbreviatura,"); 
+            SQL.AppendLine("        C.Abreviatura As CorAbreviatura,");
             SQL.AppendLine("        U.id AS IdUniMedida,");
             SQL.AppendLine("        U.abreviatura AS UnidMedidaAbreviatura,");
-            SQL.AppendLine("        CASE WHEN E.Saldo IS NULL THEN 0 ELSE  E.Saldo END AS Saldo,");            
-            SQL.AppendLine("        1 AS Qtd");     
+            SQL.AppendLine("        CASE WHEN E.Saldo IS NULL THEN 0 ELSE  E.Saldo END AS Saldo,");
+            SQL.AppendLine("        1 AS Qtd");
             SQL.AppendLine("FROM 	produtos P");
             SQL.AppendLine("	LEFT JOIN produtodetalhes PD ON PD.IdProduto = P.Id");
             SQL.AppendLine("    LEFT JOIN tamanhos T ON T.Id = PD.IdTamanho");
@@ -474,13 +474,13 @@ namespace Vestillo.Business.Repositories
             return cn.ExecuteStringSqlToList(new DevolucaoItensView(), SQL.ToString());
         }
 
-        public void UpdateRefFornecedor(int ItemId,string refFornecedor)
+        public void UpdateRefFornecedor(int ItemId, string refFornecedor)
         {
             var SQL = new StringBuilder();
             SQL.AppendLine("UPDATE produtos SET ");
             SQL.AppendLine("RefFornecedor = ");
-            SQL.AppendLine("if(IFNULL(produtos.RefFornecedor,'') = '', " + "'" + refFornecedor + "'");           
-            SQL.AppendLine(",concat(produtos.RefFornecedor," +  "'," + refFornecedor + "'))"  );            
+            SQL.AppendLine("if(IFNULL(produtos.RefFornecedor,'') = '', " + "'" + refFornecedor + "'");
+            SQL.AppendLine(",concat(produtos.RefFornecedor," + "'," + refFornecedor + "'))");
             SQL.AppendLine(" WHERE id = ");
             SQL.Append(ItemId);
 
@@ -491,13 +491,13 @@ namespace Vestillo.Business.Repositories
         {
             var SQL = new StringBuilder();
             SQL.AppendLine("UPDATE produtos SET ");
-            SQL.AppendLine("ativo = 0");           
+            SQL.AppendLine("ativo = 0");
             SQL.AppendLine(" WHERE id = ");
             SQL.Append(ItemId);
             _cn.ExecuteNonQuery(SQL.ToString());
         }
 
-        public IEnumerable<FocoVendas> GetFocoVendas(FiltroRelatorioFocoVendas filtro,bool AguparCor)
+        public IEnumerable<FocoVendas> GetFocoVendas(FiltroRelatorioFocoVendas filtro, bool AguparCor)
         {
             var cn = new DapperConnection<FocoVendas>();
             var SQL = new StringBuilder();
@@ -531,8 +531,8 @@ namespace Vestillo.Business.Repositories
             if (filtro.tamanhosIds != null && filtro.tamanhosIds.Length > 0)
                 SQL.AppendLine("        AND pd.idTamanho IN (" + string.Join(", ", filtro.tamanhosIds) + ")");
 
-          
-            
+
+
 
             if (AguparCor == false)
             {
@@ -564,28 +564,19 @@ namespace Vestillo.Business.Repositories
             SQLPrincipal.AppendLine("LEFT JOIN devolucaoitens d ON (d.idItem = p.id AND d.idcor = pd.idcor AND d.idtamanho = pd.idtamanho) ");
             SQLPrincipal.AppendLine("LEFT JOIN imagens i ON (i.idProduto = p.Id) ");
             SQLPrincipal.AppendLine(" WHERE (a.idempresa IS NULL OR a.idempresa = " + VestilloSession.EmpresaLogada.Id + ")");
-
             
-
             if (filtro.catalogosIds != null && filtro.catalogosIds.Length > 0)
                 SQLPrincipal.AppendLine("        AND p.idCatalogo IN (" + string.Join(", ", filtro.catalogosIds) + ")");
-
             if (filtro.colecoesIds != null && filtro.colecoesIds.Length > 0)
                 SQLPrincipal.AppendLine("        AND p.idColecao IN (" + string.Join(", ", filtro.colecoesIds) + ")");
-
             
-
             if (filtro.corIds != null && filtro.corIds.Length > 0)
                 SQLPrincipal.AppendLine("        AND pd.idCor IN (" + string.Join(", ", filtro.corIds) + ")");
-
             if (filtro.tamanhosIds != null && filtro.tamanhosIds.Length > 0)
                 SQLPrincipal.AppendLine("        AND pd.idTamanho IN (" + string.Join(", ", filtro.tamanhosIds) + ")");
-
             SQLPrincipal.AppendLine(" GROUP BY p.id, pd.idCor, pd.idTamanho");
             
             DataTable dt1 = Vestillo.Core.Connection.VestilloConnection.ExecToDataTable(SQLPrincipal.ToString());
-
-
             var SQLSecundario = new StringBuilder();
             SQLSecundario.AppendLine("SELECT p.id as ProdutoId, s.descricao as Segmento ,  p.Referencia, c.Abreviatura AS cor, t.Abreviatura AS tamanho, ");
             SQLSecundario.AppendLine("IFNULL(ilp.QtdNaoAtendida, 0) AS NaoAtendida, c.id as CorId, t.id as TamanhoId, a.id as AlmoxarifadoId");
@@ -598,35 +589,24 @@ namespace Vestillo.Business.Repositories
             SQLSecundario.AppendLine("LEFT JOIN itenspedidovenda ip ON (ip.ProdutoId = p.id AND ip.CorId = pd.idcor AND ip.TamanhoId = pd.idtamanho) ");
             SQLSecundario.AppendLine("LEFT JOIN itensliberacaopedidovenda ilp ON (ilp.ItemPedidoVendaID = ip.id) ");
             SQLSecundario.AppendLine(" WHERE (a.idempresa IS NULL OR a.idempresa = " + VestilloSession.EmpresaLogada.Id + ")");
-
            
-
             if (filtro.catalogosIds != null && filtro.catalogosIds.Length > 0)
                 SQLSecundario.AppendLine("        AND p.idCatalogo IN (" + string.Join(", ", filtro.catalogosIds) + ")");
-
             if (filtro.colecoesIds != null && filtro.colecoesIds.Length > 0)
                 SQLSecundario.AppendLine("        AND p.idColecao IN (" + string.Join(", ", filtro.colecoesIds) + ")");
-
            
-
             if (filtro.corIds != null && filtro.corIds.Length > 0)
                 SQLSecundario.AppendLine("        AND pd.idCor IN (" + string.Join(", ", filtro.corIds) + ")");
-
             if (filtro.tamanhosIds != null && filtro.tamanhosIds.Length > 0)
                 SQLSecundario.AppendLine("        AND pd.idTamanho IN (" + string.Join(", ", filtro.tamanhosIds) + ")");
-
             SQLSecundario.AppendLine(" GROUP BY p.id, pd.idCor, pd.idTamanho");
-
             DataTable dt2 = Vestillo.Core.Connection.VestilloConnection.ExecToDataTable(SQLSecundario.ToString());
             
-
             List<FocoVendas> listFocoVenda = null;
             listFocoVenda = new List<FocoVendas>();
             listFocoVenda.Clear();
-
             FocoVendas item = new FocoVendas();
             ImagemRepository imgRepository = new ImagemRepository();
-
             for (int i = 0; i < dt1.Rows.Count; i++)
             {
                 item = new FocoVendas();
@@ -635,7 +615,6 @@ namespace Vestillo.Business.Repositories
                 item.cor = dt1.Rows[i]["cor"].ToString(); 
                 item.tamanho = dt1.Rows[i]["tamanho"].ToString(); 
                 item.saldo = dt1.Rows[i]["Saldo"].ToDecimal();
-
                 //imagem
                 imgRepository = new ImagemRepository();
                 var imagem = imgRepository.GetImagem("id", dt1.Rows[i]["ImagemId"].ToInt());
@@ -644,16 +623,11 @@ namespace Vestillo.Business.Repositories
                     if(img.tipo == Imagem.TipoDeImagem.ProdutoAcabado)
                         item.imagem = img.imagem;
                 }
-
-
                 var qtdFaturada = dt1.Rows[i]["QtdFaturada"].ToDecimal();
                 var qtdEmpenhada = dt1.Rows[i]["QtdEmpenhada"].ToDecimal();
                 var totalFabricado = qtdFaturada + qtdEmpenhada + item.saldo;
-
                 for (int j = 0; j < dt2.Rows.Count; j++) {
-
                     var naoAtendida = dt2.Rows[i]["NaoAtendida"].ToDecimal();
-
                     if (dt1.Rows[i]["ProdutoId"].ToInt() == dt2.Rows[i]["ProdutoId"].ToInt() &&
                         dt1.Rows[i]["CorId"].ToInt() == dt2.Rows[i]["CorId"].ToInt() &&
                         dt1.Rows[i]["TamanhoId"].ToInt() == dt2.Rows[i]["TamanhoId"].ToInt() &&
@@ -669,15 +643,11 @@ namespace Vestillo.Business.Repositories
                             item.venda = (qtdFaturada + qtdEmpenhada + naoAtendida) / (totalFabricado);
                             item.giro = (item.saldo) / (totalFabricado);
                         }
-
                         break;
                        
                     }
-
                 } 
-
                 listFocoVenda.Add(item);
-
             }
             */
 
@@ -708,27 +678,20 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("LEFT JOIN itensliberacaopedidovenda ilp ON (ilp.ItemPedidoVendaID = ip.id) ");
             SQL.AppendLine("LEFT JOIN imagens i ON (i.idProduto = p.Id) ");
             SQL.AppendLine(" WHERE (a.idempresa IS NULL OR a.idempresa = " + VestilloSession.EmpresaLogada.Id + ")");
-
             if (filtro.segmentosIds != null && filtro.segmentosIds.Length > 0)
                 SQL.AppendLine(" AND p.idSegmento IN (" + string.Join(", ", filtro.segmentosIds) + ")");            
-
             if (filtro.catalogosIds != null && filtro.catalogosIds.Length > 0)
                 SQL.AppendLine("        AND p.idCatalogo IN (" + string.Join(", ", filtro.catalogosIds) + ")");
-
             if (filtro.colecoesIds != null && filtro.colecoesIds.Length > 0)
                 SQL.AppendLine("        AND p.idColecao IN (" + string.Join(", ", filtro.colecoesIds) + ")");
-
             if (filtro.gruposIds != null && filtro.gruposIds.Length > 0)
                 SQL.AppendLine("        AND p.idGrupo IN (" + string.Join(", ", filtro.gruposIds) + ")");
-
             if (filtro.corIds != null && filtro.corIds.Length > 0)
                 SQL.AppendLine("        AND pd.idCor IN (" + string.Join(", ", filtro.corIds) + ")");
-
             if (filtro.tamanhosIds != null && filtro.tamanhosIds.Length > 0)
                 SQL.AppendLine("        AND pd.idTamanho IN (" + string.Join(", ", filtro.tamanhosIds) + ")");
             
             SQL.AppendLine(" GROUP BY p.id, pd.idCor, pd.idTamanho");
-
             return cn.ExecuteStringSqlToList(new FocoVendas(), SQL.ToString());
         }*/
 
@@ -813,7 +776,7 @@ namespace Vestillo.Business.Repositories
             {
                 SQL.Append("  op.Status = 6 ");
             }
-            
+
 
             if (filtro.ordensIds != null && filtro.ordensIds.Length > 0)
                 SQL.AppendLine("        AND op.Id IN (" + string.Join(", ", filtro.ordensIds) + ")");
@@ -846,7 +809,7 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("LEFT JOIN catalogo ca ON (ca.Id = p.IdCatalogo) ");
             SQL.AppendLine("WHERE ");
             SQL.AppendLine("pv.Id IN (" + string.Join(", ", filtro.pedidosIds) + ")");
-            
+
             if (filtro.clientesIds != null && filtro.clientesIds.Length > 0)
                 SQL.AppendLine("        AND pv.ClienteId IN (" + string.Join(", ", filtro.clientesIds) + ")");
 
@@ -1144,8 +1107,8 @@ namespace Vestillo.Business.Repositories
         {
             bool Duplicado = false;
             string SQL = String.Empty;
-            var cn = new DapperConnection<ProdutoDetalhe>();           
-            
+            var cn = new DapperConnection<ProdutoDetalhe>();
+
 
             SQL = " SELECT codbarras,COUNT(*) " +
                   "  from produtodetalhes " +
@@ -1154,7 +1117,7 @@ namespace Vestillo.Business.Repositories
 
             var dados = cn.ExecuteStringSqlToList(new ProdutoDetalhe(), SQL.ToString()).ToList();
 
-            if(dados != null && dados.Count > 0)
+            if (dados != null && dados.Count > 0)
             {
                 Duplicado = true;
             }
@@ -1181,7 +1144,7 @@ namespace Vestillo.Business.Repositories
             return Duplicado;
         }
 
-        public void IncluirAlterarProdutoProtheus(int IdProduto, decimal TempoTotal,decimal TempoInterno)
+        public void IncluirAlterarProdutoProtheus(int IdProduto, decimal TempoTotal, decimal TempoInterno)
         {
 
             try
@@ -1224,7 +1187,7 @@ namespace Vestillo.Business.Repositories
                                   "'" + item.Produto + "'" + "," + TempoTotal.ToString().Replace(",", ".") + "," + TempoInterno.ToString().Replace(",", ".") + ",0)";
                             cn.ExecuteNonQuery(SQL3);
                         }
-                        
+
                     }
                 }
 
@@ -1234,16 +1197,16 @@ namespace Vestillo.Business.Repositories
             {
                 throw new Vestillo.Lib.VestilloException(ex);
             }
-            
+
 
         }
 
-        public void UpdateDescricaoMarketPlace(int ItemId,string DescMarketPlace,string EanPai)
+        public void UpdateDescricaoMarketPlace(int ItemId, string DescMarketPlace, string EanPai)
         {
             var SQL = new StringBuilder();
             SQL.AppendLine("UPDATE produtos SET ");
             SQL.AppendLine("DescricaoMarketPlace = ");
-            SQL.Append("'" + DescMarketPlace + "'" );
+            SQL.Append("'" + DescMarketPlace + "'");
             SQL.AppendLine(" , CodigoBarrarEcommerce = ");
             SQL.Append("'" + EanPai + "'");
             SQL.AppendLine(" WHERE id = ");
@@ -1256,7 +1219,7 @@ namespace Vestillo.Business.Repositories
             var SQL = new StringBuilder();
             SQL.AppendLine("update produtodetalhes set ");
             SQL.AppendLine("codbarras  = ");
-            SQL.Append("'" + EanFilho + "'");           
+            SQL.Append("'" + EanFilho + "'");
             SQL.AppendLine(" WHERE IdProduto = ");
             SQL.Append(ItemId);
             SQL.AppendLine(" AND Idcor  = ");
@@ -1266,20 +1229,20 @@ namespace Vestillo.Business.Repositories
             _cn.ExecuteNonQuery(SQL.ToString());
         }
 
-        public void UpdateNotaEntrada(int ItemId, decimal Compra, decimal Lucro,decimal Venda)
+        public void UpdateNotaEntrada(int ItemId, decimal Compra, decimal Lucro, decimal Venda)
         {
             Venda = decimal.Round(Venda, 2);
             var SQL = new StringBuilder();
             SQL.AppendLine("update produtos set ");
             SQL.AppendLine("PrecoCompra  = ");
-            SQL.Append(Compra.ToString().Replace(",","."));
+            SQL.Append(Compra.ToString().Replace(",", "."));
             SQL.AppendLine(",lucro  = ");
             SQL.Append(Lucro.ToString().Replace(",", "."));
             SQL.AppendLine(",PrecoVenda  = ");
             SQL.Append(Venda.ToString().Replace(",", "."));
             SQL.AppendLine(" WHERE Id = ");
             SQL.Append(ItemId);
-            
+
             _cn.ExecuteNonQuery(SQL.ToString());
         }
 
@@ -1333,14 +1296,14 @@ namespace Vestillo.Business.Repositories
             return _cn.ExecuteStringSqlToList(new Produto(), sql.ToString());
         }
 
-        public IEnumerable<Produto> GetListGrupoDeProduto( string grupo)
+        public IEnumerable<Produto> GetListGrupoDeProduto(string grupo)
         {
             var sql = new StringBuilder();
             string filtro = string.Empty;
-             sql.AppendLine("select  produtos.* from produtos  ");
-             sql.AppendLine(" join grupoprodutos on (grupoprodutos.id=produtos.IdGrupo) ");
-             validarGrupoDeProduto(grupo, ref filtro,true);
-             sql.AppendLine(filtro);
+            sql.AppendLine("select  produtos.* from produtos  ");
+            sql.AppendLine(" join grupoprodutos on (grupoprodutos.id=produtos.IdGrupo) ");
+            validarGrupoDeProduto(grupo, ref filtro, true);
+            sql.AppendLine(filtro);
 
             return _cn.ExecuteStringSqlToList(new Produto(), sql.ToString());
         }
@@ -1370,16 +1333,16 @@ namespace Vestillo.Business.Repositories
         {
             if (!string.IsNullOrEmpty(referencia))
             {
-                var sql = "produtos.referencia like'%" + referencia+ "%'";
+                var sql = "produtos.referencia like'%" + referencia + "%'";
                 montarFiltro(ref filtro, sql);
             }
         }
-   
+
         private void validarDescricaoDoProduto(string descricao, ref string filtro)
         {
             if (!string.IsNullOrEmpty(descricao))
             {
-                var sql = " produtos.descricao like '%" +  descricao+ "%'";
+                var sql = " produtos.descricao like '%" + descricao + "%'";
                 montarFiltro(ref filtro, sql);
             }
         }

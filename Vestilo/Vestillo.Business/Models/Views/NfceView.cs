@@ -18,6 +18,7 @@ namespace Vestillo.Business.Models
         public DateTime DataEmissao { get; set; }
         public DateTime? DataFinalizacao { get; set; }
         public decimal Desconto { get; set; }
+        public decimal DescontoGrid { get; set; }
         public decimal TotalOriginal { get; set; }
         public decimal TotalDevolvido { get; set; }
         public decimal Total { get; set; }

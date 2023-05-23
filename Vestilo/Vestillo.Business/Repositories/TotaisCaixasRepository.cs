@@ -58,6 +58,35 @@ namespace Vestillo.Business.Repositories
 
         }
 
+        public IEnumerable<TotaisCaixasView> GetPorDataFechamento(DateTime dataInicial, DateTime dataFinal,bool SomenteVendas)
+        {
+            string SQL = String.Empty;
+            SQL = " SELECT caixas.referencia as ReferenciaCaixa,caixas.descricao as DescricaoCaixa,totaiscaixas.datamovimento as datamovimento, " +
+                " IFNULL(colaboradores.razaosocial,'-') as NomeColaborador,tipo, IF(tipo = 2,totaiscaixas.dinheiro * -1,totaiscaixas.dinheiro) as dinheiro, " +
+                " totaiscaixas.cheque,totaiscaixas.cartaocredito,totaiscaixas.cartaodebito,totaiscaixas.outros, totaiscaixas.PixDep, totaiscaixas.operadoracredito,totaiscaixas.operadoradebito, " +
+                " totaiscaixas.observacao  " +
+                " FROM totaiscaixas " +
+                " INNER JOIN caixas ON caixas.id =  totaiscaixas.idcaixa" +
+                " LEFT JOIN colaboradores ON colaboradores.id =  totaiscaixas.Idcolaborador" +
+                " WHERE  DATE_FORMAT(totaiscaixas.datamovimento, '%Y-%m-%d') BETWEEN '" + dataInicial.ToString("yyyy-MM-dd") + "' AND '" + dataFinal.ToString("yyyy-MM-dd") + "' AND" + FiltroEmpresa("totaiscaixas.idempresa");
+
+                if(SomenteVendas)
+                {
+                SQL += " AND (NOT ISNULL(idnfce) OR NOT ISNULL(idNfe)) ";
+
+                }
+
+                SQL += " Order by totaiscaixas.datamovimento ";
+                
+
+            var cn = new DapperConnection<TotaisCaixasView>();
+            var cx = new TotaisCaixasView();
+
+            return cn.ExecuteStringSqlToList(cx, SQL.ToString());
+
+
+        }
+
         public IEnumerable<TotaisCaixas> GetByNfce(int idNfce)
         {
             TotaisCaixas cx = new TotaisCaixas();

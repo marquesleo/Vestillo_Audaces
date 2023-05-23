@@ -13,14 +13,14 @@ namespace Vestillo.Business.Service
 {
     public interface IPacoteProducaoService : IService<PacoteProducao, PacoteProducaoRepository, PacoteProducaoController>
     {
-        List<PacoteProducaoView> GetByView();
+        List<PacoteProducaoView> GetByView(bool CupomEletronico = false);
         IEnumerable<PacoteProducaoView> GetPacotesBrowse(FiltroRelatorioPacote filtro);
         List<PacoteProducaoView> GetByViewId(List<int> id);
         PacoteProducaoView GetByIdView(int id);
         List<PacoteProducaoView> GetByOrdemIdView(int ordemId);
         PacoteProducaoView GetByViewReferencia(string referencia);
         PacoteProducaoView GetByViewReferenciaJunior(string referencia);
-        IEnumerable<PacoteProducaoView> GetByListViewReferencia(string referencia);
+        IEnumerable<PacoteProducaoView> GetByListViewReferencia(string referencia,bool CupomEletronico);
         IEnumerable<PacoteProducaoView> GetPacotesRelatorio(FiltroRelatorioPacote filtro);
         IEnumerable<PacoteProducaoView> GetByFiltroBalanceamento(FiltroRelatorioPacote filtro);
         IEnumerable<PacoteFuncionario> GetPacotesFuncionarioRelatorio(List<int> pacotes, List<int> funcionarios, string DaData, string AteData);

@@ -171,7 +171,7 @@ namespace Vestillo.Business.Service.Web
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Produto> GetListPorTipoAtivo(Produto.enuTipoItem tipo)
+        public IEnumerable<Produto> GetListPorTipoAtivo(Produto.enuTipoItem tipo, bool Ambos = false)
         {
             throw new NotImplementedException();
         }
@@ -221,21 +221,6 @@ namespace Vestillo.Business.Service.Web
         }
 
         public IEnumerable<Produto> GetListPorReferenciaSemFichaTecnicaMaterial(string referencia)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Produto> GetListPorFiltros(int tipoItem, string referencia, string descricao, string colecao)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Produto> GetListMaterialPorFiltros(int tipoItem, string referencia, string descricao, string grupo,string fornecedor)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Produto> GetListGrupoDeProduto(string grupo)
         {
             throw new NotImplementedException();
         }

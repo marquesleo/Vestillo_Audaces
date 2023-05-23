@@ -32,6 +32,7 @@ namespace Vestillo.Business.Repositories
              return cn.ExecuteStringSqlToList(tm, SQL.ToString());
          }
 
+
          public IEnumerable<NfceItensView> GetListViewItensNfce(int IdNfce, bool emissao = false)
          {
             string where = string.Empty;
@@ -65,7 +66,7 @@ namespace Vestillo.Business.Repositories
             var SQL = new Select()
                  .Campos(" produtos.descricao as DescProduto, produtos.referencia as RefProduto, " +
                         "produtos.ncm as Ncm, produtos.cest as Cest, produtos.origem as Origem, unidademedidas.abreviatura as unidade,  " +
-                        "produtos.csosnnfce as Csosn, produtos.creditoicms as CreditoIcms,sum(nfceitens.quantidade) as qtdSomada,SUM(nfceitens.total) as totalSomado, nfceitens.* ")
+                        "produtos.csosnnfce as Csosn, produtos.creditoicms as CreditoIcms,sum(nfceitens.quantidade) as qtdSomada,SUM(nfceitens.DescValor) as DescValorSomado, SUM(nfceitens.TotalComDesconto) as totalSomado , nfceitens.* ")
                  .From("nfceitens")
                  .InnerJoin("produtos", "produtos.id =  nfceitens.idproduto")
                  .InnerJoin("unidademedidas", "unidademedidas.id = produtos.IdUniMedida")                 

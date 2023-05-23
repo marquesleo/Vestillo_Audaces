@@ -774,6 +774,8 @@ namespace Vestillo.Business.Repositories
             return cn.ExecuteStringSqlToList(new PedidoMatriz(), SQL.ToString());
         }
 
+       
+
         /*
         public bool PedidoEmProducao(int IdPedido)
         {

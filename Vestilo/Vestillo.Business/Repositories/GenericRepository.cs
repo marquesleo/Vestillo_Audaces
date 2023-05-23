@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Vestillo.Business.Repositories
 {
-    public abstract class GenericRepository<TModel>: IDisposable where TModel : class
+    public abstract class GenericRepository<TModel> : IDisposable where TModel : class
     {
         public enum TipoOperacaoLog
         {
@@ -55,7 +55,7 @@ namespace Vestillo.Business.Repositories
             else
             {
                 _cn.ExecuteInsert(ref entity);
-                GerarLog(entity, TipoOperacaoLog.Insert,"");
+                GerarLog(entity, TipoOperacaoLog.Insert);
                 //PendenciasRepository.VerificarPendencia(entity, GenericRepository<Pendencias>.TipoOperacaoLog.Insert);
             }
         }
@@ -117,11 +117,11 @@ namespace Vestillo.Business.Repositories
 
             if (entity != null)
             {
-                GerarLog(entity, TipoOperacaoLog.Delete,RefDeletada);
+                GerarLog(entity, TipoOperacaoLog.Delete, RefDeletada);
                 PendenciasRepository.VerificarPendencia(entity, GenericRepository<Pendencias>.TipoOperacaoLog.Delete);
             }
         }
-          
+
         public virtual TModel GetById(int id)
         {
             TModel entity = InstanciateTModel();
@@ -135,14 +135,14 @@ namespace Vestillo.Business.Repositories
             return _cn.ExecuteToList(InstanciateTModel(), ids);
         }
 
-        public  virtual IEnumerable<TModel> GetAll()
+        public virtual IEnumerable<TModel> GetAll()
         {
             return _cn.ExecuteToList(InstanciateTModel());
         }
 
         public void Dispose()
         {
-            
+
         }
 
         private TModel InstanciateTModel()
@@ -180,7 +180,7 @@ namespace Vestillo.Business.Repositories
                 foreach (Contador customAttribute in propertyInfo.GetCustomAttributes(typeof(Contador), false))
                 {
                     referencia = propertyInfo.GetValue(entity).ToString();
-                    return referencia; 
+                    return referencia;
                 }
 
                 if (propertyInfo.Name.ToLower().Equals("abreviatura"))
@@ -227,26 +227,27 @@ namespace Vestillo.Business.Repositories
                 tabela = table.NomeTabela;
                 break;
             }
-            int empresaLogada = 0;
+
+            int empresaLogada = 0; //alterado Audaces, testar
             List<int> empresasAcesso = new List<int>();
             if (!ProviderFactory.IsAPI)
             {
-                empresaLogada =  VestilloSession.EmpresaLogada.Id;
-                empresasAcesso  = VestilloSession.EmpresaAcessoDados.Where(x => x.EmpresaId == empresaLogada
-                                                                                   && (string.IsNullOrWhiteSpace(x.Tabela) || x.Tabela.ToLower() == tabela.ToLower())
+                empresaLogada = VestilloSession.EmpresaLogada.Id;
+                empresasAcesso = VestilloSession.EmpresaAcessoDados.Where(x => x.EmpresaId == empresaLogada
+                                                                                  && (string.IsNullOrWhiteSpace(x.Tabela) || x.Tabela.ToLower() == tabela.ToLower())
                                                                                 )
                                                                          .Select(x => x.EmpresaAcessoId)
                                                                          .Distinct()
                                                                          .ToList();
+                
+                empresasAcesso.Add(empresaLogada);
             }
             else
             {
                 empresaLogada = Vestillo.Lib.Funcoes.GetIdEmpresaLogada;
                 empresasAcesso.Add(empresaLogada);
             }
-          
-           
-            
+            //até aqui
             var SQL = new StringBuilder();
 
             if (!string.IsNullOrWhiteSpace(alias))
@@ -269,7 +270,7 @@ namespace Vestillo.Business.Repositories
             {
                 SQL.Append(" = " + empresaLogada.ToString());
             }
-            
+
             SQL.Append(") ");
 
             return SQL.ToString();
@@ -282,10 +283,10 @@ namespace Vestillo.Business.Repositories
 
                 if (entity != null && !(entity is Log))
                 {
-                   
+
                     var log = new Log();
                     log.Operacao = (int)operacao;
-                    if (!ProviderFactory.IsAPI)
+                    if (!ProviderFactory.IsAPI) // alterado audaces testar
                         log.UsuarioId = VestilloSession.UsuarioLogado.Id;
                     else
                         log.UsuarioId = 2;
@@ -297,7 +298,7 @@ namespace Vestillo.Business.Repositories
                     }
 
                     switch (operacao)
-	                {
+                    {
                         case TipoOperacaoLog.Insert:
                             log.DescricaoOperacao = "Inclusão de ";
                             break;
@@ -309,50 +310,51 @@ namespace Vestillo.Business.Repositories
                             break;
                         default:
                             break;
-	                }
+                    }
+
                     string json = JsonConvert.SerializeObject(entity);
-                    //string json = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(entity);
+                    //string json = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(entity); alterado audaces
                     string referencia = GetReferenciaPropertyModel(entity);
 
                     log.ObjetoId = GetIdPropertyModel(entity);
-                    
-                    if(log.Modulo == "Ficha Técnica De Operação" && String.IsNullOrEmpty(RefDeletada))
+
+                    if (log.Modulo == "Ficha Técnica De Operação" && String.IsNullOrEmpty(RefDeletada))
                     {
                         var dadosItemFicha = new FichaTecnicaService().GetServiceFactory().GetById(log.ObjetoId);
-                        if(dadosItemFicha != null)
+                        if (dadosItemFicha != null)
                         {
                             var Item = new ProdutoService().GetServiceFactory().GetById(dadosItemFicha.ProdutoId);
                             referencia = Item.Referencia;
                         }
-                       
-                    }
-                    else if(log.Modulo == "Ficha Técnica De Operação" && !String.IsNullOrEmpty(RefDeletada))
-                    {
-                        
-                        referencia = RefDeletada;                        
 
                     }
-                    else if (log.Modulo ==  "Ficha Tecnica Material" && String.IsNullOrEmpty(RefDeletada))
+                    else if (log.Modulo == "Ficha Técnica De Operação" && !String.IsNullOrEmpty(RefDeletada))
+                    {
+
+                        referencia = RefDeletada;
+
+                    }
+                    else if (log.Modulo == "Ficha Tecnica Material" && String.IsNullOrEmpty(RefDeletada))
                     {
                         var dadosItemFicha = new FichaTecnicaDoMaterialService().GetServiceFactory().GetById(log.ObjetoId);
-                        if(dadosItemFicha != null)
+                        if (dadosItemFicha != null)
                         {
                             var Item = new ProdutoService().GetServiceFactory().GetById(dadosItemFicha.ProdutoId);
                             referencia = Item.Referencia;
                         }
-                        
+
                     }
                     else if (log.Modulo == "Ficha Tecnica Material" && !String.IsNullOrEmpty(RefDeletada))
                     {
-                                                
-                        referencia = RefDeletada;                        
+
+                        referencia = RefDeletada;
 
                     }
 
-                    else if(log.Modulo ==  "Despesas Fixa e Variável" && String.IsNullOrEmpty(RefDeletada))
+                    else if (log.Modulo == "Despesas Fixa e Variável" && String.IsNullOrEmpty(RefDeletada))
                     {
-                        var dadosItemDespesa = new DespesaFixaVariavelService().GetServiceFactory().GetById(log.ObjetoId);   
-                        if(dadosItemDespesa != null)
+                        var dadosItemDespesa = new DespesaFixaVariavelService().GetServiceFactory().GetById(log.ObjetoId);
+                        if (dadosItemDespesa != null)
                         {
                             referencia = " Ano: " + dadosItemDespesa.Ano.ToString();
                         }
@@ -360,11 +362,11 @@ namespace Vestillo.Business.Repositories
                     }
                     else if (log.Modulo == "Despesas Fixa e Variável" && !String.IsNullOrEmpty(RefDeletada))
                     {
-                        referencia =  RefDeletada;                     
+                        referencia = RefDeletada;
 
                     }
 
-                    if (! string.IsNullOrEmpty(referencia))
+                    if (!string.IsNullOrEmpty(referencia))
                         log.DescricaoOperacao += log.Modulo + ": " + referencia;
                     else
                         log.DescricaoOperacao += log.Modulo;
@@ -376,7 +378,7 @@ namespace Vestillo.Business.Repositories
                     logRepository.Save(ref log);
                 }
             }
-            catch (Exception )
+            catch (Exception)
             {
                 //throw ex;
             }

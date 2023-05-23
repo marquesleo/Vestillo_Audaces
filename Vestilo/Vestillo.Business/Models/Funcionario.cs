@@ -18,6 +18,7 @@ namespace Vestillo.Business.Models
         public string CPF { get; set; }
         public string RG { get; set; }
         [Vestillo.Contador("Funcionario")]
+        [RegistroUnico]
         public string Referencia { get; set; }
         public string TituloEleitorNumero { get; set; }
         public string TituloEleitorSecao { get; set; }
@@ -58,8 +59,9 @@ namespace Vestillo.Business.Models
         public decimal? ValeTransporte { get; set; }
         public decimal? PlanoSaude { get; set; }
         public string RelogioDePonto { get; set; }
-
-
+        public int UsaCupom { get; set; }
+        [NaoMapeado]
+        public String DescUsaCupom { get; set; }
 
         [NaoMapeado]
         public IEnumerable<FuncionarioDespesa> Despesas { get; set; }
@@ -109,6 +111,7 @@ namespace Vestillo.Business.Models
         public string Obs { get; set; }
         public string Mes { get; set; }
         public byte[] Foto { get; set; }
+        public int UsaCupom { get; set; }        
 
     }
 }

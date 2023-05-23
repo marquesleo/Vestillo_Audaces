@@ -20,7 +20,7 @@ namespace Vestillo.Business.Repositories
         {
             var SQL = new StringBuilder();
             SQL.AppendLine("SELECT opm.armazemid, opm.corid, opm.cororiginalid, opm.tamanhoid, opm.tamanhooriginalid, sum(opm.quantidadenecessaria) as quantidadenecessaria,");
-            SQL.AppendLine(" sum(opm.quantidadeempenhada) as quantidadeempenhada, sum(opm.quantidadebaixada) as quantidadebaixada, opm.materiaprimaid, opm.materiaprimaoriginalid,opm.OrdemProducaoId,");
+            SQL.AppendLine(" sum(opm.quantidadeempenhada) as quantidadeempenhada, sum(opm.quantidadebaixada) as quantidadebaixada, opm.materiaprimaid, opm.materiaprimaoriginalid,opm.OrdemProducaoId,IF(sum(opm.quantidadenecessaria) - sum(opm.quantidadebaixada) < 0, 0,sum(opm.quantidadenecessaria) - sum(opm.quantidadebaixada))  as Falta,");
             SQL.AppendLine(" p.Referencia as MaterialReferencia,");
             SQL.AppendLine(" p.Descricao as MaterialDescricao,");
             SQL.AppendLine(" c.abreviatura as CorDescricao,");

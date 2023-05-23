@@ -58,6 +58,7 @@ namespace Vestillo.Business.Repositories
 
             return _cn.ExecuteStringSqlToList(new FichaTecnicaDoMaterialItem(), sql.ToString());
         }
+
         public IEnumerable<FichaTecnicaDoMaterialItem> GetListByProduto(int produto)
         {
             var sql = new StringBuilder();

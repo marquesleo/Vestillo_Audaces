@@ -108,7 +108,7 @@ namespace Vestillo.Business
         {
             get
             {
-                if (!Vestillo.Connection.ProviderFactory.IsAPI)
+                if (!Vestillo.Connection.ProviderFactory.IsAPI) //Alterado para Audaces, testar
                 {
                     if (_tipoAcesso == 0)
                     {
@@ -116,8 +116,9 @@ namespace Vestillo.Business
                     }
                 }
                 else
-                  return TipoAcessoDados.BD;
-                
+                    //_tipoAcesso = TipoAcessoDados.BD; ALterado para Léo 17/05 - Audaces
+                    return TipoAcessoDados.BD;
+
                 return _tipoAcesso;
             }
         }
@@ -1849,6 +1850,75 @@ namespace Vestillo.Business
             }
         }
 
+
+        public static int VerificaLicencaCupom(string CNPJ)
+        {
+            String _conexaoMySQL = "";
+            MySqlConnection con = null;
+            int licencas = 0 ;
+
+
+            if (String.IsNullOrEmpty(CNPJ))
+            {
+                
+                return licencas;
+            }
+            string cnpj = VestilloSession.limparCpfCnpj(CNPJ);
+            decimal cnpjL = Convert.ToDecimal(cnpj);
+
+            try
+            {
+                if (IsConnectedToInternet()) //Se emissão normal
+                {
+
+                    /*
+                    var cripto = new Vestillo.Lib.Cripto();
+                    var cs = cripto.Decrypt(Vestillo.Lib.Funcoes.LerConfiguracao("Plus", "cs"));
+                    var provider = Vestillo.Lib.Funcoes.LerConfiguracao("Plus", "provider");
+                    var servidor = Vestillo.Lib.Funcoes.LerConfiguracao("Plus", "database");
+                    var pw = cripto.Decrypt(Vestillo.Lib.Funcoes.LerConfiguracao("Plus", "pw"));
+                    var database = cripto.Decrypt(Vestillo.Lib.Funcoes.LerConfiguracao("Plus", "databasename"));
+                    var user = cripto.Decrypt(Vestillo.Lib.Funcoes.LerConfiguracao("Plus", "username"));
+                    */
+
+                    var cs = "Server={0};Database=rvclientes;Uid=rvclientes;Pwd={1};Pooling=true";
+                    var provider = "Mysql.Data.MysqlClient";
+                    var servidor = "rvclientes.mysql.dbaas.com.br";
+                    var pw = "Rv13023722";
+                    var database = "rvclientes";
+                    var user = "rvclientes";
+
+                    _conexaoMySQL = string.Format(cs, servidor, pw);
+
+                    String sql = "SELECT * FROM clientes where cnpj = " + cnpjL;
+                    con = new MySqlConnection(_conexaoMySQL);
+                    MySqlCommand cmd = new MySqlCommand(sql, con);
+                    MySqlDataAdapter da = new MySqlDataAdapter();
+                    da.SelectCommand = cmd;
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        licencas = Convert.ToInt32(dt.Rows[0]["LICENCACUPOM"]);
+                    }
+                    else
+                    {
+                        licencas = 0;
+                    }
+                    return licencas;
+                }
+                else
+                {
+                    licencas = 0;
+                    return licencas;
+                }
+            }
+            catch (Exception ex)
+            {
+                licencas = 0;
+                return licencas;
+            }
+        }
         /// <summary>
         /// verificar se está conectado à internet e se consegue acessar um site 
         /// </summary>
@@ -1905,7 +1975,7 @@ namespace Vestillo.Business
                         // Lê linha por linha até o final do arquivo
                         while ((linha = sr.ReadLine()) != null)
                         {
-                            if (linha == "[Plus]")
+                            if (linha == "[ImpressoraEcf]")
                             {
                                 JaExiste = true;
                                 break;
@@ -1920,15 +1990,8 @@ namespace Vestillo.Business
                         {
                             writer.WriteLine("");
                             writer.WriteLine("");
-                            writer.WriteLine("[Plus]");
-                            writer.WriteLine("service=http://localhost:2071/api/");
-                            writer.WriteLine("database= mysql01.fullscreen.com.br");
-                            writer.WriteLine("pw=Sh3UP8dFoHBBOc5SkSrGMA==");
-                            writer.WriteLine("cs=EeXvjS0ytNIrfx9V4M7cNVYemdBeK4oF4n0vbQ3L8dDUPfA2dzszwrsEOAUU4np6Pvele8GqnkKXUqIg3ZBAMEdnqjCQR8c0CVU5LL7v+ks=");
-                            writer.WriteLine("provider=T34vKo1kH1JDksRdCdKCvq0q0v3qkZ2axpKSGxKsKco=");
-                            writer.WriteLine("databasename=2s69x0p3d3d+uZk+EgyNDA==");
-                            writer.WriteLine("username=2s69x0p3d3d+uZk+EgyNDA==");
-
+                            writer.WriteLine("[ImpressoraEcf]");
+                            writer.WriteLine("nome=Daruma");
                         }
                     }
                 }
@@ -2320,7 +2383,7 @@ namespace Vestillo.Business
             {
                 if (!Vestillo.Connection.ProviderFactory.IsAPI)
                 {
-                    string param = ValorParametro("USA_ORDENACAO_FIXA");
+                    string param = ValorParametro("USA_ORDENACAO_FIXA"); //Alterado para Audaces, testar
 
                     if (!string.IsNullOrEmpty(param))
                     {
@@ -2790,7 +2853,7 @@ namespace Vestillo.Business
         {
             get
             {
-                if (!Connection.ProviderFactory.IsAPI)
+                if (!Connection.ProviderFactory.IsAPI) // alterado Audaces
                 {
                     string param = ValorParametro("INCLUI_FICHA_AUTOMATICA");
 
@@ -2815,7 +2878,7 @@ namespace Vestillo.Business
         {
             get
             {
-                if (!Vestillo.Connection.ProviderFactory.IsAPI)
+                if (!Vestillo.Connection.ProviderFactory.IsAPI) // Alterado Audaces
                 {
                     string param = ValorParametro("OPERAÇÃO_FICHA_AUTOMATICA");
 
@@ -2892,7 +2955,8 @@ namespace Vestillo.Business
         {
             get
             {
-                if (!Vestillo.Connection.ProviderFactory.IsAPI)
+
+                if (!Vestillo.Connection.ProviderFactory.IsAPI) //alterado para audaces
                 {
                     string param = ValorParametro("USA_FICHA_PRODUTO");
 
@@ -3442,6 +3506,103 @@ namespace Vestillo.Business
 
                 return false;
             }
+        }
+
+
+        public static bool VencimentoPorEmissao
+        {
+            get
+            {
+                string param = ValorParametro("VENCIMENTO_EMISSAO");
+
+                if (!string.IsNullOrEmpty(param))
+                {
+                    if (int.Parse(param) == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        public static bool ExecutaAcertoEstoquePorOp
+        {
+            get
+            {
+                string param = ValorParametro("ACERTO_ESTOQUE_OP");
+
+                if (!string.IsNullOrEmpty(param))
+                {
+                    if (int.Parse(param) == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        public static bool PintaLinhaMovMaterial
+        {
+            get
+            {
+                string param = ValorParametro("PINTA_LINHA_MATERIAL");
+
+                if (!string.IsNullOrEmpty(param))
+                {
+                    if (int.Parse(param) == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        public static bool BuscaEcfpDoArquivoIni
+        {
+            get
+            {
+                string param = ValorParametro("NFC_ECF_INI");
+
+                if (!string.IsNullOrEmpty(param))
+                {
+                    if (int.Parse(param) == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        public static string ImpressoraEcf()
+        {
+            string NomeEcf = String.Empty;            
+            var ECF = Vestillo.Lib.Funcoes.LerConfiguracao("ImpressoraEcf", "nome");
+            NomeEcf = ECF;
+            return NomeEcf;
         }
 
 

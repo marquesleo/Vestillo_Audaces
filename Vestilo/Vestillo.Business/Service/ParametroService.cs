@@ -35,7 +35,6 @@ namespace Vestillo.Business.Service
             {
                 return new ParametroServiceAPP();
             }
-
         }
     }
 }

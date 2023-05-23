@@ -75,5 +75,6 @@ namespace Vestillo.Business.Models
         public decimal Conferido { get; set; }
         public string CodigoBarras { get; set; }
         public decimal Diferenca { get; set; }
+        public decimal DiferencaOld { get; set; }
     }
 }

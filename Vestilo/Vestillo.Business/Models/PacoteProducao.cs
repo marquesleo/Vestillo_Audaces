@@ -34,6 +34,9 @@ namespace Vestillo.Business.Models
         public string Observacao { get; set; }
 
         public decimal QtdProduzida { get; set; }
+        public DateTime? DataCriacaoCEP { get; set; }
+        public int UsaCupom { get; set; }
+
         //public int QtdOperacoes { get; set; }
         //public int QtdOperacoesLancadas { get; set; }
     }

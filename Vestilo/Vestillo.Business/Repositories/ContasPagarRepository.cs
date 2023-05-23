@@ -22,7 +22,7 @@ namespace Vestillo.Business.Repositories
             var cn = new DapperConnection<ContasPagarView>();
             
             var SQL = new StringBuilder();
-            SQL.AppendLine("SELECT CR.Id, NumTitulo, Prefixo, Parcela, DataEmissao, DataVencimento, dataPagamento, ValorParcela, ValorPago, CR.Saldo, IFNULL(CR.Ativo,0) as Ativo, ");
+            SQL.AppendLine("SELECT CR.Id, NumTitulo,tipodocumentos.descricao as TipoDocumento, Prefixo, Parcela, DataEmissao, DataVencimento, dataPagamento, ValorParcela, ValorPago, CR.Saldo, IFNULL(CR.Ativo,0) as Ativo, ");
             SQL.AppendLine("    C.Nome AS NomeFornecedor, IFNULL(CR.Status, 0) AS Status,  TC.Descricao AS TipoCobrancaDescricao, CR.PossuiBoleto,");
             SQL.AppendLine("    B.Descricao AS NomeBanco, CR.Obs as Obs, CR.Obs as Obs, NF.referencia as Natureza,NF.descricao as NaturezaDesc, ");
             SQL.AppendLine("    C.razaosocial AS RazaoSocialColaborador, C.cnpjcpf AS CNPJCPF ");
@@ -31,6 +31,7 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("    LEFT JOIN bancos AS B ON B.Id = CR.IdBanco");
             SQL.AppendLine("    LEFT JOIN TiposCobranca TC ON TC.Id = CR.IdTipoCobranca");
             SQL.AppendLine("    LEFT JOIN naturezasfinanceiras NF ON NF.Id = CR.IdNaturezaFinanceira");
+            SQL.AppendLine("    LEFT JOIN tipodocumentos ON tipodocumentos.Id = CR.IdTipoDocumento");
             SQL.AppendLine("WHERE (IdPedidoCompra IS NULL OR IdPedidoCompra = 0) AND " + FiltroEmpresa("", "CR"));
             SQL.AppendLine(" ORDER BY NumTitulo, Prefixo, Parcela");
 
@@ -291,7 +292,7 @@ namespace Vestillo.Business.Repositories
         {
             var cn = new DapperConnection<TitulosView>();
             var SQL = new StringBuilder();
-            SQL.AppendLine("SELECT 	CR.Id, CR.NumTitulo,'' as NotaFiscal, CR.Prefixo, CR.Parcela, CR.DataEmissao, CR.DataVencimento, CR.ValorParcela, CR.Saldo, CR.DataPagamento, ");
+            SQL.AppendLine("SELECT 	CR.Id, CR.NumTitulo,'' as NotaFiscal, CR.Prefixo, CR.Parcela, CR.DataEmissao, CR.DataVencimento, CR.ValorParcela, CR.Saldo, CR.DataPagamento,TD.descricao as TipoDocumentos, ");
             SQL.AppendLine("		C.referencia AS RefColaborador, C.Nome As NomeColaborador, TC.Descricao As TipoCobrancaDescricao, B.descricao As NomeBanco,");
             SQL.AppendLine("        IFNULL(CR.Status, 0) AS Status, CR.Juros, CR.Desconto, CR.ValorPago, N.descricao AS NaturezaDescricao, ");
             SQL.AppendLine("        CASE WHEN IFNULL(CR.Ativo,0) = 1 THEN 'Sim' ELSE 'Não' END AS Ativo ");
@@ -305,6 +306,7 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("    LEFT JOIN bancos AS B ON B.Id = CR.IdBanco");
             SQL.AppendLine("	LEFT JOIN TiposCobranca TC ON TC.Id = CR.IdTipoCobranca");
             SQL.AppendLine("    LEFT JOIN naturezasfinanceiras N ON N.id = CR.IdNaturezaFinanceira");
+            SQL.AppendLine("    LEFT JOIN tipodocumentos TD ON TD.id = CR.IdTipoDocumento");
 
             if (filtro.ExibirBaixa)
             {

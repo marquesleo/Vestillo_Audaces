@@ -54,14 +54,14 @@ namespace Vestillo.Business.Service.APP
             return controller.GetRepXVenda(Ano,Uf);
         }
 
-        public IEnumerable<ListaFatVendaView> GetListaFatXVenda(DateTime DataInicio, DateTime DataFim, List<int> Vendedor, bool SomenteNFCe, bool SomenteTipoVendaNFCe)
+        public IEnumerable<ListaFatVendaView> GetListaFatXVenda(DateTime DataInicio, DateTime DataFim, List<int> Vendedor, bool SomenteNFCe, bool SomenteTipoVendaNFCe, bool DataDatNfce)
         {
-            return controller.GetListaFatXVenda(DataInicio, DataFim, Vendedor,SomenteNFCe,SomenteTipoVendaNFCe);
+            return controller.GetListaFatXVenda(DataInicio, DataFim, Vendedor,SomenteNFCe,SomenteTipoVendaNFCe, DataDatNfce);
         }
 
-        public int TotalFaturamentos(DateTime DataInicio, DateTime DataFim, int Vendedor, bool SomenteNFCe)
+        public int TotalFaturamentos(DateTime DataInicio, DateTime DataFim, int Vendedor, bool SomenteNFCe, bool DataDatNfce)
         {
-            return controller.TotalFaturamentos(DataInicio, DataFim, Vendedor,SomenteNFCe);
+            return controller.TotalFaturamentos(DataInicio, DataFim, Vendedor,SomenteNFCe, DataDatNfce);
 
         }
 

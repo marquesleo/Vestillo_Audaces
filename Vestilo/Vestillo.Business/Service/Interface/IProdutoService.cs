@@ -20,9 +20,11 @@ namespace Vestillo.Business.Service
         IEnumerable<Produto> GetListPorDescricaoSemFichaTecnica(string desc);
         IEnumerable<Produto> GetListPorFornecedorSemFichaTecnica(string fornecedor);
         IEnumerable<Produto> GetListPorReferenciaSemFichaTecnica(string referencia);
+
         IEnumerable<Produto> GetListPorDescricaoSemFichaTecnicaMaterial(string desc);
         IEnumerable<Produto> GetListPorFornecedorSemFichaTecnicaMaterial(string fornecedor);
         IEnumerable<Produto> GetListPorReferenciaSemFichaTecnicaMaterial(string referencia);
+
         IEnumerable<Produto> GetListById(int id);
         Produto GetByUnicoCodBarras(string CodBarras);
         IEnumerable<MovimentarEstoqueView> GetProdutoPraMovimentarEstoque(string busca, bool buscarPorId, int almoxarifadoId);
@@ -41,17 +43,13 @@ namespace Vestillo.Business.Service
         IEnumerable<CompraMaterial> GetListPorIdComFichaTecnicaMaterial(FiltroRelatorioCompraMaterial filtro);
         IEnumerable<Produto> GetProdutosLiberados();
         IEnumerable<Produto> GetProdutosLiberados(string referencia);
-        IEnumerable<Produto> GetListPorTipoAtivo(Produto.enuTipoItem tipo);
+        IEnumerable<Produto> GetListPorTipoAtivo(Produto.enuTipoItem tipo, bool Ambos = false);
         Produto GetByReferenciaComFichaTecnica(string referencia, bool fichaTecnicaCompleta);
         IEnumerable<Produto> GetAllAtivos();
         IEnumerable<Produto> GetListMateriasPrimasQuePossuemGrade();
         IEnumerable<Produto> GetListProdutosQuePossuemGradeENaoPossuemFichaTecnica();
         IEnumerable<Produto> GetProdutosParaManutencaoFichaTecnica(bool comFicha, bool semFicha);
         IEnumerable<OrdemProducaoMaterialView> GetListPorIdComFichaTecnicaMaterialSemOP(List<int> produtosId, int ordemId);
-        IEnumerable<Produto> GetListPorFiltros(int tipoItem, string referencia, string descricao, string colecao);
-        IEnumerable<Produto> GetListMaterialPorFiltros(int tipoItem, string referencia, string descricao, string grupo,string fornecedor);
-        IEnumerable<Produto> GetListGrupoDeProduto(string grupo);
-
     }
 }
 

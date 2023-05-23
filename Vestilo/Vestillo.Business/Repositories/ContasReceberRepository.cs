@@ -11,6 +11,15 @@ namespace Vestillo.Business.Repositories
 {
     public class ContasReceberRepository: GenericRepository<ContasReceber>
     {
+        public class DiasVencidos
+        {
+            public int NumeroDeDiasVencidos { get; set; }
+            public int TipoCobranca { get; set; }
+            public DateTime? DataPagamento { get; set; }
+        }
+        
+
+
         public ContasReceberRepository()
             : base(new DapperConnection<ContasReceber>())
         {
@@ -26,7 +35,7 @@ namespace Vestillo.Business.Repositories
             var cn = new DapperConnection<ContasReceberView>();
             
             var SQL = new StringBuilder();
-            SQL.AppendLine("SELECT CR.Id, NumTitulo, Prefixo, Parcela, CR.DataEmissao, DataVencimento, dataPagamento, ValorParcela, ValorPago, CR.Saldo, IFNULL(CR.Ativo,0) as Ativo,NotaFiscal,nfce.numeronfce as NFCE, ");
+            SQL.AppendLine("SELECT CR.Id, NumTitulo, Prefixo, Parcela, tipodocumentos.descricao as TipoDocumento,CR.DataEmissao, DataVencimento, dataPagamento, ValorParcela, ValorPago, CR.Saldo, IFNULL(CR.Ativo,0) as Ativo,NotaFiscal,nfce.numeronfce as NFCE, ");
             SQL.AppendLine("    IFNULL(C.Nome, CR.NomeCliente) AS NomeCliente, IFNULL(CR.Status, 0) AS Status, TC.Descricao AS TipoCobrancaDescricao, ");
             SQL.AppendLine("    B.Descricao AS NomeBanco , CR.Obs as Obs, CR.SisCob as SisCob,  NF.referencia as Natureza, NF.descricao as NaturezaDesc, CR.PossuiBoleto,CR.RemessaGerada,CR.BancoPortador,IF(CR.PossuiBoleto > 0,'Sim','Não') as SimNao, ");
             SQL.AppendLine("    C.razaosocial AS RazaoSocialColaborador, C.cnpjcpf AS CNPJCPF,M.municipio as Cidade,E.abreviatura as Estado,R.descricao as Rota ");
@@ -39,6 +48,7 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("    LEFT JOIN TiposCobranca TC ON TC.Id = CR.IdTipoCobranca");
             SQL.AppendLine("    LEFT JOIN nfce ON nfce.id = CR.IdNotaconsumidor");
             SQL.AppendLine("    LEFT JOIN naturezasfinanceiras NF ON NF.Id = CR.IdNaturezaFinanceira");
+            SQL.AppendLine("    LEFT JOIN tipodocumentos ON tipodocumentos.Id = CR.IdTipoDocumento");
             SQL.AppendLine("WHERE CR.IdPedidoVenda IS NULL  AND " + FiltroEmpresa("","CR"));
             SQL.AppendLine(" ORDER BY CR.DataEmissao DESC, CR.NumTitulo, CR.Prefixo, CR.Parcela");
 
@@ -388,7 +398,7 @@ namespace Vestillo.Business.Repositories
         {
             var cn = new DapperConnection<TitulosView>();
             var SQL = new StringBuilder();
-            SQL.AppendLine("SELECT 	CR.Id, CR.NumTitulo, CR.Prefixo, CR.Parcela, CR.DataEmissao, CR.DataVencimento, CR.ValorParcela, CR.Saldo, CR.DataPagamento,NotaFiscal,CR.SisCob as SisCob, ");
+            SQL.AppendLine("SELECT 	CR.Id, CR.NumTitulo, CR.Prefixo, CR.Parcela, CR.DataEmissao, CR.DataVencimento, CR.ValorParcela, CR.Saldo, CR.DataPagamento,NotaFiscal,CR.SisCob as SisCob,TD.descricao as TipoDocumentos,");
             SQL.AppendLine("		C.referencia AS RefColaborador, IFNULL(C.Nome, CR.NomeCliente) As NomeColaborador, TC.Descricao As TipoCobrancaDescricao, B.descricao As NomeBanco,");
             SQL.AppendLine("        IFNULL(CR.Status, 0) AS Status, CR.Juros, CR.Desconto,  N.descricao AS NaturezaDescricao, V.Referencia AS RefVendedor,");
             SQL.AppendLine("        V.Nome As NomeVendedor, CASE WHEN IFNULL(CR.Ativo,0) = 1 THEN 'Sim' ELSE 'Não' END AS Ativo ");
@@ -425,6 +435,7 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("	LEFT JOIN TiposCobranca TC ON TC.Id = CR.IdTipoCobranca");
             SQL.AppendLine("    LEFT JOIN naturezasfinanceiras N ON N.id = CR.IdNaturezaFinanceira");
             SQL.AppendLine("    LEFT JOIN colaboradores AS V ON V.Id = CR.IdVendedor");
+            SQL.AppendLine("    LEFT JOIN tipodocumentos TD ON TD.id = CR.IdTipoDocumento");
 
             // Pagamento
 
@@ -895,6 +906,70 @@ namespace Vestillo.Business.Repositories
             }
 
             return valor;
+        }
+
+        public string ScoreDC (int idCliente)
+        {
+            string Letras = String.Empty;
+            string DiasVencidos = String.Empty;
+            var cn = new DapperConnection<DiasVencidos>();
+            DateTime DataFim = DateTime.Now;
+            string FimDoPeriodo = DataFim.ToString("yyyy-MM-dd");
+            var cr = new DiasVencidos();
+
+            // Não pode ser dos ultimos 6 meses, tem que ser uma analise geral, ver os titulos dos clientes e analisar
+            //Primeira analise, clientes protestados que estão com titulo em aberto, bolinha preta
+            //Segunda analise, listar todos os titulos e fazer a analise por ponto
+            // Seria assim, de 0 a 5 dias, ganha 0 ponto
+            // de 6 a 10 dias ganha 2 pontos
+            //11 a 20 dias ganha 3 pontos
+            // > 21 ganha 5 pontos
+            // aí somamos os pontos e definimos en qual bolinha ele está 
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine(" SELECT contasreceber.*,contasreceber.DataPagamento as DataPagamento,contasreceber.IdTipoCobranca as TipoCobranca,IF(NOT ISNULL(contasreceber.DataPagamento), IF(DATEDIFF (contasreceber.DataPagamento, contasreceber.dataVencimento) <0,0,DATEDIFF (contasreceber.DataPagamento, contasreceber.dataVencimento)),IF(DATEDIFF (now(), contasreceber.dataVencimento) <0,0,DATEDIFF (now(), contasreceber.dataVencimento))) as NumeroDeDiasVencidos ");
+            sql.AppendLine(" from contasreceber where contasreceber.DataEmissao BETWEEN DATE_SUB(curdate(),INTERVAL 6 MONTH) AND " + "'" + FimDoPeriodo + "'" + " AND contasreceber.IdTipoDocumento = 3 AND contasreceber.Ativo = 1 " + " AND contasreceber.IdCliente = " + idCliente);
+
+
+            var dados = cn.ExecuteStringSqlToList(cr, sql.ToString());
+            int MaiorDiaVencido = 0;
+
+            if (dados != null && dados.Count() >0)
+            {
+                foreach (var item in dados)
+                {
+                    if(item.TipoCobranca == 9 && item.DataPagamento == null)
+                    {
+                        Letras = "P";
+                        return Letras;
+
+                    }
+                }
+
+                MaiorDiaVencido = dados.Max(x => x.NumeroDeDiasVencidos);
+                if(MaiorDiaVencido <=5)
+                {
+                    Letras = "A";
+                }
+                else if(MaiorDiaVencido >= 6 && MaiorDiaVencido <= 10)
+                {
+                    Letras = "B";
+                }
+                else if (MaiorDiaVencido >= 11 && MaiorDiaVencido <= 15)
+                {
+                    Letras = "C";
+                }
+                else if (MaiorDiaVencido > 15)
+                {
+                    Letras = "D";
+                }
+            }
+            else
+            {
+                Letras = "A";
+            }
+
+            return Letras;
+
         }
     }
 }

@@ -226,6 +226,18 @@ namespace Vestillo.Business.Service
                         case "2.0.5.1":
                             AplicarPacth2052();
                             break;
+                        case "2.0.5.2":
+                            AplicarPacth2053();
+                            break;
+                        case "2.0.5.3":
+                            AplicarPacth2054();
+                            break;
+                        case "2.0.5.4":
+                            AplicarPacth2055();
+                            break;
+                        case "2.0.5.5":
+                            AplicarPacth2056();
+                            break;
                         default:
                             break;
                     }
@@ -4339,10 +4351,25 @@ namespace Vestillo.Business.Service
 
         private bool AplicarPacth2052()
         {
+            int contador = 0;
             List<string> comandos = new List<string>();
             try
             {
-                comandos.Add("INSERT INTO parametros(Id,Chave,Valor,EmpresaId,VisaoCliente) values ( NULL,'NFCE_SEM_CERTIFICADO','2',NULL,'1');");
+                
+
+           
+                contador = _repository.RegistroExiste("SELECT COUNT(*) as contador FROM parametros WHERE parametros.chave = 'NFCE_SEM_CERTIFICADO'");
+                if (contador == 0)
+                {
+                    comandos.Add("INSERT INTO parametros(Id,Chave,Valor,EmpresaId,VisaoCliente) values ( NULL,'NFCE_SEM_CERTIFICADO','2',NULL,'1');");
+                }
+
+                contador = 0;
+                contador = _repository.RegistroExiste("select count(*) as contador FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'contadorremessa' AND COLUMN_NAME = 'Prefixo'");
+                if (contador == 0)
+                {
+                    comandos.Add("ALTER TABLE contadorremessa add column Prefixo varchar (3)  NULL  after UltimoArquivoGerado;");
+                }
 
                 comandos.Add("UPDATE parametros SET Valor = '2.0.5.2' WHERE Chave = 'VersaoBanco';");
 
@@ -4358,6 +4385,163 @@ namespace Vestillo.Business.Service
             }
         }
 
+        private bool AplicarPacth2053()
+        {
+            int contador = 0;
+            List<string> comandos = new List<string>();
+            try
+            {
+                
+                contador = _repository.RegistroExiste("select count(*) as contador FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'cores' AND COLUMN_NAME = 'imagem'");
+                if (contador == 0)
+                {
+                    comandos.Add("alter table cores add column imagem mediumblob NULL after Ativo;");
+                }
+
+                comandos.Add("INSERT INTO permissoes(Chave,Descricao) values ('Relatorios.AcompanhamentoColecao','Acompanha catalogo');");
+                comandos.Add(" INSERT INTO permissoesgrupo (PermissaoId, GrupoId) " +
+                             " SELECT     DISTINCT P.Id AS PermissaoId, " +
+                             " G.Id AS GrupoId " +
+                             " FROM Permissoes P " +
+                             " INNER JOIN grupos G ON G.Nome <> '' " +
+                             " WHERE P.Chave LIKE 'Relatorios.AcompanhamentoColecao%';");
+
+                comandos.Add("INSERT INTO permissoes(Chave,Descricao) values ('OrdemProducao.Recalcular','Recalcula Consumo');");
+                comandos.Add(" INSERT INTO permissoesgrupo (PermissaoId, GrupoId) " +
+                             " SELECT     DISTINCT P.Id AS PermissaoId, " +
+                             " G.Id AS GrupoId " +
+                             " FROM Permissoes P " +
+                             " INNER JOIN grupos G ON G.Nome <> '' " +
+                             " WHERE P.Chave LIKE 'OrdemProducao.Recalcular%';");
+
+
+                comandos.Add("insert into parametros(Chave,Valor,EmpresaId,VisaoCliente) values ('VENCIMENTO_EMISSAO','1',NULL,'1');");
+
+                comandos.Add("UPDATE parametros SET Valor = '2.0.5.3' WHERE Chave = 'VersaoBanco';");
+
+                _repository.ExecutarComandos(comandos);
+
+                Funcoes.ExibirMensagem("Atualização concluída com sucesso!!", System.Windows.Forms.MessageBoxIcon.Exclamation, System.Windows.Forms.MessageBoxButtons.OK);
+                AbrirPdfAtualizacao();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private bool AplicarPacth2054()
+        {
+            int contador = 0;
+            List<string> comandos = new List<string>();
+            try
+            {
+
+             
+                comandos.Add("insert into parametros(Chave,Valor,EmpresaId,VisaoCliente) values ('ACERTO_ESTOQUE_OP','2',NULL,'2');");               
+
+                comandos.Add("UPDATE parametros SET Valor = '2.0.5.4' WHERE Chave = 'VersaoBanco';");
+
+                _repository.ExecutarComandos(comandos);
+
+                Funcoes.ExibirMensagem("Atualização concluída com sucesso!!", System.Windows.Forms.MessageBoxIcon.Exclamation, System.Windows.Forms.MessageBoxButtons.OK);
+                AbrirPdfAtualizacao();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private bool AplicarPacth2055()
+        {
+            int contador = 0;
+            List<string> comandos = new List<string>();
+            try
+            {
+
+
+                comandos.Add("insert into parametros(Chave,Valor,EmpresaId,VisaoCliente) values ('PINTA_LINHA_MATERIAL','2',NULL,'2');");
+
+                comandos.Add("UPDATE parametros SET Valor = '2.0.5.5' WHERE Chave = 'VersaoBanco';");
+
+                _repository.ExecutarComandos(comandos);
+
+                Funcoes.ExibirMensagem("Atualização concluída com sucesso!!", System.Windows.Forms.MessageBoxIcon.Exclamation, System.Windows.Forms.MessageBoxButtons.OK);
+                AbrirPdfAtualizacao();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private bool AplicarPacth2056()
+        {
+            int contador = 0;
+            List<string> comandos = new List<string>();
+            try
+            {
+
+
+                comandos.Add("alter table nfce add column datafaturamento datetime   NULL  after datafinalizacao;");
+                comandos.Add("alter table colaboradores change complemento complemento varchar (300)  NULL  COLLATE utf8_general_ci;");
+                comandos.Add("alter table funcionarios add column UsaCupom int(1) DEFAULT '0' NOT NULL  after RelogioDePonto;");
+                comandos.Add("alter table devolucao add column IdMotivo int (1) DEFAULT '0' NOT NULL  after totalitens;");
+
+                comandos.Add("INSERT INTO permissoes(Chave,Descricao) values ('PacotesProducao.TerminalCupom','Libera os pacotes para cupom eletrônico');");
+                comandos.Add(" INSERT INTO permissoesgrupo (PermissaoId, GrupoId) " +
+                             " SELECT     DISTINCT P.Id AS PermissaoId, " +
+                             " G.Id AS GrupoId " +
+                             " FROM Permissoes P " +
+                             " INNER JOIN grupos G ON G.Nome = 'Administrador' " +
+                             " WHERE P.Chave LIKE 'PacotesProducao.TerminalCupom%';");
+
+                comandos.Add("UPDATE parametros SET Valor = '2.0.5.6' WHERE Chave = 'VersaoBanco';");
+
+                _repository.ExecutarComandos(comandos);
+
+                Funcoes.ExibirMensagem("Atualização concluída com sucesso!!", System.Windows.Forms.MessageBoxIcon.Exclamation, System.Windows.Forms.MessageBoxButtons.OK);
+                AbrirPdfAtualizacao();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private bool AplicarPacth2057()
+        {
+            int contador = 0;
+            List<string> comandos = new List<string>();
+            try
+            {
+
+
+                comandos.Add("alter table pacotes add column DataCriacaoCEP date   NULL  after FinalizouLote, add column UsaCupom int (1) DEFAULT '0' NOT NULL  after DataCriacaoCEP");
+                comandos.Add("alter table grupooperacoes add column IdOperadorCupomEletronico int(11) DEFAULT '0' NOT NULL  after texto");
+                comandos.Add("alter table nfceitens add column DescPercent decimal (10,2)  NULL  after Devolucao, add column DescValor decimal (10,2)  NULL  after DescPercent");
+                comandos.Add("alter table nfce add column DescontoGrid decimal (10,2)  NULL  after Observacao");
+                comandos.Add(" alter table nfceitens add column TotalComDesconto decimal (10,2)  NULL after DescValor");
+                comandos.Add("insert into parametros(Chave,Valor,EmpresaId,VisaoCliente) values ('NFC_ECF_INI','2',NULL,'2');");
+
+                comandos.Add("UPDATE parametros SET Valor = '2.0.5.7' WHERE Chave = 'VersaoBanco';");
+
+                _repository.ExecutarComandos(comandos);
+
+                Funcoes.ExibirMensagem("Atualização concluída com sucesso!!", System.Windows.Forms.MessageBoxIcon.Exclamation, System.Windows.Forms.MessageBoxButtons.OK);
+                AbrirPdfAtualizacao();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         private void AbrirPdfAtualizacao()
         {

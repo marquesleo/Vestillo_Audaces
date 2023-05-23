@@ -16,5 +16,6 @@ namespace Vestillo.Business.Models
         [RegistroUnico]
         public string Descricao { get; set; }
         public bool Ativo { get; set; }
+        public byte[] Imagem { get; set; }
     }
 }

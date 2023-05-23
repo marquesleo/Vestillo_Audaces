@@ -20,8 +20,14 @@ namespace Vestillo.Business.Service
 
         public new IUsuarioService GetServiceFactory()
         {
-           return new UsuarioServiceAPP();
-            
+            if (VestilloSession.TipoAcesso == VestilloSession.TipoAcessoDados.WebAPI)
+            {
+                return new UsuarioServiceWeb(this.RequestUri);
+            }
+            else
+            {
+                return new UsuarioServiceAPP();
+            }
         }   
     }
 }

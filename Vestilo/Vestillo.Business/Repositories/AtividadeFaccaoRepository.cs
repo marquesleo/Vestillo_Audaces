@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,6 +49,24 @@ namespace Vestillo.Business.Repositories
         {
             AtividadeFaccao m = new AtividadeFaccao();
             return _cn.ExecuteToList(m, "id = " + id + " And ativo = 1");
+        }
+
+
+        public bool JaFoiUsado(int IdAtvFaccao)
+        {
+            string sqlPagar = "select * from contaspagarfaccao where contaspagarfaccao.IdAtividade = " + IdAtvFaccao;
+            DataTable dtPrd = new DataTable();
+            dtPrd = _cn.ExecuteToDataTable(sqlPagar);
+
+            if(dtPrd.Rows.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+         
         }
     }
 }

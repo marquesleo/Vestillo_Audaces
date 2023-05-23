@@ -83,6 +83,7 @@ namespace Vestillo.Business.Repositories
 
         public IEnumerable<ConsultaPedidoVendaRelatorio> GetPedidoParaRelatorio(FiltroPedidoVendaRelatorio filtro)
         {
+
             var SQL = new StringBuilder();
             SQL.AppendLine("SELECT	P.Descricao as DescProduto, P.Referencia as RefProduto, C.Abreviatura AS CorProduto,PV.DataEmissao, P.referenciacli AS RefProdutoCliente, PD.referenciagradecli AS RefGradeCliente,");
             SQL.AppendLine("T.Abreviatura AS TamanhoProduto, IFNULL(T.Id, 0) as TamanhoId, PV.CodigoPedidoCliente, I.ReferenciaPedidoCliente, I.SeqPedCliente, I.Preco,");
@@ -189,6 +190,148 @@ namespace Vestillo.Business.Repositories
                         break;
                     default:
                         SQL.AppendFormat(" GROUP BY P.Id, I.CorId, I.TamanhoId");
+                        break;
+                }
+            }
+            else
+            {
+                switch (filtro.Agrupar)
+                {
+                    case "Produto":
+                        SQL.AppendFormat(" GROUP BY PV.Id, P.Id");
+                        break;
+                    case "Cor":
+                        SQL.AppendFormat(" GROUP BY PV.Id, P.Id,I.CorId");
+                        break;
+                    case "Tamanho":
+                        SQL.AppendFormat(" GROUP BY PV.Id, P.Id,I.TamanhoId");
+                        break;
+                    case "Pedido":
+                        SQL.AppendFormat(" GROUP BY PV.Id");
+                        break;
+                    default:
+                        SQL.AppendFormat(" GROUP BY PV.Id, P.Id, I.CorId, I.TamanhoId");
+                        break;
+                }
+            }
+
+            SQL.AppendLine(" ORDER BY P.Referencia, P.Descricao, C.Id, T.Id");
+
+            var cn = new DapperConnection<ConsultaPedidoVendaRelatorio>();
+            return cn.ExecuteStringSqlToList(new ConsultaPedidoVendaRelatorio(), SQL.ToString());
+        }
+
+
+
+        public IEnumerable<ConsultaPedidoVendaRelatorio> GetPedidoParaRelatorioExibeReferencias(FiltroPedidoVendaRelatorio filtro)
+        {
+
+            var SQL = new StringBuilder();
+            SQL.AppendLine("SELECT	P.Descricao as DescProduto, P.Referencia as RefProduto, C.Abreviatura AS CorProduto,PV.DataEmissao, P.referenciacli AS RefProdutoCliente, PD.referenciagradecli AS RefGradeCliente,");
+            SQL.AppendLine("T.Abreviatura AS TamanhoProduto, IFNULL(T.Id, 0) as TamanhoId, PV.CodigoPedidoCliente, I.ReferenciaPedidoCliente, I.SeqPedCliente, I.Preco,");
+            SQL.AppendLine(" PV.ClienteId, CLI.RazaoSocial AS RazaoCliente, CLI.CNPJCPF, CLI.InscEstadual, CONCAT(CLI.Endereco, CLI.Numero) AS Endereco, CLI.CEP, CLI.DDD, CLI.Telefone, CLI.Bairro, CLI.IdEstado, CLI.IdMunicipio, CLI.obscliente, ");
+            SQL.AppendLine(" PV.VendedorId, IFNULL(VEN.Referencia, '') AS RefVendedor, IFNULL(VEN.RazaoSocial, '') AS RazaoVendedor, ");
+            SQL.AppendLine(" PV.id AS PedidoId, PV.PrevisaoEntrega AS DataEntrega, PV.Status, PV.RotaId, PV.Obs,PV.DescPercent,PV.DescValor, ");
+            SQL.AppendLine(" IF(pv.TipoFrete = 0, ' ', IF(pv.TipoFrete = 1, 'CIF', 'FOB')) as TipoFrete, ");
+
+            if (filtro.Agrupar == "Pedido")
+            {
+                SQL.AppendLine("SUM(I.Qtd * I.Preco) AS ValorTotal, SUM(IL.QtdFaturada * I.Preco) AS ValorEntregue, SUM((I.Qtd - IFNULL(IL.QtdFaturada, 0)) * I.Preco) AS ValorEntregar,");
+            }
+
+            SQL.AppendLine("SUM(I.Qtd) AS Quantidade, SUM(IL.QtdEmpenhada) AS Empenhado, SUM(IL.QtdFaturada) AS QuantidadeAtendida, SUM(IF(PV.Status = 4,I.Qtd - IFNULL(IL.QtdFaturada,0), 0)) AS SaldoCancelado, PV.Referencia As Pedido");
+            SQL.AppendLine("FROM 	ItensPedidoVenda I");
+            SQL.AppendLine("INNER JOIN PedidoVenda PV ON PV.Id = I.PedidoVendaId");
+            SQL.AppendLine("INNER JOIN Produtos P ON P.Id = I.ProdutoId");
+            SQL.AppendLine("INNER JOIN colaboradores CLI ON CLI.Id = PV.ClienteId");
+            SQL.AppendLine("LEFT JOIN colaboradores VEN ON VEN.Id = PV.VendedorId");
+            SQL.AppendLine("LEFT JOIN Tamanhos T ON T.Id = I.TamanhoId");
+            SQL.AppendLine("LEFT JOIN Cores C ON C.Id = I.CorId");
+            SQL.AppendLine("LEFT JOIN ProdutoDetalhes PD ON C.Id = PD.IdCor AND T.id = PD.IdTamanho AND P.Id = PD.IdProduto");
+            SQL.AppendLine("LEFT JOIN ItensLiberacaoPedidoVenda IL ON I.Id = IL.ItemPedidoVendaId");
+            SQL.AppendLine("WHERE " + FiltroEmpresa("PV.EmpresaId"));
+
+            if (filtro.Pedido != null && filtro.Pedido.Count() > 0)
+                SQL.AppendLine(" AND I.PedidoVendaId in (" + string.Join(",", filtro.Pedido.ToArray()) + ")");
+
+            if (filtro.Cliente != null && filtro.Cliente.Count() > 0)
+                SQL.AppendLine(" AND PV.ClienteId in (" + string.Join(",", filtro.Cliente.ToArray()) + ")");
+
+            if (filtro.Vendedor != null && filtro.Vendedor.Count() > 0)
+                SQL.AppendLine(" AND PV.VendedorId in (" + string.Join(",", filtro.Vendedor.ToArray()) + ")");
+
+            if (filtro.Produtos != null && filtro.Produtos.Count() > 0)
+                SQL.AppendLine(" AND I.ProdutoId in (" + string.Join(",", filtro.Produtos.ToArray()) + ")");
+
+            if (filtro.Cor != null && filtro.Cor.Count() > 0)
+                SQL.AppendLine(" AND I.CorId in (" + string.Join(",", filtro.Cor.ToArray()) + ")");
+
+            if (filtro.Tamanho != null && filtro.Tamanho.Count() > 0)
+                SQL.AppendLine(" AND I.TamanhoId in (" + string.Join(",", filtro.Tamanho.ToArray()) + ")");
+
+            if (filtro.Segmento != null && filtro.Segmento.Count() > 0)
+                SQL.AppendLine(" AND P.idSegmento in (" + string.Join(",", filtro.Segmento.ToArray()) + ")");
+
+            if (filtro.Colecao != null && filtro.Colecao.Count() > 0)
+                SQL.AppendLine(" AND P.idColecao in (" + string.Join(",", filtro.Colecao.ToArray()) + ")");
+
+            if (filtro.Catalogo != null && filtro.Catalogo.Count() > 0)
+                SQL.AppendLine(" AND P.IdCatalogo in (" + string.Join(",", filtro.Catalogo.ToArray()) + ")");
+
+            if (filtro.Grupo != null && filtro.Grupo.Count() > 0)
+                SQL.AppendLine(" AND P.idGrupo in (" + string.Join(",", filtro.Grupo.ToArray()) + ")");
+
+            if (filtro.Rota != null && filtro.Rota.Count() > 0)
+                SQL.AppendLine(" AND PV.RotaId in (" + string.Join(",", filtro.Rota.ToArray()) + ")");
+
+            if (filtro.DoAno != null && filtro.DoAno != "")
+                SQL.AppendLine(" AND P.ano >= " + filtro.DoAno + "");
+
+            if (filtro.AteAno != null && filtro.AteAno != "")
+                SQL.AppendLine(" AND P.ano <= " + filtro.AteAno + "");
+
+            if (filtro.DaEmissao != null && filtro.AteEmissao != null && filtro.AteEmissao.ToString("yyyy-MM-dd") != "0001-01-01")
+                SQL.AppendLine(" AND Date(PV.DataEmissao) between '" + filtro.DaEmissao.ToString("yyyy-MM-dd") + "' AND '" + filtro.AteEmissao.ToString("yyyy-MM-dd") + "'");
+
+            if (filtro.DaEntrega != null && filtro.AteEntrega != null && filtro.AteEntrega.ToString("yyyy-MM-dd") != "0001-01-01")
+                SQL.AppendLine(" AND Date(PV.PrevisaoEntrega) between '" + filtro.DaEntrega.ToString("yyyy-MM-dd") + "' AND '" + filtro.AteEntrega.ToString("yyyy-MM-dd") + "'");
+
+            if (filtro.DaLiberacao != null && filtro.AteLiberacao != null && filtro.AteLiberacao.ToString("yyyy-MM-dd") != "0001-01-01")
+                SQL.AppendLine(" AND Date(IL.Data) between '" + filtro.DaLiberacao.ToString("yyyy-MM-dd") + "' AND '" + filtro.AteLiberacao.ToString("yyyy-MM-dd") + "'");
+
+            switch (filtro.ExibirPedidos)
+            {
+                case 0:
+                    break;
+                case 1:
+                    SQL.AppendLine(" AND (PV.Status = 2 OR PV.Status = 3) ");
+                    break;
+                case 2:
+                    SQL.AppendLine(" AND PV.Status = 4 ");
+                    break;
+                default:
+                    SQL.AppendLine(" AND (PV.Status <> 2 AND PV.Status <> 3 AND PV.Status <> 4 ) ");
+                    break;
+            }
+
+            if (filtro.Sintetico)
+            {
+                switch (filtro.Agrupar)
+                {
+                    case "Produto":
+                        SQL.AppendFormat(" GROUP BY  PV.Id,P.Id");
+                        break;
+                    case "Cor":
+                        SQL.AppendFormat(" GROUP BY  PV.Id,P.Id,I.CorId");
+                        break;
+                    case "Tamanho":
+                        SQL.AppendFormat(" GROUP BY  PV.Id,P.Id,I.TamanhoId");
+                        break;
+                    case "Grade":
+                        SQL.AppendLine(" GROUP BY  PV.Id,P.Id,I.CorId, I.TamanhoId");
+                        break;
+                    default:
+                        SQL.AppendFormat(" GROUP BY  PV.Id,P.Id, I.CorId, I.TamanhoId");
                         break;
                 }
             }

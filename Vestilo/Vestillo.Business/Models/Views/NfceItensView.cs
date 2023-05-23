@@ -22,6 +22,8 @@ namespace Vestillo.Business.Models
         public string AbreviaturaTamanho { get; set; }
         public decimal Quantidade { get; set; }
         public decimal Preco { get; set; }
+        public decimal DescPercent { get; set; }
+        public decimal DescValor { get; set; }
         public decimal Aliquota { get; set; }
         public decimal Total { get; set; }
         public decimal DescontoRateado { get; set; }
@@ -46,8 +48,11 @@ namespace Vestillo.Business.Models
 
         public decimal qtdSomada { get; set; } 
         public decimal totalSomado { get; set; } 
-        
+        public decimal DescValorSomado { get; set; }
+
+
         public bool salvo { get; set; }
-    
+        public decimal TotalComDesconto { get; set; }   // Novo 4.0       
+
     }
 }

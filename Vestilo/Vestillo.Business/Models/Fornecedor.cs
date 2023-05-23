@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Vestillo.Business.Models
 {
-    [Tabela("colaboradores")]
+    [Tabela("Fornecedores")]
     public class Fornecedor
     {
         [Chave]

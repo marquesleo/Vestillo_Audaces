@@ -22,20 +22,8 @@ namespace Vestillo.Business.Models
         public int IdAlmoxarifado { get; set; }
         public int IdUniMedida { get; set; }
         public int? IdSegUniMedida { get; set; }
-
-        private int _IdEmpresa;
-
         [FiltroEmpresa]
-        public int IdEmpresa { get
-            {
-                return _IdEmpresa;
-            }
-            set
-            {
-                _IdEmpresa = value;
-            }
-
-        }
+        public int IdEmpresa { get; set; }
         public int IdGrupo { get; set; }
         public int IdTipoproduto { get; set; }
 

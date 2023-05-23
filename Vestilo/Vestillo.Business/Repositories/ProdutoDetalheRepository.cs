@@ -343,35 +343,32 @@ namespace Vestillo.Business.Repositories
 
         public void InclusaoDeGradeEstoque(IEnumerable<ProdutoDetalhe> Grade,int Almoxarifado)
         {
-            if (Grade != null)
+            foreach (var item in Grade)
             {
-                foreach (var item in Grade)
+                int Produto = item.IdProduto;
+                int Cor = item.Idcor;
+                int Tamanho = item.IdTamanho;
+                string SQL = String.Empty;
+                var cn = new DapperConnection<Estoque>();
+
+
+
+
+                SQL = "SELECT * FROM estoque WHERE estoque.ProdutoId = " + Produto + " AND estoque.CorId = " + Cor + " AND estoque.TamanhoId = " + Tamanho;
+                var dados = cn.ExecuteStringSqlToList(new Estoque(), SQL);
+                if(dados == null || dados.Count() <= 0)
                 {
-                    int Produto = item.IdProduto;
-                    int Cor = item.Idcor;
-                    int Tamanho = item.IdTamanho;
-                    string SQL = String.Empty;
-                    var cn = new DapperConnection<Estoque>();
-
-
-
-
-                    SQL = "SELECT * FROM estoque WHERE estoque.ProdutoId = " + Produto + " AND estoque.CorId = " + Cor + " AND estoque.TamanhoId = " + Tamanho;
-                    var dados = cn.ExecuteStringSqlToList(new Estoque(), SQL);
-                    if (dados == null || dados.Count() <= 0)
-                    {
-                        SQL = "insert into estoque " +
-                              " (AlmoxarifadoId, ProdutoId, CorId, TamanhoId, " +
-                              " Saldo,Empenhado) " +
-                              " values (" +
-                              Almoxarifado + "," + Produto + "," + Cor + "," + Tamanho + "," +
-                              " 0, 0)";
-                        cn.ExecuteNonQuery(SQL);
-
-                    }
-
+                    SQL = "insert into estoque " +
+                          " (AlmoxarifadoId, ProdutoId, CorId, TamanhoId, " +
+                          " Saldo,Empenhado) " +
+                          " values (" + 
+                          Almoxarifado + "," + Produto + "," + Cor + "," + Tamanho + "," +
+                          " 0, 0)";
+                    cn.ExecuteNonQuery(SQL);
 
                 }
+
+
             }
 
         }

@@ -23,5 +23,6 @@ namespace Vestillo.Business.Models
         public decimal TempoCronometrado { get; set; }
         public string Sequencia { get; set; }
         public string Texto { get; set; }
+        public int IdOperadorCupomEletronico { get; set; }
     }
 }

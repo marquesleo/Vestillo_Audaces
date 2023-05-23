@@ -78,5 +78,16 @@ namespace Vestillo.Business.Repositories
             }
             return IdTamanho;
         }
+        public IEnumerable<Tamanho> GetTamanhosCatalogo(List<int> catalogoIds)
+        {
+            string SQL = String.Empty;
+            SQL = " SELECT Distinct(tamanhos.Id) as Id,tamanhos.Abreviatura from PRODUTOS " +
+                  "  INNER JOIN catalogo on catalogo.id = produtos.IdCatalogo " +
+                  "  INNER JOIN produtodetalhes ON produtodetalhes.IdProduto = produtos.Id " +
+                  "  INNER JOIN tamanhos ON tamanhos.Id = produtodetalhes.IdTamanho " +
+                  "  WHERE produtos.IdCatalogo IN(" + string.Join(", ", catalogoIds) + ") " + "Order by tamanhos.Id";
+            var tm = new Tamanho();
+            return _cn.ExecuteStringSqlToList(tm, SQL);
+        }
     }
 }

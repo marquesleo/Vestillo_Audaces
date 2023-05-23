@@ -14,6 +14,16 @@ namespace Vestillo.Business.Repositories
 {
     public class EstoqueRepository : GenericRepository<Estoque>
     {
+        public class AcertoEstoque
+        {
+            public int EstoqueId { get; set; }
+            public int MaterialId { get; set; }
+            public int TamanhoId { get; set; }
+            public int CorId { get; set; }
+            public decimal Empenhado { get; set; }
+            public decimal EmpenhoOrdem { get; set; }
+        }
+
         public EstoqueRepository()
             : base(new DapperConnection<Estoque>())
         {
@@ -313,6 +323,45 @@ namespace Vestillo.Business.Repositories
             cn.ExecuteToModel(ref consulta, SQL.ToString());
 
             
+            return consulta;
+        }
+
+        public ConsultaEstoqueView GetSaldoAtualProdutoGestaoCompra(int produtoId, int corId, int tamanhoId)
+        {
+            var SQL = new StringBuilder();
+
+            SQL.AppendLine("SELECT	E.Id, P.Referencia AS ProdutoReferencia, P.Descricao AS ProdutoDescricao, SUM(E.Saldo) as Saldo,SUM(E.Empenhado) as Empenhado,");
+            SQL.AppendLine("E.TamanhoId, T.Abreviatura AS TamanhoAbreviatura, E.CorId, C.Abreviatura AS CorAbreviatura");
+            SQL.AppendLine("FROM 	Estoque E");
+            SQL.AppendLine("INNER JOIN Produtos P ON P.Id = E.ProdutoId");            
+            SQL.AppendLine("LEFT JOIN Tamanhos T ON T.Id = E.TamanhoId");
+            SQL.AppendLine("LEFT JOIN Cores C ON C.Id = E.CorId");
+            SQL.AppendLine("WHERE " + FiltroEmpresa("P.IdEmpresa"));            
+            SQL.AppendLine("AND E.ProdutoId = " + produtoId.ToString());
+            if (corId > 0)
+            {
+                SQL.AppendLine("AND E.CorId = " + corId.ToString());
+            }
+            else
+            {
+                SQL.AppendLine("AND E.CorId IS NULL");
+            }
+
+            if (tamanhoId > 0)
+            {
+                SQL.AppendLine("AND E.TamanhoId = " + tamanhoId.ToString());
+            }
+            else
+            {
+                SQL.AppendLine("AND E.TamanhoId IS NULL");
+            }
+
+            var consulta = new ConsultaEstoqueView();
+
+            var cn = new DapperConnection<ConsultaEstoqueView>();
+            cn.ExecuteToModel(ref consulta, SQL.ToString());
+
+
             return consulta;
         }
 
@@ -722,6 +771,41 @@ namespace Vestillo.Business.Repositories
 
             return consulta;
             
+        }
+
+        public  void AcertaEmepnhoOrdemEstoque()
+        {          
+            string SQL = String.Empty;
+            try
+            {
+                SQL = " select estoque.id as EstoqueId,estoque.ProdutoId as MaterialId,estoque.CorId as CorId,estoque.TamanhoId as TamanhoId, estoque.Empenhado, IFNULL(sum(ordemproducaomateriais.quantidadeempenhada) + sum(EmpenhoProducao),0) as EmpenhoOrdem from estoque " +
+                  " left join ordemproducaomateriais on ordemproducaomateriais.materiaprimaid = estoque.ProdutoId and ordemproducaomateriais.corid = estoque.CorId and ordemproducaomateriais.tamanhoid = estoque.TamanhoId and ordemproducaomateriais.armazemid = estoque.AlmoxarifadoId " +
+                  "  group by estoque.AlmoxarifadoId,estoque.ProdutoId, estoque.CorId, estoque.TamanhoId";
+
+
+                var crtEstoque = new AcertoEstoque();
+                var cn = new DapperConnection<AcertoEstoque>();
+                var dadosEstoque = cn.ExecuteStringSqlToList(crtEstoque, SQL.ToString());
+
+                var ItensDiferentes = dadosEstoque.Where(x => x.Empenhado != x.EmpenhoOrdem);
+
+                foreach (var item in ItensDiferentes)
+                {
+                    SQL = "UPDATE estoque set estoque.empenhado = " + item.EmpenhoOrdem.ToString().Replace(",",".") + " WHERE estoque.id = " + item.EstoqueId + " AND estoque.ProdutoId = " + item.MaterialId + " AND estoque.CorId = " + item.CorId + " AND estoque.TamanhoId = " + item.TamanhoId;
+                    _cn.ExecuteNonQuery(SQL);
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+
+            
+
+
+
+
+
         }
 
         /* public IEnumerable<ConsultaEstoqueRelatorioView> GetConsultaEstoqueRelatorio(List<int> idEmpresas)

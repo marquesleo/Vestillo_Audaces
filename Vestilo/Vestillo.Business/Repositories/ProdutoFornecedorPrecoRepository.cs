@@ -456,7 +456,7 @@ namespace Vestillo.Business.Repositories
                 .Campos("produtofornecedorprecos.Id,produtofornecedorprecos.IdProduto,produtofornecedorprecos.IdFornecedor,produtofornecedorprecos.PrecoFornecedor,produtofornecedorprecos.IdCor,produtofornecedorprecos.IdTamanho,produtofornecedorprecos.PrecoCor,produtofornecedorprecos.PrecoTamanho")
                 .From("produtofornecedorprecos")
                 .Where("produtofornecedorprecos.IdProduto = " + ProdutoId + " AND  ( SELECT produtodetalhes.Inutilizado from produtodetalhes WHERE produtodetalhes.IdProduto = produtofornecedorprecos.IdProduto "
-                        + " AND produtodetalhes.Idcor = produtofornecedorprecos.IdCor AND produtodetalhes.IdTamanho = produtofornecedorprecos.IdTamanho limit 1) = 0");
+                        + " AND produtodetalhes.Idcor = produtofornecedorprecos.IdCor AND produtodetalhes.IdTamanho = produtofornecedorprecos.IdTamanho) = 0");
                 
 
             var cn = new DapperConnection<ProdutoFornecedorPreco>();

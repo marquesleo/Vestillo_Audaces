@@ -111,7 +111,7 @@ namespace Vestillo.Business.Service.Web
         }
 
 
-        public IEnumerable<ListaFatVendaView> GetListaFatXVenda(DateTime DataInicio, DateTime DataFim, List<int> Vendedor, bool SomenteNFCe, bool SomenteTipoVendaNFCe)
+        public IEnumerable<ListaFatVendaView> GetListaFatXVenda(DateTime DataInicio, DateTime DataFim, List<int> Vendedor, bool SomenteNFCe, bool SomenteTipoVendaNFCe, bool DataDatNfce)
         {
             var SQL = new StringBuilder();
             var cn = new ConnectionWebAPI<IEnumerable<ListaFatVendaView>>(VestilloSession.UrlWebAPI);
@@ -135,7 +135,7 @@ namespace Vestillo.Business.Service.Web
         }
 
 
-        public int TotalFaturamentos(DateTime DataInicio, DateTime DataFim, int Vendedor, bool SomenteNFCe)
+        public int TotalFaturamentos(DateTime DataInicio, DateTime DataFim, int Vendedor, bool SomenteNFCe, bool DataDatNfce)
         {
             int Total = 0;
 

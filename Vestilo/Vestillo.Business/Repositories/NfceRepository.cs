@@ -32,7 +32,7 @@ namespace Vestillo.Business.Repositories
 
             var SQL = new Select()
                 .Campos("n.id, n.referencia, n.serie, n.numeronfce, n.idcliente, cli.referencia as refcliente, n.emitidacontingencia, IF(n.emitidacontingencia = 1, 'Contingência', IF(n.emitidacontingencia = 2, 'Normal', '')) as emcontingencia, n.Observacao, " +
-                        " IF(n.nomecliente IS NULL, cli.nome, CONCAT(cli.nome, ' (', n.nomecliente, ' - ', n.cpfcnpj, ')')) AS nomecliente,  ven.nome as nomevendedor, tab.Descricao as TabPreco, n.IdEmpresa, n.totaldevolvido, " +
+                        " IF(n.nomecliente IS NULL, cli.nome, CONCAT(cli.nome, ' (', n.nomecliente, ' - ', n.cpfcnpj, ')')) AS nomecliente,  ven.nome as nomevendedor, tab.Descricao as TabPreco, n.IdEmpresa, n.totaldevolvido,n.DescontoGrid, " +
                         " ven.referencia as refvendedor, n.dataemissao, n.recebidasefaz, IF(n.recebidasefaz = 1, 'Sim','Não') as recebsefaz,valordesconto as Desconto,(SELECT (SUM(quantidade) -  SUM(Qtddevolvida)) from nfceitens where nfceitens.idnfce = n.id and nfceitens.Devolucao = 0 ) as TotalItens, " +
                         " n.totaloriginal, n.total, IF(IFNULL(n.statusnota,0) = 1, 'Gerada', (IF(IFNULL(n.statusnota,0) = 2 ,'Cancelada', '')))  AS Status, IF(n.TipoNFCe = 0, 'Venda', 'Pré-Venda') as DescTipoNFCe, (SELECT SUM(quantidade) from nfceitens where nfceitens.idnfce = n.id and nfceitens.Devolucao = 1 ) as TotalItensDevolvidos ")
                 .From("nfce n")
@@ -131,7 +131,7 @@ namespace Vestillo.Business.Repositories
         {           
 
             var SQL = new Select()
-                .Campos("n.id, n.referencia,  n.DataEmissao, n.idcliente, n.RecebidaSefaz, n.idvendedor, n.Observacao, n.IdEmpresa, " +
+                .Campos("n.id, n.referencia,  n.DataEmissao, n.idcliente, n.RecebidaSefaz, n.idvendedor, n.Observacao, n.IdEmpresa,n.DescontoGrid, " +
                         "cli.nome as NomeCliente, ven.nome as NomeVendedor,  IF(n.IdGuia IS NULL, '', guia.nome) as NomeGuia, " +
                         "n.totaloriginal,  (SELECT (SUM(quantidade) -  SUM(Qtddevolvida)) from nfceitens where nfceitens.idnfce = n.id and nfceitens.Devolucao = 0 ) as TotalItens,  " +
                         "(SELECT SUM(quantidade) from nfceitens where nfceitens.idnfce = n.id and nfceitens.Devolucao = 1 ) as TotalItensDevolvidos, n.Total  ")
@@ -160,6 +160,17 @@ namespace Vestillo.Business.Repositories
             SQL.Append(idNfce);
 
             _cn.ExecuteNonQuery(SQL.ToString());
+        }
+
+        public void AlterarDataFaturamento(int IdNfce)
+        {
+            DateTime DiaFaturamento = new DateTime();
+            DiaFaturamento = DateTime.Now;
+            string SQl = String.Empty;
+            var Valor = "'" + DiaFaturamento.ToString("yyyy-MM-dd") + "'";
+
+            SQl = "UPDATE nfce set nfce.datafaturamento = " +  Valor  + " WHERE nfce.id = " + IdNfce;
+            _cn.ExecuteNonQuery(SQl.ToString());
         }
 
     }

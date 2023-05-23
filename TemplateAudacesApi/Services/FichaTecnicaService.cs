@@ -320,7 +320,7 @@ namespace TemplateAudacesApi.Services
             List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
             try
             {
-                ficha.EmpresaId = 1;
+                ficha.EmpresaId = Vestillo.Lib.Funcoes.GetIdEmpresaLogada;
                 ficha.ProdutoId = produto.Id;
                 ficha.Ativo = true;
                 ficha.DataAlteracao = Convert.ToDateTime(garment.last_modified);

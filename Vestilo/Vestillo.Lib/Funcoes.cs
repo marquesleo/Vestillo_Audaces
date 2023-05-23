@@ -9,11 +9,11 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
 using System.Threading;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace Vestillo.Lib
 {
@@ -28,13 +28,32 @@ namespace Vestillo.Lib
 
         private static frmProcessamento _frmProcessamento;
         private static bool _processar;
+        public static bool UtilizaAPI = false; // Leo para API
         private static string _filtroEmpresa;
         private static string _cs = "";
         private static int _idEmpresaLogada;
         public delegate void DelegateProcessamentoBackground();
         public delegate object DelegateProcessentoBackgroundData();
 
-        public static List<ListItem> EmpresasAcesso { get; set; }
+        private static List<ListItem> _EmpresasAcesso;
+        public static List<ListItem> EmpresasAcesso
+        {
+            get
+            {
+                if (_EmpresasAcesso == null)
+                {
+                    _EmpresasAcesso = new List<Lib.Funcoes.ListItem>();
+                    if (UtilizaAPI)
+                        _EmpresasAcesso.Add(new Lib.Funcoes.ListItem() { Key = Funcoes.GetIdEmpresaLogada, Value = "" });
+                }
+
+                return _EmpresasAcesso;
+            }
+            set
+            {
+                _EmpresasAcesso = value;
+            }
+        }
 
         public static int GetIdEmpresaLogada { get { return _idEmpresaLogada; } }
         public static int SetIdEmpresaLogada { set { _idEmpresaLogada = value; } }

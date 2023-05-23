@@ -55,11 +55,11 @@ namespace Vestillo.Business.Controllers
             }
         }
 
-        public List<PacoteProducaoView> GetByView()
+        public List<PacoteProducaoView> GetByView(bool CupomEletronico = false)
         {
             using (var repository = new PacoteProducaoRepository())
             {
-                return repository.GetByView();
+                return repository.GetByView(CupomEletronico);
             }
         }
 
@@ -79,11 +79,11 @@ namespace Vestillo.Business.Controllers
             }
         }
 
-        public IEnumerable<PacoteProducaoView> GetByListViewReferencia(string referencia)
+        public IEnumerable<PacoteProducaoView> GetByListViewReferencia(string referencia, bool CupomEletronico = false)
         {
             using (var repository = new PacoteProducaoRepository())
             {
-                return repository.GetByListViewReferencia(referencia);
+                return repository.GetByListViewReferencia(referencia, CupomEletronico);
             }
         }
 

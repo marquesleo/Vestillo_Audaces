@@ -18,6 +18,7 @@ namespace Vestillo.Business.Models
         public int? idVendedor { get; set; } 
         public int idAlmoxarifado { get; set; }
         public int IdCliente { get; set; }
+        public int IdMotivo { get; set; }
         [Contador("Devolucao")]
         [RegistroUnico]
         public String Referencia { get; set; }        

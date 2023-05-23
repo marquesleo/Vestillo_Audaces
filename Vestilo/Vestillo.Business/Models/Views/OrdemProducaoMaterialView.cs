@@ -63,5 +63,10 @@ namespace Vestillo.Business.Models
         [Vestillo.NaoMapeado]
         public string QuebraManual { get; set; }
 
+        [Vestillo.NaoMapeado]
+        public decimal Falta { get; set; }
+
+
+
     }
 }

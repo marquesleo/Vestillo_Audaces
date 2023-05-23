@@ -70,19 +70,19 @@ namespace Vestillo.Business.Controllers
         }
 
 
-        public IEnumerable<ListaFatVendaView> GetListaFatXVenda(DateTime DataInicio, DateTime DataFim, List<int> Vendedor, bool SomenteNFCe, bool SomenteTipoVendaNFCe)
+        public IEnumerable<ListaFatVendaView> GetListaFatXVenda(DateTime DataInicio, DateTime DataFim, List<int> Vendedor, bool SomenteNFCe, bool SomenteTipoVendaNFCe, bool DataDatNfce)
         {
             using (FatNfeRepository repository = new FatNfeRepository())
             {
-                return repository.GetListaFatXVenda(DataInicio, DataFim, Vendedor,SomenteNFCe, SomenteTipoVendaNFCe);
+                return repository.GetListaFatXVenda(DataInicio, DataFim, Vendedor,SomenteNFCe, SomenteTipoVendaNFCe, DataDatNfce);
             }
         }
 
-        public int TotalFaturamentos(DateTime DataInicio, DateTime DataFim, int Vendedor, bool SomenteNFCe)
+        public int TotalFaturamentos(DateTime DataInicio, DateTime DataFim, int Vendedor, bool SomenteNFCe, bool DataDatNfce)
         {
             using (FatNfeRepository repository = new FatNfeRepository())
             {
-                return repository.TotalFaturamentos(DataInicio, DataFim, Vendedor,SomenteNFCe);
+                return repository.TotalFaturamentos(DataInicio, DataFim, Vendedor,SomenteNFCe, DataDatNfce);
             }
 
         }

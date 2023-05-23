@@ -158,7 +158,7 @@ namespace Vestillo.Business.Controllers
                     o.Preco = new ProdutoFornecedorPrecoRepository().GetCusto(o.MateriaPrimaId, o.CorId, o.TamanhoId);
 
                     var compras = new ItemPedidoCompraRepository().GetByMaterialGestaoCompra(o).ToList();
-                    var estoque = new EstoqueRepository().GetSaldoAtualProduto(o.ArmazemId, o.MateriaPrimaId, o.CorId, o.TamanhoId);
+                    var estoque = new EstoqueRepository().GetSaldoAtualProdutoGestaoCompra(o.MateriaPrimaId, o.CorId, o.TamanhoId);
                     decimal NecessTotal = repository.GetByQuantidadeNecessariaTotal(o.MateriaPrimaId, o.CorId, o.TamanhoId);
                     o.QuantidadeNecessariaTotal = NecessTotal;
 

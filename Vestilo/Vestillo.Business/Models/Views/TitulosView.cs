@@ -15,6 +15,7 @@ namespace Vestillo.Business.Models
         public string Prefixo { get; set; }
         public string Parcela { get; set; }
         public string Ativo { get; set; }
+        public string TipoDocumentos { get; set; }
         public DateTime DataEmissao { get; set; }
         public DateTime DataVencimento { get; set; }
         public DateTime? DataPagamento { get; set; }

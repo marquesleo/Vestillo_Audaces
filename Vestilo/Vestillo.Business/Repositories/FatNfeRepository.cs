@@ -233,7 +233,7 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("   UNION ");
             SQL.AppendLine(" SELECT nfce.id as IdNota, nfce.referencia as Referencia,nfce.numeronfce as Numero, nfce.dataemissao as Inclusao, nfce.datafinalizacao as Emissao,IFNULL(nfce.StatusNota,0) as StatusNota, ");
             SQL.AppendLine("nfce.ValorCartaoDebito as ValorCartaoDebito,nfce.ValorCheque as ValorCheque,nfce.ValorDinheiro as ValorDinheiro, nfce.valorncc as ValorNcc, nfce.troco as ValorTroco, ");
-            SQL.AppendLine("(nfce.ValorCartaoDebito + nfce.ValorCartaoCredito + nfce.ValorCheque + nfce.ValorDinheiro + nfce.valorncc) as total,nfce.ValorCartaoCredito as ValorCartaoCredito, 2 as TP,c.referencia as RefCliente,c.nome as NomeCliente, nfce.valordesconto as Desconto from nfce ");
+            SQL.AppendLine("(nfce.ValorCartaoDebito + nfce.ValorCartaoCredito + nfce.ValorCheque + nfce.ValorDinheiro + nfce.valorncc) as total,nfce.ValorCartaoCredito as ValorCartaoCredito, 2 as TP,c.referencia as RefCliente,c.nome as NomeCliente, (nfce.valordesconto + nfce.descontogrid) as Desconto from nfce ");
             SQL.AppendLine(" INNER JOIN colaboradores c on c.id = nfce.idcliente ");
             SQL.AppendLine(" WHERE SUBSTRING(nfce.dataemissao,1,10) BETWEEN " + Valor); 
             if (Tipo == 1)
@@ -320,7 +320,7 @@ namespace Vestillo.Business.Repositories
 
 
 
-        public IEnumerable<ListaFatVendaView> GetListaFatXVenda(DateTime DataInicio, DateTime DataFim, List<int> Vendedor, bool SomenteNFCe, bool SomenteTipoVendaNFCe)
+        public IEnumerable<ListaFatVendaView> GetListaFatXVenda(DateTime DataInicio, DateTime DataFim, List<int> Vendedor, bool SomenteNFCe, bool SomenteTipoVendaNFCe,bool DataDatNfce)
         {
             //total ficava errado, fiz rotina a parte
             //SQL.AppendLine("(select COUNT(nfe.id) as QtdFaturamento from nfe WHERE  NFE.Tipo = 0  AND NFE.StatusNota <> 2 AND SUBSTRING(NFE.DataInclusao,1,10) BETWEEN " + Valor + " AND NFE.Idempresa = 1 and nfe.idvendedor IN(" + Vendedores + ")) as QtdTotalFaturamentos");
@@ -356,7 +356,7 @@ namespace Vestillo.Business.Repositories
             }
             else
             {
-                SQL.AppendLine("SELECT Round(IFNULL(IF(SUM((nfceitens.preco * (nfceitens.quantidade -nfceitens.Qtddevolvida)) -nfceitens.descontorateado )< 0,0.00,SUM((nfceitens.preco * (nfceitens.quantidade - nfceitens.Qtddevolvida)) - nfceitens.DescontoRateado)),0),2) as ValorTotal, ");
+                SQL.AppendLine("SELECT  Round(IFNULL(SUM((nfceitens.preco * (nfceitens.quantidade - nfceitens.Qtddevolvida)) - (nfceitens.DescontoRateado + nfceitens.DescValor)),0),2) as ValorTotal, ");
                 SQL.AppendLine("ROUND(SUM(nfceitens.quantidade - nfceitens.Qtddevolvida), 0) QtdTotalPecas, colaboradores.nome as NomeVendedor,colaboradores.id as IdVendedor,colaboradores.referencia as RefVendedor ");
                 SQL.AppendLine("FROM nfceitens ");
                 SQL.AppendLine("INNER JOIN produtos ON produtos.id = nfceitens.idproduto");
@@ -368,7 +368,15 @@ namespace Vestillo.Business.Repositories
                     SQL.AppendLine(" nfce.TipoNFCe = 0 AND ");
                 }
                 SQL.AppendLine("nfceitens.Devolucao = 0 AND ");
-                SQL.AppendLine("SUBSTRING(nfce.dataemissao, 1, 10) BETWEEN " + Valor);
+                if(DataDatNfce == false)
+                {
+                    SQL.AppendLine("SUBSTRING(nfce.dataemissao, 1, 10) BETWEEN " + Valor);
+                }
+                else
+                {
+                    SQL.AppendLine("SUBSTRING(nfce.datafaturamento, 1, 10) BETWEEN " + Valor);
+                }
+               
                 SQL.AppendLine("AND nfce.Idempresa = " + Business.VestilloSession.EmpresaLogada.Id.ToString());
                 SQL.AppendLine("AND nfce.idvendedor IN (" + Vendedores + ")");
                 SQL.AppendLine(" GROUP BY nfce.idvendedor order by colaboradores.nome");
@@ -380,7 +388,7 @@ namespace Vestillo.Business.Repositories
             //SQL.AppendLine("WHERE  IFNULL(NFE.statusnota = 1,0) AND  NFE.Tipo = 0 AND NFE.recebidasefaz = 1 AND NFE.StatusNota = 1 AND "); 
         }
 
-        public int TotalFaturamentos(DateTime DataInicio, DateTime DataFim, int Vendedor, bool SomenteNFCe)
+        public int TotalFaturamentos(DateTime DataInicio, DateTime DataFim, int Vendedor, bool SomenteNFCe, bool DataDatNfce)
         {
             int Total = 0;
 
@@ -395,7 +403,15 @@ namespace Vestillo.Business.Repositories
             }
             else
             {
-                SQL.AppendLine("select COUNT(*) as QtdTotalFaturamentos from nfce WHERE   nfce.StatusNota <> 2 AND SUBSTRING(nfce.dataemissao,1,10) BETWEEN " + Valor + " AND nfce.Idempresa = " + Business.VestilloSession.EmpresaLogada.Id + " and nfce.idvendedor IN(" + Vendedor + ") ");
+                if(DataDatNfce == false)
+                {
+                    SQL.AppendLine("select COUNT(*) as QtdTotalFaturamentos from nfce WHERE   nfce.StatusNota <> 2 AND SUBSTRING(nfce.dataemissao,1,10) BETWEEN " + Valor + " AND nfce.Idempresa = " + Business.VestilloSession.EmpresaLogada.Id + " and nfce.idvendedor IN(" + Vendedor + ") ");
+                }
+                else
+                {
+                    SQL.AppendLine("select COUNT(*) as QtdTotalFaturamentos from nfce WHERE   nfce.StatusNota <> 2 AND SUBSTRING(nfce.datafaturamento,1,10) BETWEEN " + Valor + " AND nfce.Idempresa = " + Business.VestilloSession.EmpresaLogada.Id + " and nfce.idvendedor IN(" + Vendedor + ") ");
+                }
+                
             }
             
 
@@ -488,7 +504,7 @@ namespace Vestillo.Business.Repositories
             {
                 SQL.AppendLine(" SELECT 'DESTINATARIO' as Linha1,cli.razaosocial as Linha2, CONCAT(cli.endereco,',',cli.numero,',',IFNULL(cli.complemento,'')) as Linha3, ");
                 SQL.AppendLine(" CONCAT(cli.bairro, ' - ', mcli.municipio, ' - ',mcli.uf ) as Linha4, CONCAT('CEP:',IFNULL(cli.cep,'')) as Linha5, 'TRANSPORTADORA' as Linha6, ");
-                SQL.AppendLine(" CONCAT('TRANSPORTADO POR: ', tra.razaosocial) as Linha7, CONCAT('VOLUME:___ DE ',nfe.volumes) as Linha8, CONCAT('NOTA FISCAL: ', nfe.numero) as Linha9,'' as Linha10, '' as Linha11 from nfe  ");
+                SQL.AppendLine(" CONCAT('', tra.razaosocial) as Linha7, CONCAT('VOLUME:___ DE ',nfe.volumes) as Linha8, CONCAT('NOTA FISCAL: ', nfe.numero) as Linha9,'' as Linha10, '' as Linha11 from nfe  ");
                 SQL.AppendLine(" INNER JOIN colaboradores cli ON cli.id = nfe.IdColaborador ");
                 SQL.AppendLine(" INNER JOIN municipiosibge as mcli ON mcli.id = cli.idmunicipio ");
                 SQL.AppendLine(" INNER JOIN colaboradores tra ON tra.id = nfe.idtransportadora ");

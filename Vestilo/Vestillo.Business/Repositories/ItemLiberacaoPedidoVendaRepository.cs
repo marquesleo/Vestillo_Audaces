@@ -115,14 +115,14 @@ namespace Vestillo.Business.Repositories
                 " itensliberacaopedidovenda.Id as ItemPedidoVendaId, itensliberacaopedidovenda.AlmoxarifadoId as AlmoxarifadoId, sum(itensliberacaopedidovenda.QtdConferencia) as Qtd, " +
                 " SUM(itensliberacaopedidovenda.Qtd - itensliberacaopedidovenda.QtdFaturada) as QtdLiberada,  itenspedidovenda.Preco as Preco, itensliberacaopedidovenda.Id as Id," +
                 " SUM(itensliberacaopedidovenda.QtdEmpenhada) as QtdEmpenhada, SUM(itensliberacaopedidovenda.QtdFaturada) as QtdFaturada, itenspedidovenda.PedidoVendaId as PedidoVendaId," +
-                " SUM(itensliberacaopedidovenda.QtdConferencia - itensliberacaopedidovenda.QtdConferida ) as Diferenca, SUM(itensliberacaopedidovenda.QtdConferencia) as QtdConferencia, SUM(itensliberacaopedidovenda.QtdConferida) as QtdConferida,  produtodetalhes.codbarras as CodigoBarras, SUM(itensliberacaopedidovenda.QtdConferida) as Conferido ";
+                " SUM(itensliberacaopedidovenda.QtdConferencia - itensliberacaopedidovenda.QtdConferida ) as Diferenca,SUM(itensliberacaopedidovenda.QtdConferencia - itensliberacaopedidovenda.QtdConferida ) as DiferencaOld, SUM(itensliberacaopedidovenda.QtdConferencia) as QtdConferencia, SUM(itensliberacaopedidovenda.QtdConferida) as QtdConferida,  produtodetalhes.codbarras as CodigoBarras, SUM(itensliberacaopedidovenda.QtdConferida) as Conferido ";
             else
                 campos = "itensliberacaopedidovenda.Data as DataLiberacao,produtos.id as iditem,produtos.Referencia as RefProduto,produtos.Descricao as DescProduto,itenspedidovenda.ReferenciaPedidoCliente as ReferenciaPedidoCliente,itenspedidovenda.SeqPedCliente as SeqPedCliente, " +
                 "  tamanhos.id as IdTamanho,tamanhos.Abreviatura as DescTamanho,cores.Id as IdCor,cores.Abreviatura as DescCor, itenspedidovenda.TipoMovimentacaoId as IdTipoMov," +
                 " itensliberacaopedidovenda.Id as ItemPedidoVendaId, itensliberacaopedidovenda.AlmoxarifadoId as AlmoxarifadoId, SUM(itensliberacaopedidovenda.QtdConferencia - itensliberacaopedidovenda.QtdConferida ) as Qtd, " +
                 " SUM(itensliberacaopedidovenda.Qtd - itensliberacaopedidovenda.QtdFaturada) as QtdLiberada,  itenspedidovenda.Preco as Preco, itensliberacaopedidovenda.Id as Id," +
                 " SUM(itensliberacaopedidovenda.QtdEmpenhada) as QtdEmpenhada, SUM(itensliberacaopedidovenda.QtdFaturada) as QtdFaturada, itenspedidovenda.PedidoVendaId as PedidoVendaId," +
-                " SUM(itensliberacaopedidovenda.QtdConferencia - itensliberacaopedidovenda.QtdConferida ) as Diferenca, SUM(itensliberacaopedidovenda.QtdConferencia) as QtdConferencia, SUM(itensliberacaopedidovenda.QtdConferida) as QtdConferida,  produtodetalhes.codbarras as CodigoBarras ";
+                " SUM(itensliberacaopedidovenda.QtdConferencia - itensliberacaopedidovenda.QtdConferida ) as Diferenca,SUM(itensliberacaopedidovenda.QtdConferencia - itensliberacaopedidovenda.QtdConferida ) as DiferencaOld, SUM(itensliberacaopedidovenda.QtdConferencia) as QtdConferencia, SUM(itensliberacaopedidovenda.QtdConferida) as QtdConferida,  produtodetalhes.codbarras as CodigoBarras ";
 
             var SQL = new Select()
                 .Campos(campos)

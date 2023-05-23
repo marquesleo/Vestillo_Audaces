@@ -39,5 +39,19 @@ namespace Vestillo.Business.Models
                 return (base.Preco * base.Qtd);
             }
         }
+        [NaoMapeado]
+        public decimal AtendidaTotal
+        {
+            get
+            {
+                decimal Exc = 0; 
+                if (Excedente != null)
+                {
+                    Exc = Convert.ToDecimal(Excedente);
+                }
+                
+                return (QtdAtendida + Exc);
+            }
+        }
     }
 }

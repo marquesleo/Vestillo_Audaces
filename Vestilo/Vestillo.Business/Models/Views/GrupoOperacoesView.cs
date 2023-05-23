@@ -52,6 +52,9 @@ namespace Vestillo.Business.Models
         public string Funcionario { get; set; }
         [Vestillo.NaoMapeado]
         public string Faccao { get; set; }
+        [Vestillo.NaoMapeado]
+        public string FuncionarioCupom { get; set; }
+                
 
         [Vestillo.NaoMapeado]
         public string Status

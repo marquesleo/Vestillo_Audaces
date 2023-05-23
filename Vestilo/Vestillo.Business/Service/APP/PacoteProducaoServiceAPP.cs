@@ -18,10 +18,10 @@ namespace Vestillo.Business.Service.APP
 
         }
 
-        public List<PacoteProducaoView> GetByView()
+        public List<PacoteProducaoView> GetByView(bool CupomEletronico = false)
         {
             PacoteProducaoController controller = new PacoteProducaoController();
-            return controller.GetByView();
+            return controller.GetByView(CupomEletronico);
         }
 
         public IEnumerable<PacoteProducaoView> GetPacotesBrowse(Models.Views.FiltroRelatorioPacote filtro)
@@ -70,10 +70,10 @@ namespace Vestillo.Business.Service.APP
         }
 
 
-        public IEnumerable<PacoteProducaoView> GetByListViewReferencia(string referencia)
+        public IEnumerable<PacoteProducaoView> GetByListViewReferencia(string referencia, bool CupomEletronico = false)
         {
             PacoteProducaoController controller = new PacoteProducaoController();
-            return controller.GetByListViewReferencia(referencia);
+            return controller.GetByListViewReferencia(referencia, CupomEletronico);
         }
 
 

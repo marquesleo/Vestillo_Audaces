@@ -263,7 +263,7 @@ namespace Vestillo.Business.Repositories
             var SQL = new StringBuilder();
             SQL.AppendLine("SELECT SUM(C.Valor) as Valor, C.TipoEmitenteCheque");
             SQL.AppendLine("FROM cheques C");
-            SQL.AppendLine("WHERE DATE(C.DataEmissao) = '" + data.ToString("yyyy-MM-dd") + "'  AND C.Status = 1");
+            SQL.AppendLine("WHERE DATE(C.DataVencimento) = '" + data.ToString("yyyy-MM-dd") + "'  AND C.Status = 1");
             SQL.AppendLine("        AND " + FiltroEmpresa("", "C"));
             SQL.AppendLine("GROUP BY C.TipoEmitenteCheque");
 

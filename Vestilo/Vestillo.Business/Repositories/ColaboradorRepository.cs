@@ -94,7 +94,7 @@ namespace Vestillo.Business.Repositories
         public IEnumerable<Colaborador> GetAlgunsCampos()
         {
             var SQL = new Select()
-                .Campos("C.id, C.referencia, C.nome, C.razaosocial,C.cnpjcpf,C.fornecedor,C.faccao,C.vendedor, C.orgaopublico,C.transportadora,C.cliente, C.ativo, IFNULL(V1.nome,'') As NomeVendedor,IFNULL(V2.nome,'') As NomeVendedor2, C.TipoCliente, C.DataPrimeiraCompra,C.Ddd,c.Telefone,C.Obscliente, C.Email ")
+                .Campos("C.id, C.referencia, C.nome, C.razaosocial,C.cnpjcpf,C.fornecedor,C.faccao,C.vendedor, C.orgaopublico,C.transportadora,C.cliente, C.ativo, IFNULL(V1.nome,'') As NomeVendedor,IFNULL(V2.nome,'') As NomeVendedor2, C.TipoCliente, C.DataPrimeiraCompra,C.Ddd,c.Telefone,C.Obscliente, C.Email, C.Cep ")
                 .From("colaboradores as C ")
                 .LeftJoin("colaboradores  V1", "V1.Id = C.idvendedor ")
                 .LeftJoin("colaboradores  V2", "V2.Id = C.idvendedor2 ")
@@ -117,6 +117,18 @@ namespace Vestillo.Business.Repositories
             return _cn.ExecuteStringSqlToList(col, SQL.ToString());
         }
 
+
+        public IEnumerable<Colaborador> GetVendedoresDash() //DASH FINANCEIRO
+        {
+            var SQL = new Select()
+                .Campos("id, referencia, nome, razaosocial,cnpjcpf, ativo ")
+                .From("colaboradores")
+                .Where( " Vendedor = 1  AND " + FiltroEmpresa())
+                .OrderBy("nome");
+
+            var col = new Colaborador();
+            return _cn.ExecuteStringSqlToList(col, SQL.ToString());
+        }
 
         //para preencher o grid da tela de filtro
         public IEnumerable<Colaborador> GetByIdList(int id, String TipoColaborador)
@@ -499,7 +511,7 @@ namespace Vestillo.Business.Repositories
 
         }
 
-        public void ReferenciaMarketPlace(int IdColaborador )
+        public void ReferenciaMarketPlace(int IdColaborador,int IdPedido )
         {
             string NovaReferencia = String.Empty;
             string SQL = String.Empty;
@@ -520,11 +532,26 @@ namespace Vestillo.Business.Repositories
                         NovaReferencia = UltimoRegistro.ToString("D8");
 
                     }
-                    SQL = "Update colaboradores set colaboradores.idempresa = " + VestilloSession.EmpresaLogada.Id + " ,colaboradores.idpais = 1058,ativo = 1,colaboradores.cliente = 1, colaboradores.referencia = " + "'" + NovaReferencia + "'" +
+                    SQL = "Update colaboradores set colaboradores.idempresa = " + VestilloSession.EmpresaLogada.Id + " ,colaboradores.razaosocial = colaboradores.nome,colaboradores.idpais = 1058,ativo = 1,colaboradores.cliente = 1, colaboradores.referencia = " + "'" + NovaReferencia + "'" +
                            " WHERE colaboradores.id = " + IdColaborador;
                     _cn.ExecuteNonQuery(SQL);
 
-                    
+
+                    var RefPedido = String.Empty;
+                    var dadosContPed = ContRep.GetByNome("PedidoVenda");
+                    if (dadosContPed != null && dadosContPed.Ativo == true)
+                    {
+                        RefPedido = ContRep.GetProximo("PedidoVenda");
+                    }
+                    else
+                    {
+                        int UltimoRegistro = this.UltimoRegistro();
+                        UltimoRegistro += 1;
+                        RefPedido = UltimoRegistro.ToString("D8");
+                    }
+                    var cn = new DapperConnection<PedidoVenda>();
+                    SQL = "update pedidovenda set Status = 1, Referencia = " + "'" + RefPedido + "'" + " where pedidovenda.Id = " + IdPedido;
+                    cn.ExecuteNonQuery(SQL);
 
                 }
             }

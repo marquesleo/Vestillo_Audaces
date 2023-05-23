@@ -125,6 +125,8 @@ namespace TemplateAudacesApi.Controllers
             {
 
 
+                
+                
                 if (!string.IsNullOrWhiteSpace(type) &&  type.Equals("activity"))
                     throw new Exception("Rotina de Buscar por activity não implementada ainda!");
 

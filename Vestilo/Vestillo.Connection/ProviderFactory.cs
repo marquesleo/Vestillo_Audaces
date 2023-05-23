@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Data;
+using System.Data.Common;
 using Vestillo.Lib;
 using MySql.Data.MySqlClient;
 using System.Data.SqlClient;
@@ -9,8 +14,9 @@ namespace Vestillo.Connection
 {
     public class ProviderFactory : IDisposable
     {
-        public static bool IsAPI => (!string.IsNullOrEmpty(StringConnection));
+        public static bool IsAPI => (!string.IsNullOrEmpty(StringConnection));//Alterado para Audaces, testar
         public static string StringConnection { get; set; }
+
         public enum enumSGBD
         {
             Mysql = 1,
@@ -32,12 +38,12 @@ namespace Vestillo.Connection
                 _provider = new ProviderFactory();
             }
             return _provider;
-        }    
+        }
+
         public ProviderFactory()
         {
-
-            if (!IsAPI)
-            { 
+            if (!IsAPI)//Alterado para Audaces, testar
+            {
                 var cripto = new Cripto();
 
                 var cs = cripto.Decrypt(Funcoes.LerConfiguracao("cs"));
@@ -127,20 +133,21 @@ namespace Vestillo.Connection
                 }
             }
         }
-         
+
         public void OpenConnection()
         {
             this.CloseConnection();
 
-            if (_cn == null)
+            if (_cn == null) // alterado audaces testar
             {
                 if (!IsAPI)
-                 _cn = this.CreateConnection();
+                    _cn = this.CreateConnection();
                 else
-                    _cn =  new MySqlConnection(this.ConnectionString);
+                    _cn = new MySqlConnection(this.ConnectionString);
                 _cn.Open();
                 return;
             }
+
 
         }
 
@@ -162,7 +169,7 @@ namespace Vestillo.Connection
 
         public bool BeginTransaction()
         {
-    
+
             if (_cn == null)
             {
                 this.OpenConnection();

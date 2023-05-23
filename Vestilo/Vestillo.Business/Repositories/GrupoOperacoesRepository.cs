@@ -141,6 +141,25 @@ namespace Vestillo.Business.Repositories
             return cn.ExecuteStringSqlToList(new GrupoOperacoesView(), sql.ToString()).ToList();
         }
 
+        public List<GrupoOperacoesView> GetListByPacoteIniciais(List<int> pacotesId)
+        {
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine("Select produtos.Referencia AS ProdutoReferencia, produtos.Descricao AS ProdutoDescricao,");
+            sql.AppendLine("pacotes.referencia AS PacoteReferencia,pacotes.id AS PacoteId, ordemproducao.Referencia AS OrdemProducaoReferencia,");
+            sql.AppendLine(" tamanhos.Abreviatura AS TamanhoDescricao, cores.Abreviatura AS CorDescricao,pacotes.quantidade ");
+            sql.AppendLine(" FROM pacotes ");
+            sql.AppendLine("INNER JOIN produtos ON produtos.Id = pacotes.produtoid");
+            sql.AppendLine("INNER JOIN cores ON cores.Id = pacotes.corid");
+            sql.AppendLine("INNER JOIN tamanhos ON tamanhos.Id = pacotes.tamanhoid");
+            sql.AppendLine("INNER JOIN itensordemproducao ON itensordemproducao.id = pacotes.itemordemproducaoid");
+            sql.AppendLine("INNER JOIN ordemproducao ON ordemproducao.id = itensordemproducao.OrdemProducaoId");
+            sql.AppendLine("WHERE pacotes.id in ( " + string.Join(", ", pacotesId) + ")");            
+            sql.AppendLine("ORDER BY  pacotes.produtoid,pacotes.corid,pacotes.tamanhoid ");
+
+            var cn = new DapperConnection<GrupoOperacoesView>();
+            return cn.ExecuteStringSqlToList(new GrupoOperacoesView(), sql.ToString()).ToList();
+        }
+
         public List<GrupoOperacoesView> GetListByPacotesViewSemFicha(List<int> pacotesId)
         {
             StringBuilder sql = new StringBuilder();
@@ -311,6 +330,71 @@ namespace Vestillo.Business.Repositories
 
             var cn = new DapperConnection<GrupoOperacoesView>();
             return cn.ExecuteStringSqlToList(new GrupoOperacoesView(), sql.ToString()).ToList();
+        }
+
+
+        public List<GrupoOperacoesView> GetbyOperacoesPorOperador(int IdOperador, bool SomenteAbertos)
+        {
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine("SELECT GO.*, PR.Descricao as ProdutoDescricao, PR.Referencia as ProdutoReferencia, ");
+            sql.AppendLine("PA.quantidade, (GO.tempo*PA.quantidade + PR.TempoPacote) as TempoTotal,PA.referencia as PacoteReferencia, CR.Descricao as CorDescricao, TM.Descricao as TamanhoDescricao, ");
+            sql.AppendLine("IF(ISNULL(OO.Data), OF.Data, OO.Data) AS DataConclusao, FU.Nome AS Funcionario, F.nome AS Faccao");
+            sql.AppendLine(" FROM grupooperacoes GO ");
+            sql.AppendLine("INNER JOIN pacotes PA ON GO.grupopacoteId = PA.grupopacoteId");
+            sql.AppendLine("INNER JOIN produtos PR ON PR.id = PA.produtoId");
+            sql.AppendLine("INNER JOIN cores CR ON CR.id = PA.CorId");
+            sql.AppendLine("INNER JOIN tamanhos TM ON TM.id = PA.TamanhoId");
+            sql.AppendLine("LEFT JOIN operacaooperadora OO ON OO.PacoteId = PA.Id && OO.OperacaoId = GO.OperacaoPadraoId && OO.Sequencia = GO.Sequencia");
+            sql.AppendLine("LEFT JOIN funcionarios FU ON FU.Id = OO.FuncionarioId");
+            sql.AppendLine("LEFT JOIN operacaofaccao OF ON OF.PacoteId = PA.Id && OF.OperacaoId = GO.OperacaoPadraoId && OF.Sequencia = GO.Sequencia");
+            sql.AppendLine("LEFT JOIN colaboradores F ON F.Id = OF.FaccaoId");
+            sql.AppendLine("WHERE GO.IdOperadorCupomEletronico = " + IdOperador );            
+           
+            sql.AppendLine("GROUP BY PA.id, GO.sequencia");
+            sql.AppendLine("ORDER BY CAST(GO.sequencia AS decimal(10,0))");
+
+            var cn = new DapperConnection<GrupoOperacoesView>();
+            var Dados =  cn.ExecuteStringSqlToList(new GrupoOperacoesView(), sql.ToString()).ToList();
+            if (SomenteAbertos)
+            {
+                Dados.Where(x => x.DataConclusao == null);
+            }
+
+            return Dados;
+        }
+
+        public List<GrupoOperacoesView> GetbyOperacoesPorMultiplosOperadores(List<int> IdOperador, bool SomenteAbertos)
+        {
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine("SELECT GO.*,PR.Descricao as ProdutoDescricao, PR.Referencia as ProdutoReferencia,");
+            sql.AppendLine("PA.quantidade, (GO.tempo*PA.quantidade + PR.TempoPacote) as TempoTotal,PA.referencia as PacoteReferencia, CR.Descricao as CorDescricao, TM.Descricao as TamanhoDescricao, ");
+            sql.AppendLine("IF(ISNULL(OO.Data), OF.Data, OO.Data) AS DataConclusao, FU.Nome AS Funcionario, F.nome AS Faccao");
+            sql.AppendLine(" FROM grupooperacoes GO ");
+            sql.AppendLine("INNER JOIN pacotes PA ON GO.grupopacoteId = PA.grupopacoteId");
+            sql.AppendLine("INNER JOIN produtos PR ON PR.id = PA.produtoId");
+            sql.AppendLine("INNER JOIN cores CR ON CR.id = PA.CorId");
+            sql.AppendLine("INNER JOIN tamanhos TM ON TM.id = PA.TamanhoId");
+            sql.AppendLine("LEFT JOIN operacaooperadora OO ON OO.PacoteId = PA.Id && OO.OperacaoId = GO.OperacaoPadraoId && OO.Sequencia = GO.Sequencia");
+            sql.AppendLine("LEFT JOIN funcionarios FU ON FU.Id = OO.FuncionarioId");
+            sql.AppendLine("LEFT JOIN operacaofaccao OF ON OF.PacoteId = PA.Id && OF.OperacaoId = GO.OperacaoPadraoId && OF.Sequencia = GO.Sequencia");
+            sql.AppendLine("LEFT JOIN colaboradores F ON F.Id = OF.FaccaoId");            
+            sql.AppendLine("   WHERE GO.IdOperadorCupomEletronico");
+            sql.Append(" IN( ");
+            sql.Append(string.Join(",", IdOperador));
+            sql.Append(")");           
+            
+            sql.AppendLine("GROUP BY PA.id, GO.sequencia");
+            sql.AppendLine("ORDER BY CAST(GO.sequencia AS decimal(10,0))");
+
+            
+            var cn = new DapperConnection<GrupoOperacoesView>();
+            var Dados = cn.ExecuteStringSqlToList(new GrupoOperacoesView(), sql.ToString()).ToList();
+            if (SomenteAbertos)
+            {
+                Dados.Where(x => x.DataConclusao == null);
+            }
+
+            return Dados;
         }
     }
 }

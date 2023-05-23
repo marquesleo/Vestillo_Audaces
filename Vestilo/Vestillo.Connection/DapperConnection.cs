@@ -459,12 +459,8 @@ namespace Vestillo.Connection
             {
                 foreach (FiltroEmpresa customAttribute in propertyInfo.GetCustomAttributes(typeof(FiltroEmpresa), false))
                 {
-                    if (Funcoes.EmpresasAcesso != null)
-                    {
-                        var empresas = Funcoes.EmpresasAcesso.Where(x => x.Value == "" || x.Value.ToLower() == tabela.ToLower()).ToList();
-                        filtroEmpresa = " (" + propertyInfo.Name + " IN (" + string.Join(",", empresas.Select(x => x.Key.ToString()).ToArray()) + ") OR " + propertyInfo.Name + " IS NULL " + ")";
-                    }
-                        
+                    var empresas = Vestillo.Lib.Funcoes.EmpresasAcesso.Where(x => x.Value == "" || x.Value.ToLower() == tabela.ToLower()).ToList();
+                    filtroEmpresa = " (" + propertyInfo.Name + " IN (" + string.Join(",", empresas.Select(x => x.Key.ToString()).ToArray()) + ") OR " + propertyInfo.Name + " IS NULL " + ")";
                     break;
                 }
 
@@ -603,8 +599,7 @@ namespace Vestillo.Connection
                     where.Append(propertyInfo.Name);
                     where.Append(" = @");
                     where.Append(propertyInfo.Name);
-                    if (!String.IsNullOrEmpty(PossuiEmpresa))
-                        where.AppendLine(filtroEmpresa);
+                    where.AppendLine(filtroEmpresa);
                     where.Append(sqlId);
                     lstWhere.Add(where.ToString());
 

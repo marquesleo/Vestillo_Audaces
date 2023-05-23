@@ -17,5 +17,6 @@ namespace Vestillo.Business.Models
         [RegistroUnico]
         public int NumeracaoAtual { get; set; }
         public string UltimoArquivoGerado { get; set; }
+        public string Prefixo { get; set; }
     }
 }

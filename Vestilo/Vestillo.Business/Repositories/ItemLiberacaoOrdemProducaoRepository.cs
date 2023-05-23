@@ -47,5 +47,16 @@ namespace Vestillo.Business.Repositories
             cn.ExecuteNonQuery(SQL);
 
         }
+
+        public void DeletaMaterialLiberado(int idOrdem)
+        {
+            var cn = new DapperConnection<ItemLiberacaoOrdemProducaoView>();
+            string SQL = String.Empty;
+           
+            SQL = String.Empty;
+            SQL = "DELETE from ordemproducaomateriais WHERE ordemproducaomateriais.ordemproducaoid = " + idOrdem;
+            cn.ExecuteNonQuery(SQL);
+
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace Vestillo.Business.Repositories
         {
             StringBuilder sql = new StringBuilder();
             sql.AppendLine("SELECT 	F.Id, F.Referencia,F.Nome, F.CPF, F.DataNascimento, F.DataAdmissao, F.DataDemissao, F.Ativo,");
-            sql.AppendLine("	C.Descricao AS Cargo, F.EmpresaId");
+            sql.AppendLine("	C.Descricao AS Cargo, F.EmpresaId, F.UsaCupom");
             sql.AppendLine("FROM 	funcionarios AS F");
             sql.AppendLine("   LEFT JOIN Cargos AS C ON C.Id = F.CargoId");
             sql.AppendLine("ORDER BY F.Nome");
@@ -37,6 +37,18 @@ namespace Vestillo.Business.Repositories
             sql.AppendLine("SELECT 	*");
             sql.AppendLine("FROM 	funcionarios");
             sql.AppendLine("WHERE Ativo = 1");
+            sql.AppendLine("ORDER BY Nome");
+
+            var cn = new DapperConnection<Funcionario>();
+            return cn.ExecuteStringSqlToList(new Funcionario(), sql.ToString());
+        }
+
+        public IEnumerable<Funcionario> GetAllAtivoCupom()
+        {
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine("SELECT 	funcionarios.Id,funcionarios.Referencia,funcionarios.Nome,IF(funcionarios.usacupom = 0,'Não','Sim') as DescUsaCupom ");
+            sql.AppendLine("FROM 	funcionarios");
+            sql.AppendLine("WHERE Ativo = 1 AND funcionarios.EmpresaId = " + VestilloSession.EmpresaLogada.Id);
             sql.AppendLine("ORDER BY Nome");
 
             var cn = new DapperConnection<Funcionario>();
@@ -270,7 +282,7 @@ namespace Vestillo.Business.Repositories
         public IEnumerable<FuncionarioView> GetListPorNome(string nome)
         {
             StringBuilder sql = new StringBuilder();
-            sql.AppendLine("SELECT 	F.Id, F.Nome,F.EmpresaId, F.CPF, F.DataNascimento, F.DataAdmissao, F.DataDemissao, F.Ativo,");
+            sql.AppendLine("SELECT 	F.Id, F.Nome,F.EmpresaId, F.CPF, F.DataNascimento, F.DataAdmissao, F.DataDemissao, F.Ativo,F.UsaCupom, ");
             sql.AppendLine("	C.Descricao AS Cargo");
             sql.AppendLine("FROM 	funcionarios AS F");
             sql.AppendLine("   LEFT JOIN Cargos AS C ON C.Id = F.CargoId");
@@ -546,6 +558,28 @@ namespace Vestillo.Business.Repositories
 
             return QtdFunc;
 
+
+        }
+
+        public void AtualizaLicencaCupom(List<Funcionario> FuncsParaGravar)
+        {
+            try
+            {
+                foreach (var item in FuncsParaGravar)
+                {
+                    string SQL = String.Empty;
+                    SQL = "UPDATE funcionarios SET UsaCupom = " + item.UsaCupom + " WHERE Id = " + item.Id;
+                    _cn.ExecuteNonQuery(SQL);
+
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+
+
+            
 
         }
     }

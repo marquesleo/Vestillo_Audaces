@@ -18,7 +18,7 @@ namespace Vestillo.Business.Service.Web
             this.RequestUri = requestUri;
         }
 
-        public List<PacoteProducaoView> GetByView()
+        public List<PacoteProducaoView> GetByView(bool CupomEletronico = false)
         {
             throw new NotImplementedException();
         }
@@ -58,7 +58,7 @@ namespace Vestillo.Business.Service.Web
         }
 
 
-        public IEnumerable<PacoteProducaoView> GetByListViewReferencia(string referencia)
+        public IEnumerable<PacoteProducaoView> GetByListViewReferencia(string referencia, bool CupomEletronico = false)
         {
             throw new NotImplementedException();
         }

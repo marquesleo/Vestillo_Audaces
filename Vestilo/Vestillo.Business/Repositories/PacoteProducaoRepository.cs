@@ -20,7 +20,7 @@ namespace Vestillo.Business.Repositories
         {
         }
 
-        public List<PacoteProducaoView> GetByView()
+        public List<PacoteProducaoView> GetByView(bool CupomEletronico = false)
         {
             var cn = new DapperConnection<PacoteProducaoView>();
 
@@ -48,6 +48,10 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine("LEFT JOIN segmentos seg ON pr.Idsegmento = seg.id");
             //SQL.AppendLine("LEFT JOIN operacaooperadora OO ON OO.PacoteId = PA.Id && oo.OperacaoId = gp.OperacaoPadraoId");
             SQL.AppendLine(" WHERE" + FiltroEmpresa(" op.EmpresaId "));
+            if (CupomEletronico)
+            {
+                SQL.AppendLine(" AND pa.UsaCupom = 1 AND ISNULL(pa.datasaida) ");
+            }
             SQL.AppendLine("GROUP BY pa.id");
             SQL.AppendLine("ORDER BY pa.Referencia DESC");
 
@@ -323,7 +327,7 @@ namespace Vestillo.Business.Repositories
             return pacote;
         }
 
-        public IEnumerable<PacoteProducaoView> GetByListViewReferencia(string referencia)
+        public IEnumerable<PacoteProducaoView> GetByListViewReferencia(string referencia, bool CupomEletronico = false)
         {
             var cn = new DapperConnection<PacoteProducaoView>();
 
@@ -353,6 +357,11 @@ namespace Vestillo.Business.Repositories
             else
             {
                 SQL.AppendLine("WHERE " + FiltroEmpresa(" op.EmpresaId "));
+            }
+
+            if(CupomEletronico)
+            {
+                SQL.AppendLine(" AND pa.UsaCupom = 1 AND ISNULL(pa.datasaida) " );
             }
 
             return cn.ExecuteStringSqlToList(new PacoteProducaoView(), SQL.ToString());
@@ -456,6 +465,178 @@ namespace Vestillo.Business.Repositories
             SQL.AppendLine(" GROUP BY pa.id, iop.OrdemProducaoId, iop.ProdutoId, iop.CorId");
            
             
+
+            return cn.ExecuteStringSqlToList(new PacoteProducaoView(), SQL.ToString());
+        }
+
+
+        public IEnumerable<PacoteProducaoView> GetPacotesRelatorioPorOrdem(FiltroRelatorioPacote filtro)
+        {
+            var cn = new DapperConnection<PacoteProducaoView>();
+
+            var SQL = new StringBuilder();
+            SQL.AppendLine("select pr.id as Id,pr.Referencia as ProdutoReferencia,g.abreviatura as GrupoDescricao,SUM(pa.quantidade) as Quantidade,SUM(pa.qtddefeito) as QtdDefeito, ");
+            SQL.AppendLine("pr.referencia as ProdutoReferencia,");     
+            SQL.AppendLine("op.referencia as OrdemProducaoReferencia,");
+            SQL.AppendLine("op.id as OrdemProducaoId,");
+            SQL.AppendLine("gp.data as DataEmissao,");
+            SQL.AppendLine("pa.datasaida");
+            SQL.AppendLine("FROM 	pacotes pa");
+            SQL.AppendLine("INNER JOIN produtos pr ON pa.produtoId = pr.id");
+            SQL.AppendLine("INNER JOIN itensordemproducao iop ON pa.itemordemproducaoid = iop.id");
+            SQL.AppendLine("INNER JOIN ordemproducao op ON iop.ordemproducaoid = op.id");
+            SQL.AppendLine("INNER JOIN almoxarifados a ON op.almoxarifadoid = a.id");
+            SQL.AppendLine("INNER JOIN grupopacote gp  ON gp.id = pa.grupopacoteId");      
+            SQL.AppendLine("LEFT JOIN grupoprodutos g ON pr.idgrupo = g.id");
+            SQL.AppendLine("LEFT JOIN segmentos seg ON pr.Idsegmento = seg.id");
+            //SQL.AppendLine("LEFT JOIN operacaooperadora OO ON OO.PacoteId = PA.Id && oo.OperacaoId = go.OperacaoPadraoId");
+            SQL.AppendLine("WHERE " + FiltroEmpresa(" op.EmpresaId "));
+
+            if (filtro.OrdensProducao != null && filtro.OrdensProducao.Count() > 0)
+                SQL.AppendLine(" AND iop.OrdemProducaoId IN (" + string.Join(", ", filtro.OrdensProducao) + ")");
+
+            if (filtro.Produtos != null && filtro.Produtos.Count() > 0)
+                SQL.AppendLine("        AND iop.ProdutoId IN (" + string.Join(", ", filtro.Produtos) + ")");
+
+            if (filtro.Cores != null && filtro.Cores.Count() > 0)
+                SQL.AppendLine("        AND iop.CorId IN (" + string.Join(", ", filtro.Cores) + ")");
+
+            if (filtro.Tamanhos != null && filtro.Tamanhos.Count() > 0)
+                SQL.AppendLine("        AND iop.TamanhoId IN (" + string.Join(", ", filtro.Tamanhos) + ")");
+
+            if (filtro.Pacote != null && filtro.Pacote.Count() > 0)
+                SQL.AppendLine("        AND pa.Id IN (" + string.Join(", ", filtro.Pacote) + ")");
+
+            if (filtro.DaEmissao != "" || filtro.AteEmissao != "")
+                SQL.AppendLine("        AND DATE(gp.Data) BETWEEN  '" + filtro.DaEmissao + "' AND '" + filtro.AteEmissao + "' ");
+
+            if (filtro.DaEntrada != "" || filtro.AteEntrada != "")
+                SQL.AppendLine("        AND DATE(pa.DataEntrada) BETWEEN  '" + filtro.DaEntrada + "' AND '" + filtro.AteEntrada + "' ");
+
+            if (filtro.DaSaida != "" || filtro.AteSaida != "")
+                SQL.AppendLine("        AND DATE(pa.DataSaida) BETWEEN  '" + filtro.DaSaida + "' AND '" + filtro.AteSaida + "' ");
+
+            if (filtro.RetiraPacotesFaccao)
+            {
+                SQL.AppendLine(" AND entradafaccao <=0  ");
+            }
+
+            if (filtro.Aberto || filtro.Producao || filtro.Concluido || filtro.Finalizado)
+            {
+                SQL.AppendLine(" AND (");
+
+                if (filtro.Aberto)
+                    SQL.Append(" pa.Status = " + (int)enumStatusPacotesProducao.Aberto);
+
+                if (filtro.Aberto && filtro.Producao)
+                    SQL.Append(" OR pa.Status = " + (int)enumStatusPacotesProducao.Producao);
+                else if (filtro.Producao)
+                    SQL.Append("pa.Status = " + (int)enumStatusPacotesProducao.Producao);
+
+                if (filtro.Concluido && (filtro.Producao || filtro.Aberto))
+                    SQL.Append(" OR pa.Status = " + (int)enumStatusPacotesProducao.Concluido);
+                else if (filtro.Concluido)
+                    SQL.Append(" pa.Status = " + (int)enumStatusPacotesProducao.Concluido);
+
+                if (filtro.Finalizado && (filtro.Producao || filtro.Aberto || filtro.Concluido))
+                    SQL.Append(" OR pa.Status = " + (int)enumStatusPacotesProducao.Finalizado);
+                else if (filtro.Finalizado)
+                    SQL.Append(" pa.Status = " + (int)enumStatusPacotesProducao.Finalizado);
+
+                SQL.Append(")");
+            }
+            else
+            {
+                SQL.AppendLine(" AND pa.Status = -1");
+            }
+
+
+            SQL.AppendLine(" GROUP BY iop.OrdemProducaoId, iop.ProdutoId order by op.id");
+
+
+
+            return cn.ExecuteStringSqlToList(new PacoteProducaoView(), SQL.ToString());
+        }
+
+        public IEnumerable<PacoteProducaoView> GetPacotesRelatorioPegaTempo(FiltroRelatorioPacote filtro,int OrdemId, int ProdutoId)
+        {
+            var cn = new DapperConnection<PacoteProducaoView>();
+
+            var SQL = new StringBuilder();
+            SQL.AppendLine("SELECT 	op.id,pr.id,");            
+            SQL.AppendLine("SUM(go.tempo*pa.quantidade + pr.tempopacote) as TempoTotal,");
+            //SQL.AppendLine("(SUM(IF(oo.Data > '1-1-0001', 1, 0))/COUNT(gp.Id)) as Concluido,");
+            SQL.AppendLine("SUM(go.tempo) as TempoUnitario");
+            SQL.AppendLine("FROM 	pacotes pa");
+            SQL.AppendLine("INNER JOIN produtos pr ON pa.produtoId = pr.id");
+            SQL.AppendLine("INNER JOIN itensordemproducao iop ON pa.itemordemproducaoid = iop.id");
+            SQL.AppendLine("INNER JOIN ordemproducao op ON iop.ordemproducaoid = op.id");
+            SQL.AppendLine("INNER JOIN almoxarifados a ON op.almoxarifadoid = a.id");
+            SQL.AppendLine("INNER JOIN cores c ON pa.corid = c.id");
+            SQL.AppendLine("INNER JOIN tamanhos t ON pa.tamanhoid = t.id");
+            SQL.AppendLine("INNER JOIN grupopacote gp  ON gp.id = pa.grupopacoteId");
+            SQL.AppendLine("INNER JOIN grupooperacoes go ON gp.id = go.grupopacoteId");
+            SQL.AppendLine("LEFT JOIN grupoprodutos g ON pr.idgrupo = g.id");
+            SQL.AppendLine("LEFT JOIN segmentos seg ON pr.Idsegmento = seg.id");
+            //SQL.AppendLine("LEFT JOIN operacaooperadora OO ON OO.PacoteId = PA.Id && oo.OperacaoId = go.OperacaoPadraoId");
+            SQL.AppendLine("WHERE " + FiltroEmpresa(" op.EmpresaId "));
+            SQL.AppendLine(" AND  op.id = " + OrdemId +  " AND pa.produtoId = " + ProdutoId );
+
+            if (filtro.OrdensProducao != null && filtro.OrdensProducao.Count() > 0)
+                SQL.AppendLine(" AND iop.OrdemProducaoId IN (" + string.Join(", ", filtro.OrdensProducao) + ")");           
+
+            if (filtro.Pacote != null && filtro.Pacote.Count() > 0)
+                SQL.AppendLine("        AND pa.Id IN (" + string.Join(", ", filtro.Pacote) + ")");
+
+            if (filtro.DaEmissao != "" || filtro.AteEmissao != "")
+                SQL.AppendLine("        AND DATE(gp.Data) BETWEEN  '" + filtro.DaEmissao + "' AND '" + filtro.AteEmissao + "' ");
+
+            if (filtro.DaEntrada != "" || filtro.AteEntrada != "")
+                SQL.AppendLine("        AND DATE(pa.DataEntrada) BETWEEN  '" + filtro.DaEntrada + "' AND '" + filtro.AteEntrada + "' ");
+
+            if (filtro.DaSaida != "" || filtro.AteSaida != "")
+                SQL.AppendLine("        AND DATE(pa.DataSaida) BETWEEN  '" + filtro.DaSaida + "' AND '" + filtro.AteSaida + "' ");
+
+            if (filtro.RetiraPacotesFaccao)
+            {
+                SQL.AppendLine(" AND entradafaccao <=0  ");
+            }
+
+            if (filtro.Aberto || filtro.Producao || filtro.Concluido || filtro.Finalizado)
+            {
+                SQL.AppendLine(" AND (");
+
+                if (filtro.Aberto)
+                    SQL.Append(" pa.Status = " + (int)enumStatusPacotesProducao.Aberto);
+
+                if (filtro.Aberto && filtro.Producao)
+                    SQL.Append(" OR pa.Status = " + (int)enumStatusPacotesProducao.Producao);
+                else if (filtro.Producao)
+                    SQL.Append("pa.Status = " + (int)enumStatusPacotesProducao.Producao);
+
+                if (filtro.Concluido && (filtro.Producao || filtro.Aberto))
+                    SQL.Append(" OR pa.Status = " + (int)enumStatusPacotesProducao.Concluido);
+                else if (filtro.Concluido)
+                    SQL.Append(" pa.Status = " + (int)enumStatusPacotesProducao.Concluido);
+
+                if (filtro.Finalizado && (filtro.Producao || filtro.Aberto || filtro.Concluido))
+                    SQL.Append(" OR pa.Status = " + (int)enumStatusPacotesProducao.Finalizado);
+                else if (filtro.Finalizado)
+                    SQL.Append(" pa.Status = " + (int)enumStatusPacotesProducao.Finalizado);
+
+                SQL.Append(")");
+            }
+            else
+            {
+                SQL.AppendLine(" AND pa.Status = -1");
+            }
+
+
+
+
+            SQL.AppendLine(" GROUP BY pa.id, iop.OrdemProducaoId, iop.ProdutoId, iop.CorId");
+
+
 
             return cn.ExecuteStringSqlToList(new PacoteProducaoView(), SQL.ToString());
         }
@@ -1187,6 +1368,169 @@ namespace Vestillo.Business.Repositories
             }
 
         }
+
+        public void UpdateLiberaCupomEletronico(List<PacoteProducaoView> PctsParaGravar)
+        {
+            DateTime DataFinalizacao = DateTime.Now.Date;
+
+            try
+            {
+
+                var SQL = new StringBuilder();
+
+                foreach (var item in PctsParaGravar)
+                {
+                    SQL = new StringBuilder();
+                    string DescricaoOperacao = String.Empty;
+
+                    SQL.AppendLine("UPDATE pacotes pa  ");
+                    SQL.AppendLine("SET pa.UsaCupom = " + item.UsaCupom );
+                    SQL.AppendLine(" , pa.DataCriacaoCEP = " + "'" + DataFinalizacao.ToString("yyyy-MM-dd") + "'");
+                    SQL.AppendLine(" WHERE pa.id = ");
+                    SQL.Append(item.Id);
+
+                    _cn.ExecuteNonQuery(SQL.ToString());
+
+                    if(item.UsaCupom == 1)
+                    {
+                        DescricaoOperacao = "Liberou o pacote para cupom eletrônico";
+                    }
+                    else
+                    {
+                        DescricaoOperacao = "Retirou o pacote do cupom eletrônico";
+                    }
+
+                    Log LogPacote = new Log();
+                    LogPacote.EmpresaId = VestilloSession.EmpresaLogada.Id;
+                    LogPacote.UsuarioId = VestilloSession.UsuarioLogado.Id;
+                    LogPacote.Data = DateTime.Now;
+                    LogPacote.Operacao = 2;
+                    LogPacote.DescricaoOperacao = DescricaoOperacao;
+                    LogPacote.ObjetoId = item.Id;
+                    LogPacote.Modulo = "Pacotes de Produção";
+                    new LogService().GetServiceFactory().Save(ref LogPacote);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+
+        }
+
+        public IEnumerable<PacoteProducaoView> GetByPacoteLiberaCupom()
+        {
+            var cn = new DapperConnection<PacoteProducaoView>();
+
+            var SQL = new StringBuilder();
+            SQL.AppendLine("SELECT 	pa.Id as Id, pa.Quantidade, pa.UsaCupom, ");
+            SQL.AppendLine("pa.referencia as Referencia,");
+            SQL.AppendLine("pr.id as ProdutoId,");
+            SQL.AppendLine("pr.Referencia as ProdutoReferencia,");
+            SQL.AppendLine("c.Id as CorId,");
+            SQL.AppendLine("c.Descricao as CorDescricao,");
+            SQL.AppendLine("t.Id as TamanhoId,");
+            SQL.AppendLine("t.Descricao as TamanhoDescricao,");         
+            SQL.AppendLine("op.referencia as OrdemProducaoReferencia");           
+            SQL.AppendLine("FROM 	pacotes pa");
+            SQL.AppendLine("INNER JOIN produtos pr ON pa.produtoId = pr.id");
+            SQL.AppendLine("INNER JOIN itensordemproducao iop ON pa.itemordemproducaoid = iop.id");
+            SQL.AppendLine("INNER JOIN ordemproducao op ON iop.ordemproducaoid = op.id");            
+            SQL.AppendLine("INNER JOIN cores c ON pa.corid = c.id");
+            SQL.AppendLine("INNER JOIN tamanhos t ON pa.tamanhoid = t.id");
+            SQL.AppendLine("WHERE pa.status = 0 AND op.EmpresaId = " + VestilloSession.EmpresaLogada.Id);
+
+            return cn.ExecuteStringSqlToList(new PacoteProducaoView(), SQL.ToString());
+        }
+
+        public void UpdateDefineOperadorCupomEletronico(List<GrupoOperacoesView> OperadorXCupons)
+        {
+            try
+            {
+                var cn = new DapperConnection<GrupoOperacoesView>();
+                var SQL = new StringBuilder();
+
+                foreach (var item in OperadorXCupons)
+                {
+                    SQL = new StringBuilder();
+                    string DescricaoOperacao = String.Empty;
+
+                    SQL.AppendLine("UPDATE grupooperacoes  ");
+                    SQL.AppendLine("SET IdOperadorCupomEletronico = " + item.IdOperadorCupomEletronico);                    
+                    SQL.AppendLine(" WHERE grupooperacoes.id = ");
+                    SQL.Append(item.Id);
+
+                    cn.ExecuteNonQuery(SQL.ToString());
+
+                    if (item.IdOperadorCupomEletronico == 0)
+                    {
+                        DescricaoOperacao = "Retirou Funcionário da operação.";
+                    }
+                    else
+                    {
+                        DescricaoOperacao = "Incluiu funcionário no operação.";
+                    }
+
+                    Log LogPacote = new Log();
+                    LogPacote.EmpresaId = VestilloSession.EmpresaLogada.Id;
+                    LogPacote.UsuarioId = VestilloSession.UsuarioLogado.Id;
+                    LogPacote.Data = DateTime.Now;
+                    LogPacote.Operacao = 2;
+                    LogPacote.DescricaoOperacao = DescricaoOperacao;
+                    LogPacote.ObjetoId = item.Id;
+                    LogPacote.Modulo = "Pacotes de Produção";
+                    new LogService().GetServiceFactory().Save(ref LogPacote);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+
+        }
+
+        public List<PacoteProducaoView> GetByViewPacotesEletronico(int[] IdPacotes)
+        {
+            var cn = new DapperConnection<PacoteProducaoView>();
+
+            var SQL = new StringBuilder();
+            SQL.AppendLine("SELECT 	pa.*,");
+            SQL.AppendLine("pr.referencia as ProdutoReferencia,");
+            SQL.AppendLine("seg.descricao as ProdutoSegmento,");
+            SQL.AppendLine("op.referencia as OrdemProducaoReferencia,");
+            SQL.AppendLine("op.observacao as ObservacaoOrdem,");
+            SQL.AppendLine("op.id as OrdemProducaoId,");
+            SQL.AppendLine("g.data as DataEmissao,");
+            SQL.AppendLine("c.abreviatura as CorDescricao,");
+            //SQL.AppendLine("(SUM(IF(oo.Data > '1-1-0001', 1, 0))/COUNT(gp.Id)) as Concluido,");
+            SQL.AppendLine("t.abreviatura as TamanhoDescricao");
+            SQL.AppendLine("FROM 	pacotes pa");
+            SQL.AppendLine("INNER JOIN produtos pr ON pa.produtoId = pr.id");
+            SQL.AppendLine("INNER JOIN cores c ON pa.corid = c.id");
+            SQL.AppendLine("INNER JOIN tamanhos t ON pa.tamanhoid = t.id");
+            SQL.AppendLine("INNER JOIN grupopacote g ON g.id = pa.GrupoPacoteId");
+
+            // ALEX 22-12-2020 SQL.AppendLine("INNER JOIN grupooperacoes gp ON gp.GrupoPacoteId = g.Id");
+
+            SQL.AppendLine("LEFT JOIN itensordemproducao iop ON pa.itemordemproducaoid = iop.id");
+            SQL.AppendLine("LEFT JOIN ordemproducao op ON iop.ordemproducaoid = op.id");
+            SQL.AppendLine("LEFT JOIN segmentos seg ON pr.Idsegmento = seg.id");
+            //SQL.AppendLine("LEFT JOIN operacaooperadora OO ON OO.PacoteId = PA.Id && oo.OperacaoId = gp.OperacaoPadraoId");
+            SQL.AppendLine(" WHERE" + FiltroEmpresa(" op.EmpresaId "));
+            
+            
+            SQL.AppendLine(" AND pa.id IN (" + string.Join(", ", IdPacotes) + ")");
+            
+            SQL.AppendLine("GROUP BY pa.id");
+            SQL.AppendLine("ORDER BY pa.Referencia DESC");
+
+            return cn.ExecuteStringSqlToList(new PacoteProducaoView(), SQL.ToString()).ToList();
+        }
+
 
     }
 }

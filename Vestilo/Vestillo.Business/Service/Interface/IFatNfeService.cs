@@ -17,8 +17,8 @@ namespace Vestillo.Business.Service
         IEnumerable<FatNfeView> GetListPorNumero(string Numero, string parametrosDaBusca);
         IEnumerable<FechamentoDoDiaView> GetFechamentoDoDia(DateTime DataInicio, DateTime DataFim, int Tipo);
         IEnumerable<RepXVendaView> GetRepXVenda(string Ano, int Uf);
-        IEnumerable<ListaFatVendaView> GetListaFatXVenda(DateTime DataInicio, DateTime DataFim, List<int> Vendedor, bool SomenteNFCe, bool SomenteTipoVendaNFCe);
-        int TotalFaturamentos(DateTime DataInicio, DateTime DataFim, int Vendedor, bool SomenteNFCe);
+        IEnumerable<ListaFatVendaView> GetListaFatXVenda(DateTime DataInicio, DateTime DataFim, List<int> Vendedor, bool SomenteNFCe, bool SomenteTipoVendaNFCe, bool DataDatNfce);
+        int TotalFaturamentos(DateTime DataInicio, DateTime DataFim, int Vendedor, bool SomenteNFCe, bool DataDatNfce);
         IEnumerable<FechamentoDoDiaPagView> GetFechamentoDoDiaPorPagamento(DateTime DataInicio, DateTime DataFim);
         FatNfeEtiquetaView EtiquetaEnderecamento(int Faturamento, int Tipo);
         decimal TotalNcc(DateTime DataInicio, DateTime DataFim, int IdVendedor);

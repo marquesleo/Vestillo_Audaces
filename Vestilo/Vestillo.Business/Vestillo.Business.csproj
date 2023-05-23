@@ -74,9 +74,7 @@
     <Reference Include="System.Web.Cors">
       <HintPath>Lib\System.Web.Cors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Extensions">
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -84,9 +82,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vestillo.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Vestillo.Core.dll</HintPath>
+    <Reference Include="Vestillo.Api">
+      <HintPath>..\Vestillo.Api\bin\Debug\Vestillo.Api.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Vestillo.Lib">
       <HintPath>..\Vestillo.Lib\bin\Debug\Vestillo.Lib.dll</HintPath>
@@ -1325,6 +1323,10 @@
     <ProjectReference Include="..\Vestillo.Connection\Vestillo.Connection.csproj">
       <Project>{2e39cdd7-7d21-4b62-9e8a-8e6ecc7d6ef6}</Project>
       <Name>Vestillo.Connection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Vestillo.Core\Vestillo.Core.csproj">
+      <Project>{e2e38793-ca31-4717-8165-b0def993f9f1}</Project>
+      <Name>Vestillo.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

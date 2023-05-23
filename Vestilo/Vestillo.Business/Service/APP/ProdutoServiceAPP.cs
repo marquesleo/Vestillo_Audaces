@@ -111,9 +111,9 @@ namespace Vestillo.Business.Service.APP
             return controller.GetProdutosParaManutencaoFichaTecnica(comFicha, semFicha);
         }
 
-        public IEnumerable<Produto> GetListPorTipoAtivo(Produto.enuTipoItem tipo)
+        public IEnumerable<Produto> GetListPorTipoAtivo(Produto.enuTipoItem tipo, bool Ambos = false)
         {
-            return controller.GetListPorTipoAtivo(tipo);
+            return controller.GetListPorTipoAtivo(tipo,Ambos);
         }
 
 
@@ -216,21 +216,6 @@ namespace Vestillo.Business.Service.APP
         public IEnumerable<Produto> GetListPorReferenciaSemFichaTecnicaMaterial(string referencia)
         {
             return controller.GetListPorReferenciaSemFichaTecnicaMaterial(referencia);
-        }
-
-        public IEnumerable<Produto> GetListPorFiltros(int tipoItem, string referencia, string descricao, string colecao)
-        {
-            return controller.GetListPorFiltros(tipoItem, referencia, descricao, colecao);
-        }
-
-        public IEnumerable<Produto> GetListMaterialPorFiltros(int tipoItem, string referencia, string descricao, string grupo, string fornecedor)
-        {
-            return controller.GetListMaterialPorFiltros(tipoItem, referencia, descricao, grupo,fornecedor);
-        }
-
-        public IEnumerable<Produto> GetListGrupoDeProduto(string grupo)
-        {
-            return controller.GetListGrupoDeProduto(grupo);
         }
     }
 }

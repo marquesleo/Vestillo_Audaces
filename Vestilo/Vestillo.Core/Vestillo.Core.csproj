@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E2E38793-CA31-4717-8165-B0DEF993F9F1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Vestillo.Core</RootNamespace>
+    <AssemblyName>Vestillo.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Connection\VestilloConnection.cs" />
+    <Compile Include="Controllers\ContadorReferenciaController.cs" />
+    <Compile Include="Controllers\GenericController.cs" />
+    <Compile Include="Enuns.cs" />
+    <Compile Include="Models\AcaompanhamentoCatalogoClienteView.cs" />
+    <Compile Include="Models\AcompanhamentoCatalogoView.cs" />
+    <Compile Include="Models\AcompanhamentoColecaoView.cs" />
+    <Compile Include="Models\AcompanhamentoOrdemView.cs" />
+    <Compile Include="Models\Atividade.cs" />
+    <Compile Include="Models\AtividadeView.cs" />
+    <Compile Include="Models\AtualizaLeitorDePrecoView.cs" />
+    <Compile Include="Models\BalanceamentoSemanaItensDetalhes.cs" />
+    <Compile Include="Models\BalanceamentoSemanalItens.cs" />
+    <Compile Include="Models\BuscaPreco.cs" />
+    <Compile Include="Models\Cliente.cs" />
+    <Compile Include="Models\ClienteCarteiraView.cs" />
+    <Compile Include="Models\ClienteDadosFinanceiroView.cs" />
+    <Compile Include="Models\ClienteReferenciaComercial.cs" />
+    <Compile Include="Models\Composicao.cs" />
+    <Compile Include="Models\ComposicaoView.cs" />
+    <Compile Include="Models\ContadorReferencia.cs" />
+    <Compile Include="Models\CurvaAbcItensView.cs" />
+    <Compile Include="Models\CurvaAbcView.cs" />
+    <Compile Include="Models\DadosFaturamentoDashFinanceiro.cs" />
+    <Compile Include="Models\DashVendedorCarteiraClientes.cs" />
+    <Compile Include="Models\DashVendedorLead.cs" />
+    <Compile Include="Models\DescricaoMedida.cs" />
+    <Compile Include="Models\DespesaXReceitaDashFinanceiro.cs" />
+    <Compile Include="Models\FormDados.cs" />
+    <Compile Include="Models\FuncionariosRelCracha.cs" />
+    <Compile Include="Models\FuncionariosRelListagemView.cs" />
+    <Compile Include="Models\FunilDeVendasView.cs" />
+    <Compile Include="Models\HistoricoEstoqueView.cs" />
+    <Compile Include="Models\IModel.cs" />
+    <Compile Include="Models\IndicadoresFuncionario.cs" />
+    <Compile Include="Models\ItenPorClienteView.cs" />
+    <Compile Include="Models\ItensDaTabelaDoLeitorView.cs" />
+    <Compile Include="Models\ListagemAtividadesView.cs" />
+    <Compile Include="Models\ListagemItensBling.cs" />
+    <Compile Include="Models\MapaView.cs" />
+    <Compile Include="Models\MedidasProduto.cs" />
+    <Compile Include="Models\MedidasProdutoView.cs" />
+    <Compile Include="Models\MetaXProduzidoFuncionario.cs" />
+    <Compile Include="Models\OrdemProducaoFaccao.cs" />
+    <Compile Include="Models\PedidoVendaDashFinanceiro.cs" />
+    <Compile Include="Models\PedidoXOrdemView.cs" />
+    <Compile Include="Models\PercentuaisGeraisFuncionario.cs" />
+    <Compile Include="Models\PlanejamentoItens.cs" />
+    <Compile Include="Models\ProdutoFicha.cs" />
+    <Compile Include="Models\ProdutoFichaView.cs" />
+    <Compile Include="Models\TempoOcorrenciaFuncionario.cs" />
+    <Compile Include="Models\TipoArtigo.cs" />
+    <Compile Include="Models\Titulo.cs" />
+    <Compile Include="Models\TipoAtividade.cs" />
+    <Compile Include="Models\TipoNegocio.cs" />
+    <Compile Include="Models\UltimoPrecoMaterialView.cs" />
+    <Compile Include="Models\Vendedor.cs" />
+    <Compile Include="Models\VendedorMeta.cs" />
+    <Compile Include="Models\VendedorMetaView.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\AcompanhamentoCatalogoRepository.cs" />
+    <Compile Include="Repositories\AcompanhamentoColecaoRepository.cs" />
+    <Compile Include="Repositories\AtualizaLeitorDePrecoRepository.cs" />
+    <Compile Include="Repositories\BalanceamentoSemanaItensDetalhesRepository.cs" />
+    <Compile Include="Repositories\BalanceamnetoSemanalItensRepository.cs" />
+    <Compile Include="Repositories\ClienteReferenciaComercialRepository.cs" />
+    <Compile Include="Repositories\ClienteRepository.cs" />
+    <Compile Include="Repositories\ComposicaoRepository.cs" />
+    <Compile Include="Repositories\ContadorReferenciaRepository.cs" />
+    <Compile Include="Repositories\AtividadeRepository.cs" />
+    <Compile Include="Repositories\DashFuncionarioRepository.cs" />
+    <Compile Include="Repositories\DescricaoMedidaRepository.cs" />
+    <Compile Include="Repositories\FormDadosRepository.cs" />
+    <Compile Include="Repositories\FinanceiroRepository.cs" />
+    <Compile Include="Repositories\HistoricoEstoqueRepository.cs" />
+    <Compile Include="Repositories\MapaRepository.cs" />
+    <Compile Include="Repositories\MedidasProdutoRepository.cs" />
+    <Compile Include="Repositories\OrdemProducaoCoreRepository.cs" />
+    <Compile Include="Repositories\PedidoXOrdemRepository.cs" />
+    <Compile Include="Repositories\PlanejamentoItensRepository.cs" />
+    <Compile Include="Repositories\ProdutoFichaRepository.cs" />
+    <Compile Include="Repositories\TipoArtigoRepository.cs" />
+    <Compile Include="Repositories\TipoNegocioRepository.cs" />
+    <Compile Include="Repositories\VendedorMetaRepository.cs" />
+    <Compile Include="Repositories\VendedorRepository.cs" />
+    <Compile Include="Repositories\GenericRepository.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
+    <Compile Include="Repositories\TipoAtividadeRepository.cs" />
+    <Compile Include="Services\AcompanhamentoColecaoService.cs" />
+    <Compile Include="Services\AtividadeService.cs" />
+    <Compile Include="Services\AtualizaLeitorDePrecoService.cs" />
+    <Compile Include="Services\BalanceamentoSemanaItensDetalhesService.cs" />
+    <Compile Include="Services\BalanceamnetoSemanalItensService.cs" />
+    <Compile Include="Services\ClienteService.cs" />
+    <Compile Include="Services\AcompanhamentoCatalogoService.cs" />
+    <Compile Include="Services\ClienteReferenciaComercialService.cs" />
+    <Compile Include="Services\ComposicaoService.cs" />
+    <Compile Include="Services\ContadorReferenciaService.cs" />
+    <Compile Include="Services\DashFuncionarioService.cs" />
+    <Compile Include="Services\DescricaoMedidaService.cs" />
+    <Compile Include="Services\FichaProdutoService.cs" />
+    <Compile Include="Services\FormDadosService.cs" />
+    <Compile Include="Services\FinanceiroService.cs" />
+    <Compile Include="Services\HistoricoEstoqueService.cs" />
+    <Compile Include="Services\MapaService.cs" />
+    <Compile Include="Services\MedidasProdutoService.cs" />
+    <Compile Include="Services\OrdemProducaoCoreService.cs" />
+    <Compile Include="Services\PedidoXOrdemService.cs" />
+    <Compile Include="Services\PlanejamentoItensService.cs" />
+    <Compile Include="Services\TipoArtigoService.cs" />
+    <Compile Include="Services\TipoNegocioService.cs" />
+    <Compile Include="Services\VendedorMetaService.cs" />
+    <Compile Include="Services\VendedorService.cs" />
+    <Compile Include="Services\GenericService.cs" />
+    <Compile Include="Services\IService.cs" />
+    <Compile Include="Services\TipoAtividadeService.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Vestillo.Connection\Vestillo.Connection.csproj">
+      <Project>{2e39cdd7-7d21-4b62-9e8a-8e6ecc7d6ef6}</Project>
+      <Name>Vestillo.Connection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Vestillo.Lib\Vestillo.Lib.csproj">
+      <Project>{9b6ed396-aa3b-4e60-a45c-9604395a1e35}</Project>
+      <Name>Vestillo.Lib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

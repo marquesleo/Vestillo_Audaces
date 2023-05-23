@@ -57,6 +57,18 @@ namespace Vestillo.Business.Repositories
             return UltimoArquivo;
         }
 
+        public string GetPrefixo(int IdBanco)
+        {
+            var c = new ContadorRemessa();
+            _cn.ExecuteToModel("IdBanco = " + IdBanco, ref c);
+
+            string UltimoArquivo = String.Empty;
+                        
+            UltimoArquivo = c.Prefixo;
+
+            return UltimoArquivo;
+        }
+
         public void UpdateUltimoArquivoGerado(int IdBanco, string UltimoArquivoGerado)
         {
             var SQL = new StringBuilder();

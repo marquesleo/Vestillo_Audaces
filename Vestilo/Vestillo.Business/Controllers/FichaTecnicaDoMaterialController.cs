@@ -54,8 +54,8 @@ namespace Vestillo.Business.Controllers
             }
         }
 
-        private FichaTecnicaDoMaterialItemRepository _fichaTecnicaDoMaterialRepositoryItem;
-        private FichaTecnicaDoMaterialItemRepository fichaTecnicaDoMaterialRepositoryItem
+        private Vestillo.Business.Repositories.FichaTecnicaDoMaterialItemRepository _fichaTecnicaDoMaterialRepositoryItem;
+        private Vestillo.Business.Repositories.FichaTecnicaDoMaterialItemRepository fichaTecnicaDoMaterialRepositoryItem
         {
             get
             {
@@ -66,8 +66,8 @@ namespace Vestillo.Business.Controllers
         }
 
 
-        private FichaTecnicaDoMaterialRelacaoRepository _FichaTecnicaDoMaterialRelacaoRepository;
-        private FichaTecnicaDoMaterialRelacaoRepository FichaTecnicaDoMaterialRelacaoRepository
+        private Vestillo.Business.Repositories.FichaTecnicaDoMaterialRelacaoRepository _FichaTecnicaDoMaterialRelacaoRepository;
+        private Vestillo.Business.Repositories.FichaTecnicaDoMaterialRelacaoRepository FichaTecnicaDoMaterialRelacaoRepository
         {
             get
             {
