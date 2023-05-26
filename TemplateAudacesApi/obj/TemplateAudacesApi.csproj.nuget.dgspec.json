@@ -32,17 +32,7 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {
-              "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj": {
-                "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj"
-              },
-              "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj": {
-                "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj"
-              },
-              "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj": {
-                "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {
@@ -113,59 +103,6 @@
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.116\\RuntimeIdentifierGraph.json"
         }
-      }
-    },
-    "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj": {
-      "restore": {
-        "projectUniqueName": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj",
-        "projectName": "Vestillo.Business",
-        "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Business\\Vestillo.Business.csproj",
-        "frameworks": {
-          "net46": {
-            "projectReferences": {
-              "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj": {
-                "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj"
-              }
-            }
-          }
-        }
-      },
-      "frameworks": {
-        "net46": {}
-      }
-    },
-    "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj": {
-      "restore": {
-        "projectUniqueName": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj",
-        "projectName": "Vestillo.Connection",
-        "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Connection\\Vestillo.Connection.csproj",
-        "frameworks": {
-          "net46": {
-            "projectReferences": {
-              "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj": {
-                "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj"
-              }
-            }
-          }
-        }
-      },
-      "frameworks": {
-        "net46": {}
-      }
-    },
-    "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj": {
-      "restore": {
-        "projectUniqueName": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj",
-        "projectName": "Vestillo.Lib",
-        "projectPath": "C:\\Fontes\\VesilloAudaces\\Vestilo\\Vestillo.Lib\\Vestillo.Lib.csproj",
-        "frameworks": {
-          "net46": {
-            "projectReferences": {}
-          }
-        }
-      },
-      "frameworks": {
-        "net46": {}
       }
     }
   }
