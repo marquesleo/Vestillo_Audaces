@@ -409,7 +409,6 @@ C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\de\DevExpress.Diagram.v1
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\es\DevExpress.Diagram.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\ja\DevExpress.Diagram.v18.2.Core.resources.dll
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\bin\Debug\ru\DevExpress.Diagram.v18.2.Core.resources.dll
-C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.AssemblyReference.cache
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.frmProcessamento.resources
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.GenerateResource.cache
 C:\Fontes\VesilloAudaces\Vestilo\Vestillo.Lib\obj\Debug\Vestillo.Lib.csproj.CoreCompileInputs.cache

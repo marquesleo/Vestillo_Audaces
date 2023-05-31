@@ -29,15 +29,19 @@
   <ItemGroup>
     <Reference Include="Vestillo.Business">
       <HintPath>biblioteca\Vestillo.Business.dll</HintPath>
+      <CopyLocal>True</CopyLocal>
     </Reference>
     <Reference Include="Vestillo.Connection">
       <HintPath>biblioteca\Vestillo.Connection.dll</HintPath>
+      <CopyLocal>True</CopyLocal>
     </Reference>
     <Reference Include="Vestillo.Core">
       <HintPath>biblioteca\Vestillo.Core.dll</HintPath>
+      <CopyLocal>True</CopyLocal>
     </Reference>
     <Reference Include="Vestillo.Lib">
       <HintPath>biblioteca\Vestillo.Lib.dll</HintPath>
+      <CopyLocal>True</CopyLocal>
     </Reference>
   </ItemGroup>
 
