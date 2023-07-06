@@ -22,7 +22,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
-    <PackageReference Include="MySql.Data" Version="8.0.31" />
+    <PackageReference Include="MySql.Data" Version="6.10.7" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
   </ItemGroup>
 
@@ -33,10 +33,6 @@
     </Reference>
     <Reference Include="Vestillo.Connection">
       <HintPath>biblioteca\Vestillo.Connection.dll</HintPath>
-      <CopyLocal>True</CopyLocal>
-    </Reference>
-    <Reference Include="Vestillo.Core">
-      <HintPath>biblioteca\Vestillo.Core.dll</HintPath>
       <CopyLocal>True</CopyLocal>
     </Reference>
     <Reference Include="Vestillo.Lib">
