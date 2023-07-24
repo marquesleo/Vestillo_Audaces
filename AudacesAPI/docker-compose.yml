@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  audacesapi:
+    image: ${DOCKER_REGISTRY-}audacesapi
+    build:
+      context: .
+      dockerfile: AudacesAPI/Dockerfile
+environment:
+ - ASPNETCORE_ENVIRONMENT=Development
+ - ConnectionStrings__DefaultConnection=Server=localhost; port=3306;user id=root;password=thug$2Pac;database=vestillo_cupom;pooling=true
+ports:  
+- '2121:80'  

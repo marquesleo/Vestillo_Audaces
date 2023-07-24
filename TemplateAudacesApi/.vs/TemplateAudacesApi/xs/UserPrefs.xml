@@ -1,0 +1,36 @@
+﻿<Properties DisableMonoRequiredInfoBar="True" StartupConfiguration="{1AEA012E-4F85-4C1E-B5F2-7033AA29D500}|Default">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.TemplateAudacesApi PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="../../../../../Applications/Visual Studio.app/Contents/MonoBundle/AddIns/MonoDevelop.Docker/MSBuild/Sdks/Microsoft.Docker.Sdk/build/Microsoft.VisualStudio.Docker.Compose.targets">
+    <Files>
+      <File FileName="../../../../../usr/local/share/dotnet/sdk/7.0.202/Sdks/Microsoft.NET.Sdk.Razor/targets/Sdk.Razor.CurrentVersion.targets" />
+      <File FileName="Dockerfile" Line="16" Column="26" />
+      <File FileName="Program.cs" />
+      <File FileName=".dockerignore" />
+      <File FileName="appsettings.json" />
+      <File FileName="Controllers/ValuesController.cs" />
+      <File FileName="Properties/launchSettings.json" />
+      <File FileName="Properties/PublishProfiles/FolderProfile.pubxml" />
+      <File FileName="CertificateValidation.cs" />
+      <File FileName="DeChunkerMiddleware.cs" />
+      <File FileName="Startup.cs" />
+      <File FileName="../../../../../Applications/Visual Studio.app/Contents/MonoBundle/AddIns/MonoDevelop.Docker/MSbuild/Sdks/Microsoft.Docker.Sdk/build/Microsoft.VisualStudio.Docker.Compose.targets" Line="201" Column="5" />
+      <File FileName="docker-compose.yml" Line="10" Column="38" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="TemplateAudacesApi" expanded="True">
+            <Node name="docker-compose" expanded="True" selected="True" />
+            <Node name="TemplateAudacesApi" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>

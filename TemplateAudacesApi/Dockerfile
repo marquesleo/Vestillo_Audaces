@@ -6,13 +6,17 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
+EXPOSE 443
+
+
+ENV ConnectionStrings__MyConnectionString="Server=localhost;port=3306;user id=root;password=thug$2Pac;database=vestillo_cupom;pooling=true"
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["TemplateAudacesApi.csproj", "."]
-RUN dotnet restore "./TemplateAudacesApi.csproj"
+COPY ["TemplateAudacesApi/TemplateAudacesApi.csproj", "TemplateAudacesApi/"]
+RUN dotnet restore "TemplateAudacesApi.csproj"
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src/TemplateAudacesApi"
 RUN dotnet build "TemplateAudacesApi.csproj" -c Release -o /app/build
 
 FROM build AS publish

@@ -72,6 +72,7 @@
     <ProjectReference Include="..\Vestillo.Lib\Vestillo.Lib.csproj">
       <Project>{9b6ed396-aa3b-4e60-a45c-9604395a1e35}</Project>
       <Name>Vestillo.Lib</Name>
+      <ReferenceSourceTarget></ReferenceSourceTarget>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

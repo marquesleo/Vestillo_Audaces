@@ -1,0 +1,47 @@
+﻿<Properties StartupConfiguration="{7F1396EE-F174-4E5B-BA35-5A727B4656D2}|Default">
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench ActiveDocument="docker-compose.yml">
+    <Files>
+      <File FileName="AudacesAPI/Controllers/ValuesController.cs" />
+      <File FileName="AudacesAPI/appsettings.json" />
+      <File FileName="AudacesAPI/Program.cs" />
+      <File FileName="AudacesAPI/Models/Interface/IProduto.cs" />
+      <File FileName="AudacesAPI/Models/Interface/IProdutoAcabado.cs" />
+      <File FileName="AudacesAPI/Models/Activity.cs" />
+      <File FileName="AudacesAPI/Models/CustomFields.cs" />
+      <File FileName="AudacesAPI/Services/ComposicaoService.cs" />
+      <File FileName="AudacesAPI/Services/GradeDeProdutoService.cs" />
+      <File FileName="AudacesAPI/Services/PrecoService.cs" />
+      <File FileName="AudacesAPI/Utils/Settings.cs" />
+      <File FileName="AudacesAPI/Utils/TokenService.cs" />
+      <File FileName="AudacesAPI/Utils/UtilConverter.cs" />
+      <File FileName="AudacesAPI/Utils/UserRepository.cs" />
+      <File FileName="AudacesAPI/Dockerfile" Line="5" Column="1" />
+      <File FileName=".dockerignore" />
+      <File FileName="docker-compose.yml" Line="14" Column="1" />
+      <File FileName="AudacesAPI/Properties/launchSettings.json" />
+      <File FileName="docker-compose.override.yml" />
+      <File FileName="../../../../../Applications/Visual Studio.app/Contents/MonoBundle/AddIns/MonoDevelop.Docker/MSbuild/Sdks/Microsoft.Docker.Sdk/build/Microsoft.VisualStudio.Docker.Compose.targets" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="AudacesAPI" expanded="True">
+            <Node name="AudacesAPI" expanded="True">
+              <Node name="Controllers" expanded="True" />
+            </Node>
+            <Node name="docker-compose" expanded="True">
+              <Node name="docker-compose.yml" expanded="True" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.docker-compose PreferredExecutionTarget="MonoDevelop.Default" />
+  <MultiItemStartupConfigurations />
+</Properties>

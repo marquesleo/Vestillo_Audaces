@@ -1323,10 +1323,12 @@
     <ProjectReference Include="..\Vestillo.Connection\Vestillo.Connection.csproj">
       <Project>{2e39cdd7-7d21-4b62-9e8a-8e6ecc7d6ef6}</Project>
       <Name>Vestillo.Connection</Name>
+      <ReferenceSourceTarget></ReferenceSourceTarget>
     </ProjectReference>
     <ProjectReference Include="..\Vestillo.Core\Vestillo.Core.csproj">
       <Project>{e2e38793-ca31-4717-8165-b0def993f9f1}</Project>
       <Name>Vestillo.Core</Name>
+      <ReferenceSourceTarget></ReferenceSourceTarget>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
