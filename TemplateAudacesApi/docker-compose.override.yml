@@ -4,7 +4,7 @@ services:
   audacesapi:
     environment:
       - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ConnectionStrings__DefaultConnection=Server=localhost; port=3306;user id=root;password=thug$2Pac;database=vestillo_cupom;pooling=true
+      - ConnectionStrings__MyConnectionString=teste
     ports:
       - "80"
       - "443"

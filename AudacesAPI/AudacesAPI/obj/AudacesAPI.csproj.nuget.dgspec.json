@@ -1,26 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/Users/leonardomsilva/FONTES/Vestillo_Audaces/AudacesAPI/AudacesAPI/AudacesAPI.csproj": {}
+    "C:\\Fontes\\VesilloAudaces\\AudacesAPI\\AudacesAPI\\AudacesAPI.csproj": {}
   },
   "projects": {
-    "/Users/leonardomsilva/FONTES/Vestillo_Audaces/AudacesAPI/AudacesAPI/AudacesAPI.csproj": {
+    "C:\\Fontes\\VesilloAudaces\\AudacesAPI\\AudacesAPI\\AudacesAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/leonardomsilva/FONTES/Vestillo_Audaces/AudacesAPI/AudacesAPI/AudacesAPI.csproj",
+        "projectUniqueName": "C:\\Fontes\\VesilloAudaces\\AudacesAPI\\AudacesAPI\\AudacesAPI.csproj",
         "projectName": "AudacesAPI",
-        "projectPath": "/Users/leonardomsilva/FONTES/Vestillo_Audaces/AudacesAPI/AudacesAPI/AudacesAPI.csproj",
-        "packagesPath": "/Users/leonardomsilva/.nuget/packages/",
-        "outputPath": "/Users/leonardomsilva/FONTES/Vestillo_Audaces/AudacesAPI/AudacesAPI/obj/",
+        "projectPath": "C:\\Fontes\\VesilloAudaces\\AudacesAPI\\AudacesAPI\\AudacesAPI.csproj",
+        "packagesPath": "C:\\Users\\leo_m\\.nuget\\packages\\",
+        "outputPath": "C:\\Fontes\\VesilloAudaces\\AudacesAPI\\AudacesAPI\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "/Users/leonardomsilva/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\leo_m\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 18.2.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\DevExpress 18.2\\Components\\System\\Components\\Packages": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -62,8 +68,7 @@
             "net47",
             "net471",
             "net472",
-            "net48",
-            "net481"
+            "net48"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -75,7 +80,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.202/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.120\\RuntimeIdentifierGraph.json"
         }
       }
     }

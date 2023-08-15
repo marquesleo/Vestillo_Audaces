@@ -310,6 +310,8 @@ namespace TemplateAudacesApi.Services
                 },
 
                 size = IdTamanhoDescricao,
+                
+
 
             };
             return variant;
@@ -323,6 +325,7 @@ namespace TemplateAudacesApi.Services
             {
                 if (detalhe != null && detalhe.Any())
                 {
+
                     variants = new List<Variant>();
                     foreach (var det in detalhe)
                     {

@@ -65,8 +65,10 @@ namespace TemplateAudacesApi.Controllers
 
         private void SetarPadroes()
         {
-            Vestillo.Connection.ProviderFactory.StringConnection = _config.GetConnectionString("db");
+            var connectionString = Environment.GetEnvironmentVariable("MyConnectionString");
+            Vestillo.Connection.ProviderFactory.StringConnection = _config.GetConnectionString("MyConnectionString");
             var valor = Vestillo.Connection.ProviderFactory.IsAPI;
+           
             Vestillo.Lib.Funcoes.SetIdEmpresaLogada = Convert.ToInt32(_config.GetSection("parametros").GetSection("empresa").Value);
             Vestillo.Lib.Funcoes.UtilizaAPI = true;
         }

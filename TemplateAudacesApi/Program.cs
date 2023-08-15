@@ -22,5 +22,6 @@ namespace TemplateAudacesApi
                 .UseStartup<Startup>()
             .UseIISIntegration()
             .UseContentRoot(Directory.GetCurrentDirectory());
+       
     }
 }
