@@ -36,6 +36,16 @@ namespace TemplateAudacesApi.Models
         public CustomFields custom_fields { get; set; }
         public ICollection<Image> images { get; set; }
         public List<Variant> variants { get; set; } = new List<Variant>();
+        public string NomeDaCorDoProdutoAcabado { get; set; }
+
+        public string produto
+        {
+            get
+            {
+                return uid + "-" + description + "-" + variant;
+            }
+        }
+
         public ICollection<Size> sizes { get; set; } = new List<Size>();
         public ICollection<Color> colors { get; set; } = new List<Color>();
     }

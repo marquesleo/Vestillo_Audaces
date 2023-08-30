@@ -36,6 +36,17 @@ namespace TemplateAudacesApi.Services
             }
         }
 
+        private FichaTecnicaDoMaterialRepository _fichaTecnicaDoMaterialRepository;
+        private FichaTecnicaDoMaterialRepository fichaTecnicaDoMaterialRepository
+        {
+            get
+            {
+                if (_fichaTecnicaDoMaterialRepository == null)
+                    _fichaTecnicaDoMaterialRepository = new FichaTecnicaDoMaterialRepository();
+                return _fichaTecnicaDoMaterialRepository;
+            }
+        }
+
         private ComposicaoService _ComposicaoService;
         private ComposicaoService ComposicaoService
         {
@@ -46,6 +57,18 @@ namespace TemplateAudacesApi.Services
                 return _ComposicaoService;
             }
         }
+
+        private FichaTecnicaRepository _FichaTecnicaRepository;
+        private FichaTecnicaRepository FichaTecnicaRepository
+        {
+            get
+            {
+                if (_FichaTecnicaRepository == null)
+                    _FichaTecnicaRepository = new FichaTecnicaRepository();
+                return _FichaTecnicaRepository;
+            }
+        }
+
 
         private FichaTecnicaDoMaterialRepository _FichaTecnicaDoMaterialRepository;
         private FichaTecnicaDoMaterialRepository FichaTecnicaDoMaterialRepository
@@ -86,7 +109,7 @@ namespace TemplateAudacesApi.Services
 
 
 
-      
+
 
         /// <summary>
         /// Inclui a ficha tecnica pelo produto
@@ -94,7 +117,8 @@ namespace TemplateAudacesApi.Services
         /// <param name="garment"></param>
         public FichaTecnicaDoMaterial Incluir(Garment garment)
         {
-            FichaTecnicaDoMaterial fichaVestilo = null;
+            FichaTecnicaDoMaterial fichaVestiloMaterial = null;
+            FichaTecnica fichaTecnica = null;
             Produto produto = null;
             Colaborador fornecedor = null;
             string referencia = string.Empty;
@@ -103,28 +127,30 @@ namespace TemplateAudacesApi.Services
             {
                 produtoRepository.BeginTransaction();
                 //retorna pela referencia o produto
-                produto = new ProdutoServices().RetornarProduto(garment, ref referencia,ref descricao);
+                produto = new ProdutoServices().RetornarProduto(garment, ref referencia, ref descricao);
 
                 if (produto == null || produto.Id == 0)
                 {
                     //inclui um novo produto,detalhe, fornecedor caso nao tenha
-                    produto = produtoInclusaoService.IncluirProdutoAcabado(garment, ref fornecedor, referencia,descricao);
+                    produto = produtoInclusaoService.IncluirProdutoAcabado(garment, ref fornecedor, referencia, descricao);
                 }
                 else
                 {
                     //altera o produto acabado
-                    produto = produtoInclusaoService.AlterarProdutoAcabado(garment, produto,descricao);
+                    produto = produtoInclusaoService.AlterarProdutoAcabado(garment, produto, descricao);
                 }
 
-                fichaVestilo = RetornarFichaTecnica(produto);
+                fichaTecnica = RetornarFichaTecnica(produto);
+                fichaVestiloMaterial = fichaTecnicaDoMaterialRepository.GetById(fichaTecnica.Id);
 
-                if (fichaVestilo != null && fichaVestilo.Id > 0)
+
+                if (fichaVestiloMaterial != null && fichaVestiloMaterial.Id > 0)
                 {
-                    AlterarFicha(garment, fichaVestilo, produto);
+                    AlterarFicha(garment, fichaVestiloMaterial, produto);
                 }
                 else
                 {
-                    fichaVestilo = IncluirNovaFicha(garment, produto);
+                    fichaVestiloMaterial = PrepararParaInclusaoDeNovaFicha(garment, produto, fichaVestiloMaterial);
                 }
                 produtoRepository.CommitTransaction();
             }
@@ -134,13 +160,14 @@ namespace TemplateAudacesApi.Services
                 produtoRepository.RollbackTransaction();
                 throw ex;
             }
-            return fichaVestilo;
+            return fichaVestiloMaterial;
         }
 
-        public FichaTecnicaDoMaterial RetornarFichaTecnica(Produto produto)
+        public FichaTecnica RetornarFichaTecnica(Produto produto)
         {
             //retorno a ficha pelo produto
-            return FichaTecnicaDoMaterialRepository.GetByProduto(Convert.ToInt32(produto.Id));
+            var fichaTecnicaRepository = new FichaTecnicaRepository();
+            return fichaTecnicaRepository.GetByProduto(Convert.ToInt32(produto.Id));
         }
 
 
@@ -149,7 +176,7 @@ namespace TemplateAudacesApi.Services
             try
             {
                 var fichatecnicaRelacaoRepository = new FichaTecnicaDoMaterialRelacaoRepository();
-                
+
                 var ficha = RetornarFichaTecnica(produto);
                 if (ficha != null && ficha.Id > 0)
                 {
@@ -166,14 +193,125 @@ namespace TemplateAudacesApi.Services
 
                 throw ex;
             }
-            
+
         }
+
+        private void GravarFicha(Produto produtoAcabado,
+                                 List<string> lstUid,
+                                 Variant variant,
+                                 FichaTecnicaDoMaterial fichaTecnicaDoMaterial,
+                                 List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem,
+                                 Cor corDoProduto,
+                                 Tamanho tamanhoDoProduto,
+                                 ref short sequencia)
+        {
+            Produto produtoMaterial = null;
+            //foreach (var uid in lstUid)
+            //  {
+            produtoMaterial = produtoRepository.GetByReferencia(variant.materials[0].uid);
+            var itemFichaTecnicaDoMaterial = new FichaTecnicaDoMaterialItem();
+            itemFichaTecnicaDoMaterial.FichaTecnicaId = fichaTecnicaDoMaterial.Id;
+            itemFichaTecnicaDoMaterial.MateriaPrimaId = produtoMaterial.Id;
+
+            itemFichaTecnicaDoMaterial.DestinoId = 1;
+
+            itemFichaTecnicaDoMaterial.quantidade = variant.materials.Sum(p => p.amount);
+
+            itemFichaTecnicaDoMaterial.preco = variant.value * itemFichaTecnicaDoMaterial.quantidade;
+            itemFichaTecnicaDoMaterial.sequencia = sequencia;
+
+            fichaTecnicaDoMaterialRepositoryItem.Save(ref itemFichaTecnicaDoMaterial);
+
+
+            foreach (var material in variant.materials)
+            {
+                //produtoMaterial = produtoRepository.GetByReferencia(material.uid);
+                //var itemFichaTecnicaDoMaterial = new FichaTecnicaDoMaterialItem();
+                //itemFichaTecnicaDoMaterial.FichaTecnicaId = fichaTecnicaDoMaterial.Id;
+                //itemFichaTecnicaDoMaterial.MateriaPrimaId = produtoMaterial.Id;
+
+                //itemFichaTecnicaDoMaterial.DestinoId = 1;
+
+                //itemFichaTecnicaDoMaterial.quantidade = variant.materials.Sum(p => p.amount);
+
+                //itemFichaTecnicaDoMaterial.preco = variant.value * itemFichaTecnicaDoMaterial.quantidade;
+                //itemFichaTecnicaDoMaterial.sequencia = sequencia;
+
+                //fichaTecnicaDoMaterialRepositoryItem.Save(ref itemFichaTecnicaDoMaterial);
+
+
+
+
+                //if (produtoMaterial != null && produtoMaterial.Id > 0)
+                //ComposicaoService.ExcluirFornecedoresDoProduto(produtoMaterial);//excluo a relacao de fornecedor e produto caso tenha
+
+                if (produtoMaterial == null || produtoMaterial.Id == 0)
+                    //inclui o item
+                    produtoMaterial = produtoInclusaoService.IncluirProdutoMaterial(material);
+
+
+
+                //ComposicaoService.GravarGradeDeProduto(produto, cor, tamanho);
+
+                //relaciona o produto, fornecedor, tamanho e cor e a grade do produto
+                //produtoFornecedorPreco = ComposicaoService.GravarItemDaComposicao(material.supplier, produtoMaterial, cor,
+                //                                                         tamanho,
+                //                                                         Convert.ToDecimal(material.cost), false);//incluo a relacao de produto e fornecedor*/
+
+
+                /* 3814 - ACO - UNICO
+                   3814 - BRANCO - UNICO
+                   147  - ROXO - G 
+
+
+
+                   26 - ACO -  UNICO   |   3814 - ACO - UNICO
+                   26 - BRANCO - UNICO |   3814 - BRANCO - UNICO
+                   26 - ROXO -  G      |   3814 - 3814 - ACO - UNICO
+
+
+
+                 */
+
+
+                //vai montando a ficha
+
+
+                string descCor = RetornarCor(variant, material);
+                string descTamanho = RetornarTamanho(variant, material);
+
+                var corDoMaterial = Utils.RetornarCor(descCor);
+                var tamanhoDoMaterial = Utils.RetornarTamanho(descTamanho);
+
+
+                FichaTecnicaDoMaterialItem fichaTecnicaDoMaterialItem = IncluirFichaTecnicaMaterialItem(produtoAcabado,
+                corDoProduto,
+                tamanhoDoProduto,
+                fichaTecnicaDoMaterial,
+                itemFichaTecnicaDoMaterial,
+                produtoMaterial,
+                corDoMaterial,
+                tamanhoDoMaterial
+               );
+                lstFichaTecnicaMaterialItem.Add(fichaTecnicaDoMaterialItem);
+
+
+
+
+
+                //}
+                sequencia += 1;
+            }
+        }
+
 
 
 
         private List<FichaTecnicaDoMaterialItem> IncluirItensFichaTecnica(Garment garment,
                                          FichaTecnicaDoMaterial fichaTecnicaDoMaterial,
-                                         Produto produto)
+                                         Produto produto,
+                                         Variant variant,
+                                         ref short sequencia)
         {
             List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
 
@@ -181,54 +319,51 @@ namespace TemplateAudacesApi.Services
             {
 
                 ComposicaoService.ExcluirGradeDeProduto(produto);
-                foreach (var variant in garment.variants)
+                // var variant = garment.variants[0];
+
+
+                List<string> lstUid = new List<string>();
+                Produto produtoMaterial = null;
+
+                //peguei o item do material pelo codigo
+
+
+                var itensRepetidos = variant.materials
+                    .GroupBy(item => item.produto)
+                    .Where(group => group.Count() > 1)
+                    .Select(group => group.ToList()).ToList();
+
+                var novaVariant = new Variant();
+                novaVariant = variant.Clone(variant);
+                novaVariant.materials.Clear();
+                var materialRepetido = new Material();
+                var listaDeUid = new List<string>();
+
+                var CorDoProduto = new Cor();
+                var tamanhoDoProduto = new Tamanho();
+
+                Utils.RetornarCorETamanhoDoTexto(variant.name, ref CorDoProduto, ref tamanhoDoProduto);
+
+
+                if (itensRepetidos != null && itensRepetidos.Any())
                 {
-                    short sequencia = 1;
-                    foreach (var material in variant.materials)
-                    {
-                        Produto produtoMaterial = null;
-                        ProdutoFornecedorPreco produtoFornecedorPreco = null;
+                    materialRepetido = itensRepetidos.ToList()[0][0];
+                    novaVariant.materials.Add(materialRepetido);
+                    lstUid.Add(materialRepetido.uid);
+                    GravarFicha(produto, lstUid, novaVariant, fichaTecnicaDoMaterial, lstFichaTecnicaMaterialItem, CorDoProduto, tamanhoDoProduto, ref sequencia);
+                    var materials = variant.materials.Where(p => p.produto != materialRepetido.produto).ToList();
+                    novaVariant.materials.AddRange(materials);
 
-                        produtoMaterial = produtoRepository.GetByReferencia(material.uid);//peguei o item do material pelo codigo
-
-                        //if (produtoMaterial != null && produtoMaterial.Id > 0)
-                        //ComposicaoService.ExcluirFornecedoresDoProduto(produtoMaterial);//excluo a relacao de fornecedor e produto caso tenha
-
-                        if (produtoMaterial == null || produtoMaterial.Id == 0)
-                            //inclui o item
-                            produtoMaterial = produtoInclusaoService.IncluirProdutoMaterial(material);
-
-                        string cor = RetornarCor(variant, material);
-                        string tamanho = RetornarTamanho(variant, material);
-
-                        ComposicaoService.GravarGradeDeProduto(produto, cor, tamanho);
-                       
-                        //relaciona o produto, fornecedor, tamanho e cor e a grade do produto
-                        produtoFornecedorPreco = ComposicaoService.GravarItemDaComposicao(material.supplier, produtoMaterial, cor,
-                                                                                 tamanho,
-                                                                                 Convert.ToDecimal(material.cost), false);//incluo a relacao de produto e fornecedor*/
-
-
-
-
-
-
-                        //vai montando a ficha
-                        FichaTecnicaDoMaterialItem fichaTecnicaDoMaterialItem = IncluirFichaTecnicaMaterialItem(produto,
-                            fichaTecnicaDoMaterial,
-                            produtoMaterial,
-                            produtoFornecedorPreco,
-                            material.amount,
-                            material.cost,
-                            sequencia
-                            );
-                        sequencia += 1;
-
-                        lstFichaTecnicaMaterialItem.Add(fichaTecnicaDoMaterialItem);
-
-
-                    }
                 }
+                else
+                {
+                    novaVariant = variant;
+                }
+                lstUid = (from obj in novaVariant.materials select obj.uid).Distinct().ToList();
+
+                GravarFicha(produto, lstUid, novaVariant, fichaTecnicaDoMaterial, lstFichaTecnicaMaterialItem, CorDoProduto, tamanhoDoProduto, ref sequencia);
+
+
                 ComposicaoService.gradeDetalheService.lstDetalhe.Clear();
             }
             catch (Exception ex)
@@ -241,25 +376,20 @@ namespace TemplateAudacesApi.Services
 
         private String RetornarCor(Variant variant, Material material)
         {
-            if (material.color != null &&  material.color.GetType().FullName == "System.Text.Json.JsonElement")
+            if (material.color != null && material.color.GetType().FullName == "System.Text.Json.JsonElement")
             {
-                
-
                 if (!string.IsNullOrEmpty(material.color.ToString()))
                 {
                     var vet = material.color.ToString().Split(":");
                     return vet[0].ToString();
                 }
-                 
+
 
             }
             if (variant.custom_fields != null && variant.custom_fields.color != null)
             {
                 return variant.custom_fields.color.value;
             }
-            
-
-
             return "";
         }
 
@@ -279,23 +409,16 @@ namespace TemplateAudacesApi.Services
 
 
         private FichaTecnicaDoMaterialItem IncluirFichaTecnicaMaterialItem(Produto produtoHeader,
+            Cor corDoProduto,
+            Tamanho tamanhoDoProduto,
             FichaTecnicaDoMaterial fichaTecnicaDoMaterial,
+            FichaTecnicaDoMaterialItem itemFichaTecnicaDoMaterial,
             Produto produtoMaterial,
-            ProdutoFornecedorPreco produtoFornecedorPreco,
-            decimal quantidade,
-            decimal precoDoItem,
-            short sequencia)
+            Cor corDoMaterial,
+            Tamanho tamanho
+            )
         {
-            var itemFichaTecnicaDoMaterial = new FichaTecnicaDoMaterialItem();
-            itemFichaTecnicaDoMaterial.FichaTecnicaId = fichaTecnicaDoMaterial.Id;
-            itemFichaTecnicaDoMaterial.MateriaPrimaId = produtoMaterial.Id;
-            itemFichaTecnicaDoMaterial.preco = precoDoItem;
-            itemFichaTecnicaDoMaterial.DestinoId = 1;
-            itemFichaTecnicaDoMaterial.idFornecedor = produtoFornecedorPreco.IdFornecedor;
-            itemFichaTecnicaDoMaterial.quantidade = quantidade;
-            itemFichaTecnicaDoMaterial.sequencia = sequencia;
 
-            fichaTecnicaDoMaterialRepositoryItem.Save(ref itemFichaTecnicaDoMaterial);
 
             var fichatecnicaRelacaoRepository = new FichaTecnicaDoMaterialRelacaoRepository();
             var fichatecnicarRelacao = new FichaTecnicaDoMaterialRelacao();
@@ -303,50 +426,222 @@ namespace TemplateAudacesApi.Services
             fichatecnicarRelacao.FichaTecnicaItemId = itemFichaTecnicaDoMaterial.Id;
             fichatecnicarRelacao.FichaTecnicaId = fichaTecnicaDoMaterial.Id;
             fichatecnicarRelacao.ProdutoId = produtoHeader.Id;
+
             fichatecnicarRelacao.MateriaPrimaId = produtoMaterial.Id;
-            fichatecnicarRelacao.Cor_Produto_Id = Convert.ToInt32(produtoFornecedorPreco.IdCor);
-            fichatecnicarRelacao.cor_materiaprima_Id = Convert.ToInt32(produtoFornecedorPreco.IdCor);
-            fichatecnicarRelacao.Tamanho_Materiaprima_Id = Convert.ToInt32(produtoFornecedorPreco.IdTamanho);
-            fichatecnicarRelacao.Tamanho_Produto_Id = Convert.ToInt32(produtoFornecedorPreco.IdTamanho); ;
+
+            fichatecnicarRelacao.Cor_Produto_Id = Convert.ToInt32(corDoProduto.Id);
+            fichatecnicarRelacao.Tamanho_Produto_Id = Convert.ToInt32(tamanhoDoProduto.Id);
+
+
+            fichatecnicarRelacao.cor_materiaprima_Id = Convert.ToInt32(corDoMaterial.Id);
+            fichatecnicarRelacao.Tamanho_Materiaprima_Id = Convert.ToInt32(tamanho.Id);
+
 
             fichatecnicaRelacaoRepository.Save(ref fichatecnicarRelacao);
 
             return itemFichaTecnicaDoMaterial;
         }
 
-        private FichaTecnicaDoMaterial IncluirNovaFicha(Garment garment, Produto produto)
+
+        private FichaTecnicaDoMaterial GravarFichaTecnicaHeader(Garment garment, Produto produto)
         {
-            var ficha = new FichaTecnicaDoMaterial();
+            var fichaTecnica = new FichaTecnica();
+            var fichaDoMaterial = new FichaTecnicaDoMaterial();
+            try
+            {
+                fichaDoMaterial.EmpresaId = Vestillo.Lib.Funcoes.GetIdEmpresaLogada;
+                fichaDoMaterial.ProdutoId = produto.Id;
+                fichaDoMaterial.Ativo = true;
+                fichaDoMaterial.DataAlteracao = Convert.ToDateTime(garment.last_modified);
+                fichaDoMaterial.Observacao = produto.Obs;
+                fichaDoMaterial.UserId = 1;
+                fichaDoMaterial.Total = Convert.ToDecimal(garment.variants.Sum(p => p.value));
+                fichaDoMaterial.possuiquebra = false;
+
+                fichaTecnica.ProdutoId = produto.Id;
+                fichaTecnica.Observacao = produto.Obs;
+                fichaTecnica.Ativo = true;
+                fichaTecnica.EmpresaId = Vestillo.Lib.Funcoes.GetIdEmpresaLogada;
+
+                FichaTecnicaRepository.Save(ref fichaTecnica);
+                FichaTecnicaDoMaterialRepository.Save(ref fichaDoMaterial); //salvei a ficha
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Erro ao gravar GravarFichaTecnicaHeader " + ex.Message);
+            }
+            return fichaDoMaterial;
+
+        }
+        private FichaTecnicaDoMaterial PrepararParaInclusaoDeNovaFicha(Garment garment, 
+                                    Produto produto, FichaTecnicaDoMaterial ficha)
+        {
+           
             List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
             try
             {
-                ficha.EmpresaId = Vestillo.Lib.Funcoes.GetIdEmpresaLogada;
-                ficha.ProdutoId = produto.Id;
-                ficha.Ativo = true;
-                ficha.DataAlteracao = Convert.ToDateTime(garment.last_modified);
-                ficha.Observacao = produto.Obs;
-                ficha.UserId = 1;
-                ficha.Total = Convert.ToDecimal(garment.variants.Sum(p => p.value));
-                ficha.possuiquebra = false;
-
-                FichaTecnicaDoMaterialRepository.Save(ref ficha); //salvei a ficha
-
                 //inclui itens da ficha
                 if (garment.variants != null && garment.variants.Any() && garment.variants[0].materials != null && garment.variants[0].materials.Any())
                 {
-                    lstFichaTecnicaMaterialItem = IncluirItensFichaTecnica(garment, ficha, produto);
+                    if (ficha == null || ficha.Id==0)
+                    ficha = GravarFichaTecnicaHeader(garment, produto);
+
+                    short sequencia = 1;
+
+                    List<Models.ItemPraGravar> lstItemPraGravar = RetornarPossiveisCombinacoes(garment);
+
+                    List<Models.Ficha> lstFicha = RetornarListaASerGravada(ficha, out sequencia, lstItemPraGravar);
+
+                    GravarFichaDeMaterialItemERelacao(produto, ficha, lstFichaTecnicaMaterialItem, lstFicha);
+
                 }
 
             }
 
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
             return ficha;
         }
 
+        private void GravarFichaDeMaterialItemERelacao(Produto produto, 
+                                                        FichaTecnicaDoMaterial ficha, 
+                                                        List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem,
+                                                        List<Models.Ficha> lstFicha)
+        {
+            try
+            {
+                foreach (var itemFicha in lstFicha)
+                {
+                    var produtoMaterial = produtoRepository.GetByReferencia(itemFicha.uidMateriaPrima);
+                    var itemFichaTecnicaDoMaterial = new FichaTecnicaDoMaterialItem();
+                    itemFichaTecnicaDoMaterial.FichaTecnicaId = itemFicha.idFicha;
+                    itemFichaTecnicaDoMaterial.MateriaPrimaId = produtoMaterial.Id;
+
+                    itemFichaTecnicaDoMaterial.DestinoId = 1;
+
+                    itemFichaTecnicaDoMaterial.quantidade = itemFicha.quantidade;
+
+                    itemFichaTecnicaDoMaterial.preco = itemFicha.valor;
+                    itemFichaTecnicaDoMaterial.sequencia = itemFicha.sequencia;
+
+                    var corDoProduto = new Cor();
+                    var tamanhoDoProduto = new Tamanho();
+
+                    corDoProduto = Utils.RetornarCor(itemFicha.corProduto);
+
+
+                    fichaTecnicaDoMaterialRepositoryItem.Save(ref itemFichaTecnicaDoMaterial);
+                    foreach (var itemRelacao in itemFicha.Itens)
+                    {
+
+
+                        tamanhoDoProduto = Services.Utils.RetornarTamanho(itemRelacao.tamanhoProduto);
+
+                        var corDoMaterial = Utils.RetornarCor(itemRelacao.descCorMateriaPrima);
+                        var tamanhoDoMaterial = Utils.RetornarTamanho(itemRelacao.descTamanhoMateriaPrima);
+
+                        FichaTecnicaDoMaterialItem fichaTecnicaDoMaterialItem =
+                            IncluirFichaTecnicaMaterialItem(produto,
+                        corDoProduto,
+                        tamanhoDoProduto,
+                        ficha,
+                        itemFichaTecnicaDoMaterial,
+                        produtoMaterial,
+                        corDoMaterial,
+                        tamanhoDoMaterial
+                        );
+                        lstFichaTecnicaMaterialItem.Add(fichaTecnicaDoMaterialItem);
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Erro ao gravar ficha de material item e relacao " + ex.Message);
+            }
+        }
+
+        private List<Models.Ficha> RetornarListaASerGravada(FichaTecnicaDoMaterial ficha, out short sequencia, List<Models.ItemPraGravar> lstItemPraGravar)
+        {
+            try
+            {
+                List<Models.Ficha> lstFicha = null;
+                var lst = from p in lstItemPraGravar
+                          group p by new { p.corProduto, p.uidMateriaPrima }
+                             into g
+                          orderby g.Key.corProduto
+                          select new Models.Ficha
+                          {
+                              corProduto = g.Key.corProduto,
+                              uidMateriaPrima = g.Key.uidMateriaPrima,
+                              Itens = g.ToList()
+                          };
+
+                sequencia = 1;
+
+                lstFicha = new List<Models.Ficha>();
+                foreach (var item in lst)
+                {
+                    var NovaFicha = new Models.Ficha();
+                    NovaFicha.idFicha = ficha.Id;
+                    NovaFicha.corProduto = item.corProduto;
+                    NovaFicha.uidMateriaPrima = item.uidMateriaPrima;
+                    NovaFicha.sequencia = sequencia;
+                                     
+                    NovaFicha.quantidade = item.Itens.Sum(p => p.quantidade);
+                    NovaFicha.valor = NovaFicha.quantidade * item.Itens.Sum(p => p.valor);
+                    NovaFicha.Itens = item.Itens;
+                    lstFicha.Add(NovaFicha);
+                    sequencia += 1;
+                }
+                return lstFicha;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Erro ao retornar lista a ser gravada RetornarListaASerGravada " + ex.Message);
+            }
+        }
+
+        private List<Models.ItemPraGravar> RetornarPossiveisCombinacoes(Garment garment)
+        {
+            var lstItemPraGravar = new List<Models.ItemPraGravar>();
+            try
+            {
+                foreach (var variant in garment.variants)
+                {
+
+                    foreach (var material in variant.materials)
+                    {
+                        var itemPraGravar = new Models.ItemPraGravar();
+
+                        itemPraGravar.uidMateriaPrima = material.uid;
+                        itemPraGravar.corProduto = variant.CorDaVariant;
+                        itemPraGravar.tamanhoProduto = variant.TamanhoVariant;
+                        itemPraGravar.quantidade = material.amount;
+                        itemPraGravar.descCorMateriaPrima = RetornarCor(variant, material);
+                        itemPraGravar.descTamanhoMateriaPrima = RetornarTamanho(variant, material);
+                        itemPraGravar.valor = Convert.ToDecimal(material.total);
+                        lstItemPraGravar.Add(itemPraGravar);
+
+
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Erro ao retornar possiveis combinacoes RetornarPossiveisCombinacoes " + ex.Message);
+            }
+
+            return lstItemPraGravar;
+        }
 
         private void AlterarFicha(Garment garment, FichaTecnicaDoMaterial fichaVestilo, Produto produto)
         {
@@ -365,7 +660,7 @@ namespace TemplateAudacesApi.Services
                 if (garment.variants != null && garment.variants.Any())
                 {
                     //inclui itens da ficha
-                    lstFichaTecnicaMaterialItem = IncluirItensFichaTecnica(garment, fichaVestilo, produto);
+                     PrepararParaInclusaoDeNovaFicha(garment,produto, fichaVestilo);
 
                 }
             }
@@ -403,16 +698,16 @@ namespace TemplateAudacesApi.Services
         }
 
 
-        public List<FichaTecnicaDoMaterialRelacao> RetornarItensDaFichaRelacao(Produto produto)
+        public List<FichaTecnicaDoMaterialRelacao> RetornarItensDaFichaRelacao(FichaTecnicaDoMaterial ficha)
         {
             var fichatecnicaRelacaoRepository = new FichaTecnicaDoMaterialRelacaoRepository();
-           
-            var fichatecnica = RetornarFichaTecnica(produto);
-            if (fichatecnica != null)
-                return fichatecnicaRelacaoRepository.GetAllViewByFichaTecnica(fichatecnica.Id).ToList();
-            else
-                throw new Exception($"Produto:{produto.Referencia}, não possui ficha tecnica");
+
           
+            if (ficha != null)
+                return fichatecnicaRelacaoRepository.GetAllViewByFichaTecnica(ficha.Id).ToList();
+            else
+                throw new Exception($"Produto:{ficha.ProdutoId}, não possui ficha tecnica");
+
         }
 
         //public List<Item> RetornarItensDaFichaTecnica(Produto produto, List<Color> colors, List<Size> size)
@@ -478,13 +773,37 @@ namespace TemplateAudacesApi.Services
                 item.name = produtoItem.Descricao;
                 item.last_modified = produtoItem.DataAlteracao.ToString();
                 item.date_register = produtoItem.DataCadastro.ToString();
-                item.value  = produtoItem.PrecoVenda.ToString();
+                item.value = produtoItem.PrecoVenda.ToString();
                 item.product_group = grupo?.Id + "-" + grupo?.Descricao;
                 item.supplier = fornecedor?.Id + "-" + fornecedor?.RazaoSocial;
                 item.measure_unit = uniMedida?.Id + "-" + uniMedida?.Descricao;
                 item.Tamanho = item.measure_unit;
+
+                var corMateriaPrima = Utils.RetornarCor(itemFicha.cor_materiaprima_Id);
+
+                //if (!item.colors.Any(p=> p.uid == corMateriaPrima.Id.ToString()))
+                //     item.colors.Add(new Color { description = corMateriaPrima.Descricao, uid = corMateriaPrima.Id.ToString(), value = corMateriaPrima.Descricao });
+
+                var color = new Color { description = corMateriaPrima.Descricao, uid = corMateriaPrima.Id.ToString(), value = corMateriaPrima.Descricao };
+
+                var tamanhoMateriaPrima = Utils.RetornarTamanho(itemFicha.Tamanho_Materiaprima_Id);
+                //  var tamanho = new Size { uid = tamanhoMateriaPrima.Id.ToString(), value = tamanhoMateriaPrima.Descricao };
+
+                //if (!item.sizes.Any(p => p.uid == tamanhoMateriaPrima.Id.ToString()))
+                //     item.sizes.Add(new Size {  uid = tamanhoMateriaPrima.Id.ToString(), value = tamanhoMateriaPrima.Descricao });
+
                 item.notes = produtoItem.Obs;
                 item.collection = produtoItem.Colecao;
+                var variant = new Variant()
+                {
+                    name = corMateriaPrima.Id + "-" + corMateriaPrima.Descricao + "-" + tamanhoMateriaPrima.Descricao,
+                    label = corMateriaPrima.Id + "-" + corMateriaPrima.Descricao + "-" + tamanhoMateriaPrima.Descricao,
+                    color = color,
+                    size = tamanhoMateriaPrima.Descricao
+
+                };
+
+                item.variants.Add(variant);
                 itens.Add(item);
             }
         }

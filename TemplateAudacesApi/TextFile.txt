@@ -10,6 +10,6 @@ sudo docker push your_user_name/new_image:latest
 good luck!
 
 
-docker run -d -p 2520:80 -e "ConnectionStrings__MyConnectionString=Server=192.168.0.107; port=3306;user id=root;password=Leo141827;database=vestillo;pooling=true" leopac/audacesapi --network="host"
+docker run -d -p 2520:80 -e "ConnectionStrings__MyConnectionString=Server=192.168.0.107; port=3306;user id=root;password=Leo141827;database=vestillo;pooling=true" -e "parametros__empresa=1" leopac/audacesapi --network="host"
 
 docker run -d -p 2520:80 -e "ConnectionStrings__MyConnectionString=Server=192.168.0.107; port=3306;user id=root;password=Leo141827;database=vestillo;pooling=true" leopac/audacesapi --network="host"

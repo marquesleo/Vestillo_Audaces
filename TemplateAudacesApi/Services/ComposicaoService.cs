@@ -120,7 +120,7 @@ namespace TemplateAudacesApi.Services
             
             Cor cor;
             Tamanho tamanho;
-            GravarCorETamanho(color, size, out cor, out tamanho);
+            CarregarCorETamanho(color, size, out cor, out tamanho);
 
 
             Colaborador fornecedor = Utils.RetornarFornecedorDoProduto(produto);
@@ -151,8 +151,8 @@ namespace TemplateAudacesApi.Services
         {
             Cor cor;
             Tamanho tamanho;
-            GravarCorETamanho(color, size, out cor, out tamanho);
-            gradeDetalheService.IncluirDetalhe(produto, cor, tamanho);//vincula o produto com a grade
+            CarregarCorETamanho(color, size, out cor, out tamanho);
+           // gradeDetalheService.IncluirDetalhe(produto, cor, tamanho);//vincula o produto com a grade
         }
 
         public void ExcluirGradeDeProduto(Produto produto)
@@ -168,21 +168,17 @@ namespace TemplateAudacesApi.Services
             }
         }
 
-        private void GravarCorETamanho(string color, string size, out Cor cor, out Tamanho tamanho)
+        private void CarregarCorETamanho(string color, string size, out Cor cor, out Tamanho tamanho)
         {
             cor = new Cor();
             tamanho = new Tamanho();
-            IncluirCor(ref cor, color);
-            IncluirTamanho(size, ref tamanho);
+            CarregarTamanho(size, ref tamanho);
+            CarregarCor(ref cor, color);
+           
 
         }
 
-       
-    
-
-
-
-        private void IncluirTamanho(string size, ref Tamanho Tamanho)
+        private void CarregarTamanho(string size, ref Tamanho Tamanho)
         {
             if (!string.IsNullOrEmpty(size))
             {
@@ -191,7 +187,7 @@ namespace TemplateAudacesApi.Services
 
         }
 
-        private void IncluirCor(ref Cor cor, string  color)
+        private void CarregarCor(ref Cor cor, string  color)
         {
             try
             {

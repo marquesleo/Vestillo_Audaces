@@ -126,7 +126,15 @@ namespace TemplateAudacesApi.Controllers
             try
             {
 
+                if (reference == "FICHA001" || uid == "FICHAMODELO")
+                {
+                    items.Add(retornarFichaModelo());
+                    return items;
+                }
+                else
+                {
 
+               
                 
                 
                 if (!string.IsNullOrWhiteSpace(type) &&  type.Equals("activity"))
@@ -178,6 +186,7 @@ namespace TemplateAudacesApi.Controllers
                     var lstProdutos = ProdutoServices.GetListMaterialPorFiltros(1, reference, description, product_group, supplier);
                     if (lstProdutos != null && lstProdutos.Any())
                         items.AddRange(lstProdutos);
+                }
                 }
             }
             catch (Exception ex)
@@ -275,10 +284,39 @@ namespace TemplateAudacesApi.Controllers
 
         }
 
+        private object retornarFichaModelo()
+        {
+           
+            var produto =    new Garment()
+            {
+                name = "FICHAMODELO",
+                uid = "FICHAMODELO",
+                description = "UTILIZAR ESSE MODELO PARA FICHA MODELO",
+          
+            };
 
+            var customFieldsCores = new CustomFields();
+            customFieldsCores.name = "COR";
+            customFieldsCores.type = "string";
+            var lstCores = new List<string>();
+            Services.Utils.lstCor.ForEach(c => lstCores.Add(c.Id + "-" + c.Descricao));
+            customFieldsCores.options = lstCores;
+            customFieldsCores.editable = "true";
+            
+            var customFieldsTamanho = new CustomFields();
+            customFieldsTamanho.name = "TAMANHO";
+            customFieldsTamanho.type = "string";
+            var lstTamanho = new List<string>();
+            Services.Utils.lstTamanho.ForEach(t => lstTamanho.Add(t.Id + "-" + t.Descricao));
 
+            customFieldsTamanho.options = lstTamanho;
+            customFieldsTamanho.editable = "true";
+            
+            produto.custom_fields.Add(customFieldsCores);
+            produto.custom_fields.Add(customFieldsTamanho);
 
-
+            return produto;
+        }
 
         [HttpPost]
         [Route("v1/garment")]
@@ -290,6 +328,7 @@ namespace TemplateAudacesApi.Controllers
             try
             {
                 ValidarProdutoParaGravacao(value, uid);
+
                 var FichaTecnicaMaterial = FichaTecnicaService.Incluir(value);
                 ret = new StatusRetorno()
                 {

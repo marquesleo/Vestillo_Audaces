@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TemplateAudacesApi.Models
 {
-    public class Garment :  Interface.IProdutoAcabado
+    public class Garment
     {
         public Garment()
         {
@@ -34,12 +34,19 @@ namespace TemplateAudacesApi.Models
         public string currency { get; set; }
         public ICollection<string> composition { get; set; }
         public string responsible { get; set; }
-        public CustomFields custom_fields { get; set; } = new CustomFields();
+        public List<CustomFields> custom_fields { get; set; } = new List<CustomFields>();
         public ICollection<Size> sizes { get; set; } = new List<Size>();
         public ICollection<Price> prices { get; set; } = new List<Price>();
         public List<Variant> variants { get; set; } = new List<Variant>();
+
+
+      
+
         public List<Variation> variations { get; set; } 
+
         public ICollection<Item> items { get; set; } = new List<Item>();
+
+
         public string color_1 { get; set; }
         public string color_2 { get; set; }
         public string instance_uid { get; set; }

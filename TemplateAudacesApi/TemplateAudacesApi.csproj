@@ -27,21 +27,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Vestillo.Business">
-      <HintPath>biblioteca\Vestillo.Business.dll</HintPath>
-      <CopyLocal>True</CopyLocal>
-    </Reference>
-    <Reference Include="Vestillo.Connection">
-      <HintPath>biblioteca\Vestillo.Connection.dll</HintPath>
-      <CopyLocal>True</CopyLocal>
-    </Reference>
-    <Reference Include="Vestillo.Lib">
-      <HintPath>biblioteca\Vestillo.Lib.dll</HintPath>
-      <CopyLocal>True</CopyLocal>
-    </Reference>
+    <None Remove="docker-compose.yml" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="docker-compose.yml" />
+    <Reference Include="Vestillo.Business">
+      <HintPath>biblioteca\Vestillo.Business.dll</HintPath>
+    </Reference>
+    <Reference Include="Vestillo.Connection">
+      <HintPath>biblioteca\Vestillo.Connection.dll</HintPath>
+    </Reference>
+    <Reference Include="Vestillo.Core">
+      <HintPath>biblioteca\Vestillo.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Vestillo.Lib">
+      <HintPath>biblioteca\Vestillo.Lib.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

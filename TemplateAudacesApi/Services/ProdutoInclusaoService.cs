@@ -79,7 +79,7 @@ namespace TemplateAudacesApi.Services
                 produto.IdUniMedida = uniMedida.Id;
                 produto.IdGrupo = 1;
                 produto.IdAlmoxarifado = 1;
-                produto.PrecoVenda = 0;
+                produto.PrecoVenda = variant.value;
                 produto.Obs= variant.notes;
                 produto.DataAlteracao = Convert.ToDateTime(garment.last_modified);
                 produto.IdColecao =  colecao?.Id;
@@ -136,10 +136,10 @@ namespace TemplateAudacesApi.Services
                     produto.Obs += " \n ";
 
                 produto.Obs += ";autor:" + garment.author;
-            }
+            } 
 
-
-            produto.Colecao = garment.collection;
+            var colecao = Utils.RetornarColecao(garment.collection);
+            produto.IdColecao = colecao?.Id;
             produtoRepository.Save(ref produto);
                                               
             return produto;
