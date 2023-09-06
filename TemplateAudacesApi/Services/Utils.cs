@@ -20,6 +20,29 @@ namespace TemplateAudacesApi.Services
             }
         }
 
+        private static ProdutoRepository _produtoRepository;
+        private static ProdutoRepository produtoRepository
+        {
+            get
+            {
+                if (_produtoRepository == null)
+                    _produtoRepository = new ProdutoRepository();
+
+                return _produtoRepository;
+            }
+        }
+
+        private static List<Produto> _lstProduto;
+        public static List<Produto> lstProduto
+        {
+            get
+            {
+                if (_lstProduto == null)
+                    _lstProduto = new List<Produto>();
+                return _lstProduto;
+            }
+        }
+
         private static ColecaoRepository _ColecaoRepository;
         private static ColecaoRepository ColecaoRepository
         {
@@ -91,9 +114,20 @@ namespace TemplateAudacesApi.Services
             }
         }
 
+        private static List<Colaborador> _lstFornecedor;
+        private static List<Colaborador> lstFornecedor
+        {
+            get
+            {
+                if (_lstFornecedor == null)
+                    _lstFornecedor = new List<Colaborador>();
 
+                return _lstFornecedor;
+            }
+        }
         public static Colaborador RetornarFornecedorDoProduto(Produto produto)
         {
+            var fornecedor = new Colaborador();
             try
             {
                 var FornecedorPreco = new ProdutoFornecedorPreco();
@@ -102,15 +136,21 @@ namespace TemplateAudacesApi.Services
                 if (produto.Fornecedor != null && produto.Fornecedor.Any())
                 {
                     FornecedorPreco = produto.Fornecedor.FirstOrDefault();
+
+                    fornecedor = lstFornecedor.FirstOrDefault(p => p.Id == FornecedorPreco.IdFornecedor);
+                    if (fornecedor == null || fornecedor.Id == 0)
+                    {
+                        fornecedor = ColaboradorRepository.GetById(FornecedorPreco.IdFornecedor);
+                        lstFornecedor.Add(fornecedor);
+                    }
                 }
-                var fornecedor = ColaboradorRepository.GetById(FornecedorPreco.IdFornecedor);
-                return fornecedor;
             }
             catch (Exception ex)
             {
 
                 throw;
             }
+            return fornecedor;
         }
         public static GrupProduto RetornarGrupo(string descricao)
         {
@@ -157,7 +197,8 @@ namespace TemplateAudacesApi.Services
                     {
                         codigo = vet[0];
                         descricao = vet[1];
-                        cor = CorRepository.GetById(Convert.ToInt32(codigo));
+                        cor = lstCor.FirstOrDefault(p=> p.Id == Convert.ToInt32(codigo));
+                       
                     }
 
                 }
@@ -166,6 +207,8 @@ namespace TemplateAudacesApi.Services
                     if (lstCor != null && lstCor.Any())
                     {
                         cor = getCor(lstCor, descricao);
+                        if (cor == null || cor.Id == 0)
+                            cor = lstCor.FirstOrDefault(p => p.Id == Convert.ToInt32(descricao));
                     }
 
                 }
@@ -192,7 +235,7 @@ namespace TemplateAudacesApi.Services
                 if (_lstCor == null)
                 {
                     _lstCor = new List<Cor>();
-                    _lstCor = CorRepository.GetByAtivos(1).ToList();
+                    _lstCor = CorRepository.GetAll().ToList();
 
                 }
                 return _lstCor;
@@ -231,6 +274,29 @@ namespace TemplateAudacesApi.Services
 
             return cor;
         }
+
+
+        public static Produto RetornarProduto(int idProduto)
+        {
+            Produto produto = new Produto();
+
+
+            if (idProduto > 0)
+            {
+                produto = lstProduto.Find(p => p.Id == idProduto);
+                if (produto == null || produto.Id == 0)
+                {
+                    produto = produtoRepository.GetById(Convert.ToInt32(idProduto));
+                    if (produto != null)
+                        lstProduto.Add(produto);
+                }
+
+            }
+
+            return produto;
+        }
+
+
 
 
         public static Colecao RetornarColecao(string descricao)
@@ -305,6 +371,22 @@ namespace TemplateAudacesApi.Services
             }
         }
 
+        private static List<GrupProduto> _lstGrupo;
+        public static List<GrupProduto> lstGrupo
+        {
+            get
+            {
+                if (_lstGrupo == null)
+                {
+                    _lstGrupo = new List<GrupProduto>();
+                
+                    _lstGrupo = GrupoProdutoRepository.GetAll().ToList();
+                }
+                return _lstGrupo;
+            }
+        }
+
+
         public static Tamanho RetornarTamanho(int idTamanho)
         {
             var tamanho = new Tamanho();
@@ -328,7 +410,7 @@ namespace TemplateAudacesApi.Services
         public static Tamanho RetornarTamanho(string descricao)
         {
             Tamanho tamanho = new Tamanho();
-            IEnumerable<Tamanho> lstTamanho = null;
+          
             string codigo = string.Empty;
             if (!string.IsNullOrWhiteSpace(descricao))
             {
@@ -339,17 +421,14 @@ namespace TemplateAudacesApi.Services
                     {
                         codigo = vet[0];
                         descricao = vet[1];
-                        tamanho = TamanhoRepository.GetById(Convert.ToInt32(codigo));
+                        tamanho = lstTamanho.FirstOrDefault(p => p.Id ==  Convert.ToInt32(codigo));
                     }
 
                 }
                 else
                 {
-                    lstTamanho = TamanhoRepository.GetListPorDescricao(descricao);
-                    if (lstTamanho != null && lstTamanho.Any())
-                    {
-                        tamanho = lstTamanho.FirstOrDefault();
-                    }
+                    tamanho = lstTamanho.FirstOrDefault(p => p.Descricao.Contains(descricao));
+                    
                 }
             }
 
@@ -359,8 +438,8 @@ namespace TemplateAudacesApi.Services
 
         public static Colecao RetornarColecao(int codigo)
         {
-            Colecao colecao = new Colecao();
-            colecao = ColecaoRepository.GetById(codigo);
+
+            var colecao = lstColecao.FirstOrDefault(p => p.Id == codigo);
             return colecao;
         }
 
@@ -369,27 +448,14 @@ namespace TemplateAudacesApi.Services
 
             try
             {
-                colecao = RetornarColecao(descricao);
-                if (colecao == null || colecao.Id == 0)
-                {
-                    var vetColecao = descricao.Split("-");
-                    if (vetColecao != null && vetColecao.Length == 2)
-                    {
-                        colecao = new Colecao();
-                        colecao.Id = Convert.ToInt32(vetColecao[0].ToString());
-                        colecao.Descricao = vetColecao[1];
-
-                    }
-                    else
-                    {
-                        colecao.Descricao = descricao;
-
-                    }
-                    colecao.Abreviatura = colecao.Descricao;
-                    colecao.IdEmpresa = 1;
+                    colecao = new Colecao();
+                    colecao.Abreviatura = descricao;
+                    colecao.Descricao = descricao;
+                    colecao.IdEmpresa = Vestillo.Lib.Funcoes.GetIdEmpresaLogada;
                     ColecaoRepository.Save(ref colecao);
+                    lstColecao.Add(colecao);
 
-                }
+      
             }
             catch (Exception ex)
             {
@@ -400,7 +466,7 @@ namespace TemplateAudacesApi.Services
         public static GrupProduto RetornarGrupo(int codigo)
         {
             GrupProduto grupo = new GrupProduto();
-            grupo = GrupoProdutoRepository.GetById(codigo);
+            grupo = lstGrupo.FirstOrDefault(p => p.Id == codigo);
             return grupo;
         }
 
@@ -438,11 +504,31 @@ namespace TemplateAudacesApi.Services
 
         }
 
+        private static List<UniMedida> _lstUnidade;
+        public static List<UniMedida> lstUnidade
+        {
+            get
+            {
+                if (_lstUnidade == null)
+                    _lstUnidade = new List<UniMedida>();
+                return _lstUnidade;
+            }
+        }
+
         public static UniMedida RetornarUnidade(int IdUnidade)
         {
             UniMedida uniMedida = new UniMedida();
 
-            uniMedida = UniMedidaRepository.GetById(IdUnidade);
+            if (IdUnidade > 0)
+            {
+                uniMedida = lstUnidade.FirstOrDefault(p => p.Id == IdUnidade);
+                if (uniMedida == null || uniMedida.Id == 0)
+                {
+                    uniMedida = UniMedidaRepository.GetById(IdUnidade);
+                    lstUnidade.Add(uniMedida);
+                }
+            }
+       
 
             return uniMedida;
         }

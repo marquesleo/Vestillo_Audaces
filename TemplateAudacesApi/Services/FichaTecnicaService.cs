@@ -140,13 +140,10 @@ namespace TemplateAudacesApi.Services
                     produto = produtoInclusaoService.AlterarProdutoAcabado(garment, produto, descricao);
                 }
 
-                fichaTecnica = RetornarFichaTecnica(produto);
-                fichaVestiloMaterial = fichaTecnicaDoMaterialRepository.GetById(fichaTecnica.Id);
-
-
-                if (fichaVestiloMaterial != null && fichaVestiloMaterial.Id > 0)
+                var fichaTecnicaMaterial = FichaTecnicaDoMaterialRepository.GetByProduto(produto.Id);
+                if (fichaTecnicaMaterial != null && fichaTecnicaMaterial.Id > 0)
                 {
-                    AlterarFicha(garment, fichaVestiloMaterial, produto);
+                    fichaVestiloMaterial = AlterarFicha(garment, fichaTecnicaMaterial, produto);
                 }
                 else
                 {
@@ -156,7 +153,7 @@ namespace TemplateAudacesApi.Services
             }
             catch (Exception ex)
             {
-                ExcluirRelacaoQuandoDaProblema(produto);
+                // ExcluirRelacaoQuandoDaProblema(produto);
                 produtoRepository.RollbackTransaction();
                 throw ex;
             }
@@ -212,12 +209,13 @@ namespace TemplateAudacesApi.Services
             var itemFichaTecnicaDoMaterial = new FichaTecnicaDoMaterialItem();
             itemFichaTecnicaDoMaterial.FichaTecnicaId = fichaTecnicaDoMaterial.Id;
             itemFichaTecnicaDoMaterial.MateriaPrimaId = produtoMaterial.Id;
-
+            itemFichaTecnicaDoMaterial.percentual_custo = 100;
             itemFichaTecnicaDoMaterial.DestinoId = 1;
 
             itemFichaTecnicaDoMaterial.quantidade = variant.materials.Sum(p => p.amount);
-
-            itemFichaTecnicaDoMaterial.preco = variant.value * itemFichaTecnicaDoMaterial.quantidade;
+            var total = Convert.ToDecimal(variant.value) * itemFichaTecnicaDoMaterial.quantidade;
+            itemFichaTecnicaDoMaterial.preco = total;
+            itemFichaTecnicaDoMaterial.valor = total;
             itemFichaTecnicaDoMaterial.sequencia = sequencia;
 
             fichaTecnicaDoMaterialRepositoryItem.Save(ref itemFichaTecnicaDoMaterial);
@@ -225,56 +223,15 @@ namespace TemplateAudacesApi.Services
 
             foreach (var material in variant.materials)
             {
-                //produtoMaterial = produtoRepository.GetByReferencia(material.uid);
-                //var itemFichaTecnicaDoMaterial = new FichaTecnicaDoMaterialItem();
-                //itemFichaTecnicaDoMaterial.FichaTecnicaId = fichaTecnicaDoMaterial.Id;
-                //itemFichaTecnicaDoMaterial.MateriaPrimaId = produtoMaterial.Id;
 
-                //itemFichaTecnicaDoMaterial.DestinoId = 1;
-
-                //itemFichaTecnicaDoMaterial.quantidade = variant.materials.Sum(p => p.amount);
-
-                //itemFichaTecnicaDoMaterial.preco = variant.value * itemFichaTecnicaDoMaterial.quantidade;
-                //itemFichaTecnicaDoMaterial.sequencia = sequencia;
-
-                //fichaTecnicaDoMaterialRepositoryItem.Save(ref itemFichaTecnicaDoMaterial);
-
-
-
-
-                //if (produtoMaterial != null && produtoMaterial.Id > 0)
-                //ComposicaoService.ExcluirFornecedoresDoProduto(produtoMaterial);//excluo a relacao de fornecedor e produto caso tenha
 
                 if (produtoMaterial == null || produtoMaterial.Id == 0)
-                    //inclui o item
+
                     produtoMaterial = produtoInclusaoService.IncluirProdutoMaterial(material);
 
 
 
-                //ComposicaoService.GravarGradeDeProduto(produto, cor, tamanho);
 
-                //relaciona o produto, fornecedor, tamanho e cor e a grade do produto
-                //produtoFornecedorPreco = ComposicaoService.GravarItemDaComposicao(material.supplier, produtoMaterial, cor,
-                //                                                         tamanho,
-                //                                                         Convert.ToDecimal(material.cost), false);//incluo a relacao de produto e fornecedor*/
-
-
-                /* 3814 - ACO - UNICO
-                   3814 - BRANCO - UNICO
-                   147  - ROXO - G 
-
-
-
-                   26 - ACO -  UNICO   |   3814 - ACO - UNICO
-                   26 - BRANCO - UNICO |   3814 - BRANCO - UNICO
-                   26 - ROXO -  G      |   3814 - 3814 - ACO - UNICO
-
-
-
-                 */
-
-
-                //vai montando a ficha
 
 
                 string descCor = RetornarCor(variant, material);
@@ -295,11 +252,6 @@ namespace TemplateAudacesApi.Services
                );
                 lstFichaTecnicaMaterialItem.Add(fichaTecnicaDoMaterialItem);
 
-
-
-
-
-                //}
                 sequencia += 1;
             }
         }
@@ -307,72 +259,7 @@ namespace TemplateAudacesApi.Services
 
 
 
-        private List<FichaTecnicaDoMaterialItem> IncluirItensFichaTecnica(Garment garment,
-                                         FichaTecnicaDoMaterial fichaTecnicaDoMaterial,
-                                         Produto produto,
-                                         Variant variant,
-                                         ref short sequencia)
-        {
-            List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
-
-            try
-            {
-
-                ComposicaoService.ExcluirGradeDeProduto(produto);
-                // var variant = garment.variants[0];
-
-
-                List<string> lstUid = new List<string>();
-                Produto produtoMaterial = null;
-
-                //peguei o item do material pelo codigo
-
-
-                var itensRepetidos = variant.materials
-                    .GroupBy(item => item.produto)
-                    .Where(group => group.Count() > 1)
-                    .Select(group => group.ToList()).ToList();
-
-                var novaVariant = new Variant();
-                novaVariant = variant.Clone(variant);
-                novaVariant.materials.Clear();
-                var materialRepetido = new Material();
-                var listaDeUid = new List<string>();
-
-                var CorDoProduto = new Cor();
-                var tamanhoDoProduto = new Tamanho();
-
-                Utils.RetornarCorETamanhoDoTexto(variant.name, ref CorDoProduto, ref tamanhoDoProduto);
-
-
-                if (itensRepetidos != null && itensRepetidos.Any())
-                {
-                    materialRepetido = itensRepetidos.ToList()[0][0];
-                    novaVariant.materials.Add(materialRepetido);
-                    lstUid.Add(materialRepetido.uid);
-                    GravarFicha(produto, lstUid, novaVariant, fichaTecnicaDoMaterial, lstFichaTecnicaMaterialItem, CorDoProduto, tamanhoDoProduto, ref sequencia);
-                    var materials = variant.materials.Where(p => p.produto != materialRepetido.produto).ToList();
-                    novaVariant.materials.AddRange(materials);
-
-                }
-                else
-                {
-                    novaVariant = variant;
-                }
-                lstUid = (from obj in novaVariant.materials select obj.uid).Distinct().ToList();
-
-                GravarFicha(produto, lstUid, novaVariant, fichaTecnicaDoMaterial, lstFichaTecnicaMaterialItem, CorDoProduto, tamanhoDoProduto, ref sequencia);
-
-
-                ComposicaoService.gradeDetalheService.lstDetalhe.Clear();
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-            return lstFichaTecnicaMaterialItem;
-        }
+     
 
         private String RetornarCor(Variant variant, Material material)
         {
@@ -381,7 +268,13 @@ namespace TemplateAudacesApi.Services
                 if (!string.IsNullOrEmpty(material.color.ToString()))
                 {
                     var vet = material.color.ToString().Split(":");
-                    return vet[0].ToString();
+                    var codigo = 0;
+                    if (int.TryParse(vet[0].ToString(),out codigo))
+                    {
+                        var cor =Utils.RetornarCor(codigo);
+                        return cor.Descricao;
+                    }else
+                       return vet[0].ToString();
                 }
 
 
@@ -455,7 +348,7 @@ namespace TemplateAudacesApi.Services
                 fichaDoMaterial.DataAlteracao = Convert.ToDateTime(garment.last_modified);
                 fichaDoMaterial.Observacao = produto.Obs;
                 fichaDoMaterial.UserId = 1;
-                fichaDoMaterial.Total = Convert.ToDecimal(garment.variants.Sum(p => p.value));
+                fichaDoMaterial.Total = Convert.ToDecimal(garment.variants[0].value);
                 fichaDoMaterial.possuiquebra = false;
 
                 fichaTecnica.ProdutoId = produto.Id;
@@ -474,26 +367,30 @@ namespace TemplateAudacesApi.Services
             return fichaDoMaterial;
 
         }
-        private FichaTecnicaDoMaterial PrepararParaInclusaoDeNovaFicha(Garment garment, 
+        private FichaTecnicaDoMaterial PrepararParaInclusaoDeNovaFicha(Garment garment,
                                     Produto produto, FichaTecnicaDoMaterial ficha)
         {
+
            
-            List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
             try
             {
                 //inclui itens da ficha
                 if (garment.variants != null && garment.variants.Any() && garment.variants[0].materials != null && garment.variants[0].materials.Any())
                 {
-                    if (ficha == null || ficha.Id==0)
-                    ficha = GravarFichaTecnicaHeader(garment, produto);
+                    bool inclusao = false;
+                    if (ficha == null || ficha.Id == 0)
+                    {
+                        ficha = GravarFichaTecnicaHeader(garment, produto);
+                        inclusao = true;
 
-                    short sequencia = 1;
+                    }   
+                 
 
-                    List<Models.ItemPraGravar> lstItemPraGravar = RetornarPossiveisCombinacoes(garment);
+                     GravarFichaTecnica(garment, ficha, produto, inclusao);
 
-                    List<Models.Ficha> lstFicha = RetornarListaASerGravada(ficha, out sequencia, lstItemPraGravar);
+                    //List<Models.Ficha> lstFicha = RetornarListaASerGravada(ficha, out sequencia, lstItemPraGravar);
 
-                    GravarFichaDeMaterialItemERelacao(produto, ficha, lstFichaTecnicaMaterialItem, lstFicha);
+                    //                    GravarFichaDeMaterialItemERelacao(produto, ficha, lstFichaTecnicaMaterialItem, lstFicha);
 
                 }
 
@@ -507,14 +404,21 @@ namespace TemplateAudacesApi.Services
             return ficha;
         }
 
-        private void GravarFichaDeMaterialItemERelacao(Produto produto, 
-                                                        FichaTecnicaDoMaterial ficha, 
+        private void GravarFichaDeMaterialItemERelacao(Produto produto,
+                                                        FichaTecnicaDoMaterial ficha,
                                                         List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem,
                                                         List<Models.Ficha> lstFicha)
         {
             try
             {
-                foreach (var itemFicha in lstFicha)
+                fichaTecnicaDoMaterialRepositoryItem.ExcluirRelacao(ficha.Id);
+                var fichatecnicaRelacaoRepository = new FichaTecnicaDoMaterialRelacaoRepository();
+                fichatecnicaRelacaoRepository.ExcluirRelacao(ficha.Id);
+                var lstMateriaPrimaGrava = new List<FichaTecnicaDoMaterialItem>();
+                short sequencia = 1;
+                int ultimoCodigoItemMateriaPrima = 0;
+
+                foreach (var itemFicha in lstFicha.OrderBy(p => p.uidMateriaPrima))
                 {
                     var produtoMaterial = produtoRepository.GetByReferencia(itemFicha.uidMateriaPrima);
                     var itemFichaTecnicaDoMaterial = new FichaTecnicaDoMaterialItem();
@@ -526,7 +430,8 @@ namespace TemplateAudacesApi.Services
                     itemFichaTecnicaDoMaterial.quantidade = itemFicha.quantidade;
 
                     itemFichaTecnicaDoMaterial.preco = itemFicha.valor;
-                    itemFichaTecnicaDoMaterial.sequencia = itemFicha.sequencia;
+                    itemFichaTecnicaDoMaterial.valor = itemFicha.valor;
+                    itemFichaTecnicaDoMaterial.sequencia = sequencia;
 
                     var corDoProduto = new Cor();
                     var tamanhoDoProduto = new Tamanho();
@@ -534,15 +439,22 @@ namespace TemplateAudacesApi.Services
                     corDoProduto = Utils.RetornarCor(itemFicha.corProduto);
 
 
-                    fichaTecnicaDoMaterialRepositoryItem.Save(ref itemFichaTecnicaDoMaterial);
+                    if (!lstMateriaPrimaGrava.Any(p => p.MateriaPrimaId == produtoMaterial.Id))
+                    {
+                        fichaTecnicaDoMaterialRepositoryItem.Save(ref itemFichaTecnicaDoMaterial);
+                        lstMateriaPrimaGrava.Add(itemFichaTecnicaDoMaterial);
+                        ultimoCodigoItemMateriaPrima = itemFichaTecnicaDoMaterial.Id;
+                        sequencia += 1;
+                    }
                     foreach (var itemRelacao in itemFicha.Itens)
                     {
 
-
-                        tamanhoDoProduto = Services.Utils.RetornarTamanho(itemRelacao.tamanhoProduto);
+                        itemFichaTecnicaDoMaterial.Id = ultimoCodigoItemMateriaPrima;
+                        tamanhoDoProduto = Utils.RetornarTamanho(itemRelacao.tamanhoProduto);
 
                         var corDoMaterial = Utils.RetornarCor(itemRelacao.descCorMateriaPrima);
                         var tamanhoDoMaterial = Utils.RetornarTamanho(itemRelacao.descTamanhoMateriaPrima);
+
 
                         FichaTecnicaDoMaterialItem fichaTecnicaDoMaterialItem =
                             IncluirFichaTecnicaMaterialItem(produto,
@@ -578,6 +490,7 @@ namespace TemplateAudacesApi.Services
                           select new Models.Ficha
                           {
                               corProduto = g.Key.corProduto,
+                              //tamanhoProduto = g.Key.tamanhoProduto,
                               uidMateriaPrima = g.Key.uidMateriaPrima,
                               Itens = g.ToList()
                           };
@@ -592,12 +505,15 @@ namespace TemplateAudacesApi.Services
                     NovaFicha.corProduto = item.corProduto;
                     NovaFicha.uidMateriaPrima = item.uidMateriaPrima;
                     NovaFicha.sequencia = sequencia;
-                                     
-                    NovaFicha.quantidade = item.Itens.Sum(p => p.quantidade);
-                    NovaFicha.valor = NovaFicha.quantidade * item.Itens.Sum(p => p.valor);
+
+                    NovaFicha.quantidade = lst.Count(p => p.uidMateriaPrima == item.uidMateriaPrima);
+                    NovaFicha.valor = item.Itens.FirstOrDefault().valor;
+
                     NovaFicha.Itens = item.Itens;
+
                     lstFicha.Add(NovaFicha);
                     sequencia += 1;
+
                 }
                 return lstFicha;
             }
@@ -608,31 +524,209 @@ namespace TemplateAudacesApi.Services
             }
         }
 
-        private List<Models.ItemPraGravar> RetornarPossiveisCombinacoes(Garment garment)
+
+        public class ItemQSeRepete
         {
-            var lstItemPraGravar = new List<Models.ItemPraGravar>();
+            public string descricaoItem { get; set; }
+            public int item { get; set; }
+        }
+
+        public class CorPraGravar
+        {
+            public string Cor { get; set; }
+        }
+        public class ItemDaFichaTecnica
+        {
+            public string Cor { get; set; }
+            public string Tamanho { get; set; }
+            public string IdMateriaPrima { get; set; }
+            public string descricaoToda => IdMateriaPrima + "|" + Cor + "|" + Tamanho;
+            public short sequencia { get; set; }
+            public decimal quantidade { get; set; }
+            public double valor { get; set; }
+            public List<Models.ItemPraGravar> variacoes { get; set; } = new List<Models.ItemPraGravar>();
+        }
+
+        public class PossiveisVariacoes
+        {
+            public string corDoProduto { get; set; }
+            public string corDaMateriaPrima { get; set; }
+            public string tamanhoMateriaPrima { get; set; }
+            public string tamanhoProduto { get; set; }
+        }
+
+        private void GravarFichaTecnica(Garment garment,FichaTecnicaDoMaterial ficha, 
+                                                 Produto produto, 
+                                                 bool inclusao)
+        {
+            var lstTodasVariantesFormadas = new List<Models.ItemPraGravar>();
+            var item = 1;
+            //carrego toda lista
             try
             {
-                foreach (var variant in garment.variants)
+                lstTodasVariantesFormadas = RetornarTodasVariantesPossiveis(garment);
+                item = 0;
+
+                var CoresESeusItens = (from o in lstTodasVariantesFormadas
+                                       group o by new { o.corProduto } into g
+                                       select new
+                                       {
+                                           cor_produto = g.Key.corProduto,
+                                           Itens = g.ToList()
+
+                                       });
+
+
+                IncluirClasseDeProduto(produto, lstTodasVariantesFormadas);
+
+                List<ItemDaFichaTecnica> lstItemFichaTecnica;
+                List<CorPraGravar> lstCorPraGravar;
+                RetornarItensParaGravarNaFichaTecnicaMaterialItemECores(garment, out item, out lstItemFichaTecnica, out lstCorPraGravar);
+
+
+
+                //////////////// verifico aqui os itens q se repetem /////////////////////////////////
+                var lstItemQueSeRepete = new List<ItemQSeRepete>();
+
+                foreach (var s in CoresESeusItens)
                 {
+                    //vejo se ja tem alguma materia-prima repetida dentro de cada cor
+                    var materiaRepetida = (from obj in s.Itens
+                                           group obj by new { obj.descricaoToda, obj.item } into g
+                                           select new
+                                           {
+                                               materia_prima_toda = g.Key.descricaoToda,
+                                               item = g.Key.item,
+                                               qtd = g.Count(),
+                                               Itens = g.ToList()
+                                           });
 
-                    foreach (var material in variant.materials)
+                    //se tiver
+                    foreach (var m in materiaRepetida)
                     {
-                        var itemPraGravar = new Models.ItemPraGravar();
+                        //tendo eu verifico se for mais de uma, e nao exista na lista de repetidas eu adiciono
+                        if (m.qtd > 1 && !lstItemQueSeRepete.Any(p => p.descricaoItem == m.materia_prima_toda))
+                        {
 
-                        itemPraGravar.uidMateriaPrima = material.uid;
-                        itemPraGravar.corProduto = variant.CorDaVariant;
-                        itemPraGravar.tamanhoProduto = variant.TamanhoVariant;
-                        itemPraGravar.quantidade = material.amount;
-                        itemPraGravar.descCorMateriaPrima = RetornarCor(variant, material);
-                        itemPraGravar.descTamanhoMateriaPrima = RetornarTamanho(variant, material);
-                        itemPraGravar.valor = Convert.ToDecimal(material.total);
-                        lstItemPraGravar.Add(itemPraGravar);
-
-
+                            if (!lstItemFichaTecnica.Any(p => p.sequencia == m.item))
+                            {
+                                var itemQSeRepete = new ItemQSeRepete();
+                                itemQSeRepete.item = m.item;
+                                itemQSeRepete.descricaoItem = m.materia_prima_toda;
+                                lstItemQueSeRepete.Add(itemQSeRepete);
+                            }
+                        }
                     }
-
                 }
+
+
+
+
+
+                // vejo o item q se repete e adiciono ele no restante do item
+                AdicionarItensRepetidosAItensParaGravarNaFichaTecnicaDoMaterialItem(lstTodasVariantesFormadas, lstItemFichaTecnica, lstItemQueSeRepete);
+
+
+
+                //// excluo a relacao toda do banco antes de incluir ou alterar
+                var fichatecnicaRelacaoRepository = new FichaTecnicaDoMaterialRelacaoRepository();
+                fichatecnicaRelacaoRepository.ExcluirRelacao(ficha.Id);
+                fichaTecnicaDoMaterialRepositoryItem.ExcluirRelacao(ficha.Id);
+
+                //aqui eu gravo a ficha
+
+                foreach (var itemFicha in lstItemFichaTecnica)
+                {
+                    var produtoMaterial = produtoRepository.GetByReferencia(itemFicha.IdMateriaPrima);
+                    var itemFichaTecnicaDoMaterial = new FichaTecnicaDoMaterialItem();
+                    itemFichaTecnicaDoMaterial.FichaTecnicaId = ficha.Id;
+                    itemFichaTecnicaDoMaterial.MateriaPrimaId = produtoMaterial.Id;
+
+                    itemFichaTecnicaDoMaterial.DestinoId = 1;
+
+                    itemFichaTecnicaDoMaterial.quantidade = itemFicha.quantidade;//tenho q ver;
+
+                    itemFichaTecnicaDoMaterial.preco = Convert.ToDecimal(itemFicha.valor);
+                    itemFichaTecnicaDoMaterial.valor = Convert.ToDecimal(itemFicha.valor);
+                    itemFichaTecnicaDoMaterial.sequencia = itemFicha.sequencia;
+
+
+                    fichaTecnicaDoMaterialRepositoryItem.Save(ref itemFichaTecnicaDoMaterial); //gravo a ficha tecnica material item
+
+
+                    foreach (var minhaCor in lstCorPraGravar)
+                    {
+                        //retorno a combinacao daquele item
+                        var combinacao = (from obj in lstTodasVariantesFormadas
+                                          where
+                                                     itemFicha.IdMateriaPrima == obj.uidMateriaPrima &&
+                                                     minhaCor.Cor == obj.corProduto &&
+                                                     itemFicha.descricaoToda == obj.descricaoToda
+                                          select obj).ToList();
+
+                        //se existem itens repetidos pode trazer mais itens, entao agrupo pela cor e tamanho 
+                        var combinacaoPorTamanhoECor = (from o in combinacao
+                                                        group o by new { o.corProduto, o.tamanhoProduto, o.descCorMateriaPrima, o.descTamanhoMateriaPrima } into g
+                                                        select new
+                                                        {
+                                                            corProduto = g.Key.corProduto,
+                                                            tamanhoProduto = g.Key.tamanhoProduto,
+                                                            descCorMateriaPrima = g.Key.descCorMateriaPrima,
+                                                            descTamanhoMateriaPrima = g.Key.descTamanhoMateriaPrima,
+                                                            Itens = g.ToList()
+
+                                                        });
+
+                        var corDoProduto = new Cor();
+                        var tamanhoDoProduto = new Tamanho();
+                        corDoProduto = Utils.RetornarCor(minhaCor.Cor);
+
+                        if (combinacaoPorTamanhoECor.Any())
+                        {
+
+
+                            var lstMateriaPrimaGrava = new List<FichaTecnicaDoMaterialItem>();
+
+
+                            itemFichaTecnicaDoMaterial.FichaTecnicaId = ficha.Id;
+                            itemFichaTecnicaDoMaterial.MateriaPrimaId = produtoMaterial.Id;
+
+                            itemFichaTecnicaDoMaterial.DestinoId = 1;
+
+                            itemFichaTecnicaDoMaterial.quantidade = itemFicha.quantidade;//tenho q ver;
+
+                            itemFichaTecnicaDoMaterial.preco = Convert.ToDecimal(itemFicha.valor);
+                            itemFichaTecnicaDoMaterial.valor = Convert.ToDecimal(itemFicha.valor);
+                            itemFichaTecnicaDoMaterial.sequencia = itemFicha.sequencia;
+
+
+
+
+                            //gravo a relacao
+                            foreach (var itemRelacao in combinacaoPorTamanhoECor)
+                            {
+                                tamanhoDoProduto = Utils.RetornarTamanho(itemRelacao.tamanhoProduto);
+
+                                var corDoMaterial = Utils.RetornarCor(itemRelacao.descCorMateriaPrima);
+                                var tamanhoDoMaterial = Utils.RetornarTamanho(itemRelacao.descTamanhoMateriaPrima);
+
+
+                                FichaTecnicaDoMaterialItem fichaTecnicaDoMaterialItem =
+                                    IncluirFichaTecnicaMaterialItem(produto,
+                                corDoProduto,
+                                tamanhoDoProduto,
+                                ficha,
+                                itemFichaTecnicaDoMaterial,
+                                produtoMaterial,
+                                corDoMaterial,
+                                tamanhoDoMaterial
+                                );
+
+                            }
+                        }
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -640,27 +734,186 @@ namespace TemplateAudacesApi.Services
                 throw new Exception("Erro ao retornar possiveis combinacoes RetornarPossiveisCombinacoes " + ex.Message);
             }
 
-            return lstItemPraGravar;
+           
         }
 
-        private void AlterarFicha(Garment garment, FichaTecnicaDoMaterial fichaVestilo, Produto produto)
+        private static void AdicionarItensRepetidosAItensParaGravarNaFichaTecnicaDoMaterialItem(List<Models.ItemPraGravar> lstTodasVariantesFormadas, List<ItemDaFichaTecnica> lstItemFichaTecnica, List<ItemQSeRepete> lstItemQueSeRepete)
+        {
+            if (lstItemQueSeRepete.Any())
+            {
+                foreach (var r in lstItemQueSeRepete)
+                {
+                    var itemRepetido = (from obj in lstItemFichaTecnica
+                                        where obj.descricaoToda == r.descricaoItem
+                                        select obj).FirstOrDefault();
+                    if (itemRepetido != null)
+                    {
+                        var novoItem = new ItemDaFichaTecnica();
+                        novoItem.Tamanho = itemRepetido.Tamanho;
+                        novoItem.IdMateriaPrima = itemRepetido.IdMateriaPrima;
+                        novoItem.Cor = itemRepetido.Cor;
+                        novoItem.sequencia = Convert.ToInt16(lstItemFichaTecnica.Count + 1);
+                        var itemComQtdEValor = (from obj in lstTodasVariantesFormadas
+                                                where obj.item == r.item && r.descricaoItem == obj.descricaoToda
+                                                select obj).FirstOrDefault();
+                        novoItem.quantidade = itemComQtdEValor.quantidade;
+                        novoItem.valor = Convert.ToDouble(itemComQtdEValor.valor);
+                        lstItemFichaTecnica.Add(novoItem);
+                    }
+
+                }
+            }
+        }
+
+        private void RetornarItensParaGravarNaFichaTecnicaMaterialItemECores(Garment garment, out int item, out List<ItemDaFichaTecnica> lstItemFichaTecnica, out List<CorPraGravar> lstCorPraGravar)
+        {
+
+            //aqui separo o item pra ser gravado na ficha tecnica do material item
+            lstItemFichaTecnica = new List<ItemDaFichaTecnica>();
+            lstCorPraGravar = new List<CorPraGravar>();
+            item = 1;
+            foreach (var variant in garment.variants)
+            {
+
+                foreach (var material in variant.materials)
+                {
+
+                    string cor = RetornarCor(variant, material);
+                    if (!lstItemFichaTecnica.Any(p => p.descricaoToda == material.uid.Trim() + "|" + cor.Trim() + "|" + material.size.Trim()))
+                    {
+                        var ItemDaFichaTecnica = new ItemDaFichaTecnica();
+                        ItemDaFichaTecnica.Cor = cor.Trim();
+                        ItemDaFichaTecnica.Tamanho = material.size.Trim();
+                        ItemDaFichaTecnica.IdMateriaPrima = material.uid.Trim();
+                        ItemDaFichaTecnica.sequencia = Convert.ToInt16(item);
+                        ItemDaFichaTecnica.quantidade = material.amount;
+
+                        decimal valor = 0;
+                        if (material.total > 0)
+                            valor = material.total;
+                        else if (material.cost > 0)
+                            valor = material.cost;
+                        else
+                            valor = Convert.ToDecimal(variant.value);
+
+
+                        ItemDaFichaTecnica.valor = Convert.ToDouble(valor);
+                        lstItemFichaTecnica.Add(ItemDaFichaTecnica);
+                        item += 1;
+                    }
+
+                }
+
+
+                if (!lstCorPraGravar.Any(p => p.Cor == variant.CorDaVariant))
+                {
+                    var corPraGravar = new CorPraGravar();
+                    corPraGravar.Cor = variant.CorDaVariant.Trim();
+                    lstCorPraGravar.Add(corPraGravar);
+                }
+            }
+        }
+
+        private List<Models.ItemPraGravar>  RetornarTodasVariantesPossiveis(Garment garment)
+        {
+            var lstTodasVariantesFormadas = new List<Models.ItemPraGravar>();
+            int item = 1;
+            foreach (var variant in garment.variants)
+            {
+                foreach (var material in variant.materials)
+                {
+                    var itemPraGravar = new Models.ItemPraGravar();
+
+                    itemPraGravar.uidMateriaPrima = material.uid;
+                    itemPraGravar.corProduto = variant.CorDaVariant.Trim();
+                    itemPraGravar.item = item;
+                    itemPraGravar.tamanhoProduto = variant.TamanhoVariant.Trim();
+                    itemPraGravar.quantidade = material.amount;
+                    itemPraGravar.descCorMateriaPrima = RetornarCor(variant, material).Trim();
+                    itemPraGravar.descTamanhoMateriaPrima = RetornarTamanho(variant, material).Trim();
+                    decimal valor = 0;
+                    if (material.total > 0)
+                        valor = material.total;
+                    else if (material.cost > 0)
+                        valor = material.cost;
+                    else
+                        valor = Convert.ToDecimal(variant.value);
+                    itemPraGravar.valor = valor;
+                    lstTodasVariantesFormadas.Add(itemPraGravar);
+
+                }
+                item += 1;
+
+            }
+
+            return lstTodasVariantesFormadas;
+        }
+
+        private void IncluirClasseDeProduto(Produto produto, List<Models.ItemPraGravar> lstItensAGravar)
+        {
+            try
+            {
+                var GradeDeProdutoService = new GradeDeProdutoService();
+                var lstDetalhesDoProduto = GradeDeProdutoService.RetornarDetalhesDoProduto(produto.Id);
+
+                GradeDeProdutoService.ExcluirDetalhes(produto);
+           
+                var lstCoresETamanhos = (from obj in lstItensAGravar
+                                         group obj by new { obj.corProduto, obj.tamanhoProduto } into g
+                                         select new
+                                         {
+                                             corProduto = g.Key.corProduto,
+                                             tamanhoProduto = g.Key.tamanhoProduto,
+                                             qtd = g.Count(),
+                                             Itens = g.ToList()
+                                         });
+
+                if (lstCoresETamanhos != null && lstCoresETamanhos.Any())
+                {
+                    foreach (var item in lstCoresETamanhos)
+                    {
+                        var cor = Utils.RetornarCor(item.corProduto);
+                        var tamanho = Utils.RetornarTamanho(item.tamanhoProduto);
+                        GradeDeProdutoService.IncluirDetalhe(produto, cor, tamanho);
+
+                    }
+                }
+
+                if (lstDetalhesDoProduto != null && lstDetalhesDoProduto.Any())
+                foreach (var item in lstDetalhesDoProduto)
+                {
+                    var cor = Utils.RetornarCor(item.Idcor);
+                    var tamanho = Utils.RetornarTamanho(item.IdTamanho);
+                    GradeDeProdutoService.IncluirDetalhe(produto, cor, tamanho);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Erro ao Incluir Classe de Produto [IncluirClasseDeProduto]  " + ex.Message);
+            }
+        }
+
+
+        private FichaTecnicaDoMaterial AlterarFicha(Garment garment, FichaTecnicaDoMaterial fichaVestilo, Produto produto)
         {
             try
             {
                 List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
                 fichaVestilo.DataAlteracao = Convert.ToDateTime(garment.last_modified);
                 fichaVestilo.Observacao = produto.Obs;
-                fichaVestilo.Total = 0;
+                fichaVestilo.Total = Convert.ToDecimal(garment.variants.Sum(p => p.value));
                 FichaTecnicaDoMaterialRepository.Save(ref fichaVestilo); //salvei a ficha
 
                 fichaTecnicaDoMaterialRepositoryItem.ExcluirRelacao(fichaVestilo.Id);//exclui relacao
+
                 var fichatecnicaRelacaoRepository = new FichaTecnicaDoMaterialRelacaoRepository();
                 fichatecnicaRelacaoRepository.ExcluirRelacao(fichaVestilo.Id);
 
                 if (garment.variants != null && garment.variants.Any())
                 {
                     //inclui itens da ficha
-                     PrepararParaInclusaoDeNovaFicha(garment,produto, fichaVestilo);
+                    fichaVestilo = PrepararParaInclusaoDeNovaFicha(garment, produto, fichaVestilo);
 
                 }
             }
@@ -669,6 +922,7 @@ namespace TemplateAudacesApi.Services
 
                 throw ex;
             }
+            return fichaVestilo;
         }
 
         public List<Material> RetornarItensDaFichaTecnicaDeMaterial(Produto produto)
@@ -702,7 +956,7 @@ namespace TemplateAudacesApi.Services
         {
             var fichatecnicaRelacaoRepository = new FichaTecnicaDoMaterialRelacaoRepository();
 
-          
+
             if (ficha != null)
                 return fichatecnicaRelacaoRepository.GetAllViewByFichaTecnica(ficha.Id).ToList();
             else
@@ -710,31 +964,6 @@ namespace TemplateAudacesApi.Services
 
         }
 
-        //public List<Item> RetornarItensDaFichaTecnica(Produto produto, List<Color> colors, List<Size> size)
-        //{
-        //    List<Item> itens = new List<Item>();
-        //    try
-        //    {
-        //        var fichaTecnica = FichaTecnicaDoMaterialRepository.GetByProduto(produto.Id);
-        //        if (fichaTecnica != null)
-        //        {
-        //            var precoService = new PrecoService();
-        //           var itensDaFicha = fichaTecnicaDoMaterialRepositoryItem.GetAllViewByProdutoId(produto.Id).ToList();
-        //            if (itensDaFicha != null && itensDaFicha.Any())
-        //            {
-        //                foreach (var itemFicha in itensDaFicha)
-        //                {
-        //                    RetornarItem(produto, itens, itemFicha, colors, size);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //    return itens;
-        //}
 
 
         public List<Item> RetornarItensDoMaterial(List<FichaTecnicaDoMaterialRelacao> itemDaRelacao)
@@ -773,11 +1002,11 @@ namespace TemplateAudacesApi.Services
                 item.name = produtoItem.Descricao;
                 item.last_modified = produtoItem.DataAlteracao.ToString();
                 item.date_register = produtoItem.DataCadastro.ToString();
-                item.value = produtoItem.PrecoVenda.ToString();
+                item.value = Convert.ToDouble(produtoItem.PrecoVenda);
                 item.product_group = grupo?.Id + "-" + grupo?.Descricao;
                 item.supplier = fornecedor?.Id + "-" + fornecedor?.RazaoSocial;
                 item.measure_unit = uniMedida?.Id + "-" + uniMedida?.Descricao;
-                item.Tamanho = item.measure_unit;
+
 
                 var corMateriaPrima = Utils.RetornarCor(itemFicha.cor_materiaprima_Id);
 

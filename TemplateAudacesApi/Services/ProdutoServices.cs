@@ -14,17 +14,7 @@ namespace TemplateAudacesApi.Services
     {
 
 
-        private IProdutoService _produtoService;
-        private IProdutoService produtoService
-        {
-            get
-            {
-                if (_produtoService == null)
-                    _produtoService = new ProdutoService().GetServiceFactory();
-
-                return _produtoService;
-            }
-        }
+       
 
         private ProdutoRepository _produtoRepository;
         private ProdutoRepository produtoRepository
@@ -73,21 +63,6 @@ namespace TemplateAudacesApi.Services
                     _uniMedidaRepository = new UniMedidaRepository();
                 return _uniMedidaRepository;
 
-            }
-        }
-
-
-
-
-        private ColaboradorRepository _fornecedorRepository;
-        private ColaboradorRepository fornecedorRepository
-        {
-            get
-            {
-                if (_fornecedorRepository == null)
-                    _fornecedorRepository = new ColaboradorRepository();
-
-                return _fornecedorRepository;
             }
         }
 
@@ -144,7 +119,7 @@ namespace TemplateAudacesApi.Services
 
         }
 
-        public List<Object> GetProdutosByGrupo(string referencia,string descricao)
+        public List<Object> GetProdutosByGrupo(string referencia, string descricao)
         {
             List<Object> lstGrupo = new List<Object>();
             try
@@ -173,11 +148,6 @@ namespace TemplateAudacesApi.Services
         }
 
 
-        private Item RetornarItem(Produto produto)
-        {
-            return RetornarProdutoItem(produto);
-        }
-
         private Object RetornarProduto(Produto produto)
         {
             if (produto.TipoItem == 0)
@@ -196,7 +166,7 @@ namespace TemplateAudacesApi.Services
                 description = produto.Descricao,
                 reference = produto.Referencia,
                 last_modified = Convert.ToString(produto.DataAlteracao)
-              };
+            };
             return grupo;
 
         }
@@ -206,32 +176,32 @@ namespace TemplateAudacesApi.Services
             try
             {
 
-            var unidadeDeMedida = UniMedidaRepository.GetById(produto.IdUniMedida);
-            var grupoDeProduto = GrupoProdutoRepository.GetById(produto.IdGrupo);
-            var precoService = new PrecoService();
-            var fornecedor = Utils.RetornarFornecedorDoProduto(produto);
-            var detalhe = produtoDetalheRepository.GetListViewByProduto(produto.Id, 1);
-            ICollection<Color> colors = RetornarCores(detalhe);
-            ICollection<Size> sizes = RetornarTamanhos(detalhe);
-            decimal preco = precoService.RetornarPrecoDoMaterial(produto);
+                var unidadeDeMedida = UniMedidaRepository.GetById(produto.IdUniMedida);
+                var grupoDeProduto = GrupoProdutoRepository.GetById(produto.IdGrupo);
+                var precoService = new PrecoService();
+                var fornecedor = Utils.RetornarFornecedorDoProduto(produto);
+                var detalhe = produtoDetalheRepository.GetListViewByProduto(produto.Id, 1);
+                ICollection<Color> colors = RetornarCores(detalhe);
+                ICollection<Size> sizes = RetornarTamanhos(detalhe);
+                decimal preco = precoService.RetornarPrecoDoMaterial(produto);
 
-            return new Material
-            {
-                type = "raw_material",
-                uid = produto.Referencia,
-                name = produto.Descricao,
-                reference = produto.Referencia,
-                description = (!string.IsNullOrEmpty(produto.DescricaoAlternativa)) ? produto.DescricaoAlternativa : produto.Descricao,
-                value = Convert.ToDouble(preco),
-                measure_unit = unidadeDeMedida?.Id + "-" + unidadeDeMedida?.Descricao,
-                product_group = grupoDeProduto?.Id + "-" + grupoDeProduto?.Descricao,
-                supplier = (fornecedor != null) ? fornecedor?.Id + "-" + fornecedor?.RazaoSocial : "",
-                notes = produto.Obs,
-                last_modified = produto.DataAlteracao.ToShortDateString(),
-                variants = RetornarVariants(produto, detalhe, preco),
-                //colors = colors,
-                //sizes = sizes
-            };
+                return new Material
+                {
+                    type = "raw_material",
+                    uid = produto.Referencia,
+                    name = produto.Descricao,
+                    reference = produto.Referencia,
+                    description = (!string.IsNullOrEmpty(produto.DescricaoAlternativa)) ? produto.DescricaoAlternativa : produto.Descricao,
+                    value = Convert.ToDouble(preco),
+                    measure_unit = unidadeDeMedida?.Id + "-" + unidadeDeMedida?.Descricao,
+                    product_group = grupoDeProduto?.Id + "-" + grupoDeProduto?.Descricao,
+                    supplier = (fornecedor != null) ? fornecedor?.Id + "-" + fornecedor?.RazaoSocial : "",
+                    notes = produto.Obs,
+                    last_modified = produto.DataAlteracao.ToShortDateString(),
+                    variants = RetornarVariants(produto, detalhe, preco),
+                    //colors = colors,
+                    //sizes = sizes
+                };
 
             }
             catch (Exception ex)
@@ -245,318 +215,161 @@ namespace TemplateAudacesApi.Services
 
 
         private List<Variant> RetornarVariantsDeProdutoAcabado(Produto produto,
-                                                               decimal preco,
-                                                               List<FichaTecnicaDoMaterialRelacao> itensDaFichaRelacao)
+                                                               List<FichaTecnicaDoMaterialRelacao> itensDaFichaRelacao,
+                                                               List<FichaTecnicaDoMaterialItem> itensFichaTecnicaDoMaterialItems,
+                                                               ref decimal SomaTotalFicha)
         {
             List<Variant> variants = null;
             var FichaTecnicaService = new FichaTecnicaService();
+            variants = new List<Variant>();
+      
+
+                //////////////////////////////////////////////////////////
+                 foreach (var relacao in itensDaFichaRelacao.OrderBy(p=> p.Cor_Produto_Id))
+                 {
+                     var corDoProduto = Utils.RetornarCor(relacao.Cor_Produto_Id);
+                     var tamanhoDoProduto = Utils.RetornarTamanho(relacao.Tamanho_Produto_Id);
+                     var IdCorETamanho = string.Format("{0}-{1}-{2}", corDoProduto.Id, corDoProduto.Descricao.Trim(), tamanhoDoProduto.Descricao.Trim());
+                     Variant variant = new Variant();
+
+                variant.name = IdCorETamanho;
+                     if (produto.Descricao.Contains("-"))
+                     {
+                         produto.Descricao = produto.Descricao.Replace("-", null);
+                     }
+                     variant.description = string.Format("{0}-{1}", produto.Referencia, produto.Descricao);
+                     variant.notes = RetornarObservacao(produto);
+                     variant.label = corDoProduto.Id + "-" + corDoProduto.Descricao;
+                     variant.author = RetornarAutor(produto);
+                     variant.color = new Color()
+                     {
+                         description = corDoProduto.Descricao,
+                         value = corDoProduto.Descricao,
+                         uid = corDoProduto.Id.ToString(),
+                     };
+
+                     variant.size = tamanhoDoProduto.Id + "-" + tamanhoDoProduto.Descricao.Trim();
 
 
+                var itensDaRelacao = (from obj in itensDaFichaRelacao
+                                      where obj.Cor_Produto_Id == corDoProduto.Id &&
+                                            obj.Tamanho_Produto_Id == tamanhoDoProduto.Id
+                                               select obj).ToList();
 
-            try
-            {
-                if (itensDaFichaRelacao != null && itensDaFichaRelacao.Any())
-                {
-                    variants = new List<Variant>();
-                    foreach (var relacao in itensDaFichaRelacao)
-                    {
-
-                        var corDoProduto = Utils.RetornarCor(relacao.Cor_Produto_Id);
-                        var tamanhoDoProduto = Utils.RetornarTamanho(relacao.Tamanho_Produto_Id);
-
-                        string IdCorEDescricaoETamanho = string.Format("{0}-{1}-{2}", corDoProduto.Id, corDoProduto.Descricao, tamanhoDoProduto.Descricao);
-
-                        string IdTamanhoDescricao = String.Format("{0}-{1}", tamanhoDoProduto.Id, tamanhoDoProduto.Descricao.Trim());
-
-                        Variant variant = CarregarVariante(produto, preco, relacao, IdCorEDescricaoETamanho, IdTamanhoDescricao, corDoProduto);
-
-                        var itensCorETamanho = itensDaFichaRelacao.Where(p => p.cor_materiaprima_Id == relacao.cor_materiaprima_Id &&
-                                                    p.Tamanho_Materiaprima_Id == relacao.Tamanho_Materiaprima_Id);
+                //var itensDaRelacao = (from obj in itensDaFichaRelacao
+                //                 where obj.Cor_Produto_Id == corDoProduto.Id &&
+                //                        obj.FichaTecnicaItemId == relacao.FichaTecnicaItemId
+                //                 select obj).ToList();
 
 
-                        if (itensCorETamanho != null && itensCorETamanho.Any()
-                                && !variants.Any(p => p.label == IdCorEDescricaoETamanho))
-                        {
-                            var itens = FichaTecnicaService.RetornarItensDoMaterial(itensCorETamanho.ToList());
+                foreach (var itemRelacao in itensDaRelacao)
+                     {
+                         var item = new Item();
+                         var produtoItem = Utils.RetornarProduto(itemRelacao.MateriaPrimaId);
+                         var fornecedor = Utils.RetornarFornecedorDoProduto(produtoItem);
+                         UniMedida uniMedida = Utils.RetornarUnidade(produtoItem.IdUniMedida);
+                         if (produtoItem != null)
+                         {
+                             var grupo = Utils.RetornarGrupo(produtoItem.IdGrupo);
 
-                            variant.items.AddRange(itens);
+                             var itemDaFicha = (from obj in itensFichaTecnicaDoMaterialItems
+                                                where obj.MateriaPrimaId == itemRelacao.MateriaPrimaId
 
-                        }
+                                                select obj).FirstOrDefault();
 
-                        if (!variants.Any(p => p.name == IdCorEDescricaoETamanho))
-                        {
-                            variants.Add(variant);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
+                             item.type = "raw_material";
+                             item.reference = produtoItem.Referencia;
+                             item.uid = produtoItem.Referencia;
+                             item.description = produtoItem.Descricao;
 
-                throw ex;
-            }
-            return variants;
+                             item.last_modified = produtoItem.DataAlteracao.ToString();
+                             item.date_register = produtoItem.DataCadastro.ToString();
+                             item.value = (itemDaFicha.CustoCalculado > 0) ? Convert.ToDouble(itemDaFicha.CustoCalculado) : Convert.ToDouble(itemDaFicha.preco);
+                             item.product_group = grupo?.Id + "-" + grupo?.Descricao;
+                             item.supplier = fornecedor?.Id + "-" + fornecedor?.RazaoSocial;
+                             item.measure_unit = uniMedida?.Id + "-" + uniMedida?.Descricao;
 
-        }
+                             var corMateriaPrima = Utils.RetornarCor(itemRelacao.cor_materiaprima_Id);
+                             var color = new Color { description = corMateriaPrima.Descricao, uid = corMateriaPrima.Id.ToString(), value = corMateriaPrima.Descricao };
+                             var tamanhoMateriaPrima = Utils.RetornarTamanho(itemRelacao.Tamanho_Materiaprima_Id);
 
+                             item.notes = produtoItem.Obs;
+                             var colecao = Utils.RetornarColecao(Convert.ToInt32(produtoItem.IdColecao));
+                             item.collection = colecao?.Descricao;
+                             var variantMateria = new Variant()
+                             {
+                                 name = corMateriaPrima.Id + "-" + corMateriaPrima.Descricao + "-" + tamanhoMateriaPrima.Descricao,
+                                 label = corMateriaPrima.Id + "-" + corMateriaPrima.Descricao + "-" + tamanhoMateriaPrima.Descricao,
+                                 color = color,
+                                 size = tamanhoMateriaPrima.Descricao
+                                   
+                             };
 
-        private Variant CarregarVariante(Produto produto, decimal preco,
-                                          FichaTecnicaDoMaterialRelacao det,
-                                          string IdCorEDescricao,
-                                          string IdTamanhoDescricao, 
-                                          Cor cor)
-        {
-            var variant = new Variant()
-            {
-
-                name = IdCorEDescricao,
-                description = string.Format("{0}-{1}", produto.Referencia, produto.Descricao),
-                notes = RetornarObservacao(produto),
-                
-                label = cor.Id + "-" + cor.Descricao,
-                author = RetornarAutor(produto),
-                color = new Color()
-                {
-                    description = cor.Descricao,
-                    value = IdCorEDescricao,
-                    uid = IdCorEDescricao,
-                },
-
-                size = IdTamanhoDescricao,
-
-
-
-            };
-            return variant;
-        }
-
-
-        private List<Variant> RetornarVariantsDeProdutoAcabado(Produto produto,
-                                                              IEnumerable<ProdutoDetalheView> detalhe,
-                                                              decimal preco,
-                                                              List<FichaTecnicaDoMaterialRelacao> itensDaFichaRelacao,
-                                                              List<FichaTecnicaDoMaterialItem> fichaTecnicaDoMaterialItems
-                                                              )
-        {
-            
-            List<Variant> variants = null;
-            var FichaTecnicaService = new FichaTecnicaService();
-            try
-            {
-                variants = new List<Variant>();
-                if (fichaTecnicaDoMaterialItems != null && fichaTecnicaDoMaterialItems.Any())
-                {
-                    foreach (var det in fichaTecnicaDoMaterialItems)
-                    {
-                        var itensDaRelacao = (from obj in itensDaFichaRelacao where obj.FichaTecnicaItemId == det.Id select obj).ToList();
-
-
-                        foreach (var relacao in itensDaRelacao)
-                        {
-                            var corDaMateriaPrima = Utils.RetornarCor(relacao.cor_materiaprima_Id);
-                            var tamanhoMateria = Utils.RetornarTamanho(relacao.Tamanho_Materiaprima_Id);
-                            Cor corDoProduto = new Cor();
-                            Tamanho tamanhoProduto = new Tamanho();
-                            corDoProduto = Utils.RetornarCor(relacao.Cor_Produto_Id);
-                            tamanhoProduto = Utils.RetornarTamanho(relacao.Tamanho_Produto_Id);
-                            var cor = new Color()
-                            {
-                                description = corDoProduto.Descricao,
-                                value = corDoProduto.Descricao,
-                                uid = corDoProduto.Id.ToString()
-                            };
-
-                            var produtoItem = produtoRepository.GetById(det.MateriaPrimaId);
-                            var variant = new Variant();
-
-                            variant.name = corDaMateriaPrima.Id + "-" + corDaMateriaPrima.Descricao + tamanhoMateria.Descricao;
-                            variant.label = corDaMateriaPrima.Id + "-" + corDaMateriaPrima.Descricao + tamanhoMateria.Descricao;
-                                variant.color = cor;
-                            variant.size = tamanhoMateria.Descricao;
-                            if (!variants.Any(p => p.label == variant.label))
-                            {
-                                variants.Add(variant);
-                               
-                            }
-
+                             item.variants.Add(variantMateria);
+                        item.name = produtoItem.Referencia + "|" + produtoItem.Descricao + "|" + variantMateria.name + "|";
                             
-                        }
+                         }
+                    if (!variant.items.Any(p => p.name == item.name))
+                             variant.items.Add(item);
+                     }
 
 
 
-                        //var color = new Color { description = corDaMateriaPrima.Descricao, uid = corDaMateriaPrima.Id.ToString(), value = corDaMateriaPrima.Descricao };
+                     variant.value = variant.items.Sum(p => p.value);
 
-                        //foreach (var item in lst)
-                        //{
-                        //    var variant = new Variant();
-
-
-                        //    variant.notes = RetornarObservacao(produto);
-                        //    variant.description = string.Format("{0}-{1}", det.getMateriaPrima.Referencia, det.getMateriaPrima.Descricao);
-                        //    variant.author = RetornarAutor(produto);
-                        //    variant.value = det.preco;
-
-                        //    variant.name = corDoProduto.Id + "-" + corDoProduto.Descricao + "-" + tamanhoProduto.Descricao; 
-                        //    variant.label = corDoProduto.Id + "-" + corDoProduto.Descricao + "-" + tamanhoProduto.Descricao; 
-                        //    variant.color = new Color()
-                        //    {
-                        //        description = corDoProduto.Descricao,
-                        //        value = corDoProduto.Descricao,
-                        //        uid = corDoProduto.Id.ToString()
-                        //    };
-                        //    variant.size = tamanhoProduto.Id + "-" + tamanhoProduto.Descricao;
-                        //    variant.items = new List<Item>();
-                        //    var lstItem = new List<Item>();
-                        //    foreach (var r in item.Relacao)
-                        //    {                              
-
-
-                        //        variant.items.Add(relacao);
-                        //    }
-
-                        //    variants.Add(variant);
-                        //}
+                     if (!variants.Any(p => p.name == variant.name))
+                     {
+                         variants.Add(variant);
+                     }
+                 }
 
 
 
-
-
-
-
-
-                        //var items = new List<Item>();
-                        //foreach (var relacao in itensDaRelacao)
-                        //{
-
-                        //    var variant = new Variant();
-                        //    Cor corDaMateriaPrima = new Cor();
-                        //    Cor corDoProduto = new Cor();
-                        //    Tamanho tamanhoProduto = new Tamanho();
-                        //    Tamanho tamanhoMateria = new Tamanho();
-
-                        //    corDaMateriaPrima = Utils.RetornarCor(relacao.cor_materiaprima_Id);
-                        //    corDoProduto = Utils.RetornarCor(relacao.Cor_Produto_Id);
-                        //    tamanhoProduto = Utils.RetornarTamanho(relacao.Tamanho_Produto_Id);
-                        //    tamanhoMateria = Utils.RetornarTamanho(relacao.Tamanho_Materiaprima_Id);
-
-
-                        //    variant.name = corDoProduto.Id + "-" + corDoProduto.Descricao;
-                        //    variant.label = corDaMateriaPrima.Id + "-" + corDaMateriaPrima.Descricao;
-                        //    variant.color = new Color()
-                        //    {
-                        //        description = corDoProduto.Descricao,
-                        //        value = corDoProduto.Descricao,
-                        //        uid = corDoProduto.Id.ToString()
-                        //    };
-                        //    variant.size = tamanhoProduto.Id + "-" + tamanhoProduto.Descricao;
-
-                        //    ///item
-                        //    var item = new Item();
-
-                        //    var produtoItem = produtoRepository.GetById(relacao.MateriaPrimaId);
-                        //    var fornecedor = Utils.RetornarFornecedorDoProduto(produtoItem);
-                        //    UniMedida uniMedida = Utils.RetornarUnidade(produtoItem.IdUniMedida);
-                        //    if (produtoItem != null)
-                        //    {
-                        //        var grupo = Utils.RetornarGrupo(produtoItem.IdGrupo);
-                        //        item.type = "raw_material";
-                        //        item.reference = produtoItem.Referencia;
-                        //        item.uid = produtoItem.Referencia;
-                        //        item.description = produtoItem.Descricao;
-                        //        item.name = produtoItem.Descricao;
-                        //        item.last_modified = produtoItem.DataAlteracao.ToString();
-                        //        //item.date_register = produtoItem.DataCadastro.ToString();
-                        //        item.value = produtoItem.PrecoVenda.ToString();
-                        //        item.product_group = grupo?.Id + "-" + grupo?.Descricao;
-                        //        item.supplier = fornecedor?.Id + "-" + fornecedor?.RazaoSocial;
-                        //        item.measure_unit = uniMedida?.Id + "-" + uniMedida?.Descricao;
-                        //        //item.Tamanho = item.measure_unit;
-
-
-
-                        //        //if (!item.colors.Any(p=> p.uid == corMateriaPrima.Id.ToString()))
-                        //        //     item.colors.Add(new Color { description = corMateriaPrima.Descricao, uid = corMateriaPrima.Id.ToString(), value = corMateriaPrima.Descricao });
-
-                        //        var color = new Color { description = corDaMateriaPrima.Descricao, uid = corDaMateriaPrima.Id.ToString(), value = corDaMateriaPrima.Descricao };
-
-
-                        //        var tamanho = new Size { uid = tamanhoMateria.Id.ToString(), value = tamanhoMateria.Descricao };
-
-                        //        //if (!item.sizes.Any(p => p.uid == tamanhoMateriaPrima.Id.ToString()))
-                        //        //     item.sizes.Add(new Size {  uid = tamanhoMateriaPrima.Id.ToString(), value = tamanhoMateriaPrima.Descricao });
-
-                        //        item.notes = produtoItem.Obs;
-                        //        var colecao = Utils.RetornarColecao(Convert.ToInt32(produtoItem?.IdColecao));
-                        //        //item.collection = colecao?.Descricao;
-                        //        var variant1 = new Variant()
-                        //        {
-                        //            name = corDaMateriaPrima.Id + "-" + corDaMateriaPrima.Descricao,
-                        //            label = corDaMateriaPrima.Id + "-" + corDaMateriaPrima.Descricao,
-                        //            color = color,
-                        //            size = tamanhoMateria.Descricao
-
-                        //        };
-
-                        //        item.variants.Add(variant1);
-
-
-                        //    }
-                        //    items.Add(item);
-                        //    //string IdCorEDescricaoETamanho = string.Format("{0}-{1}-{2}", det.Idcor, det.DescCor,det.DescTamanho);
-                        //    //string IdTamanhoDescricao = String.Format("{0}-{1}", det.IdTamanho, det.DescTamanho.Trim());
-
-
-
-                        //    //Variant variant = CarregarVariante(produto, preco, det, IdCorEDescricaoETamanho, IdTamanhoDescricao);
-
-                        //    // var itensCorETamanho = itensDaFichaRelacao.Where(p => p.cor_materiaprima_Id == det.Idcor && 
-                        //    // p.Tamanho_Materiaprima_Id == det.IdTamanho);
-
-
-
-
-                        //    //if (itensCorETamanho != null && itensCorETamanho.Any()
-                        //    //        && !variants.Any(p=>  p.label ==IdCorEDescricaoETamanho))
-                        //    //{
-                        //    //               var itens = FichaTecnicaService.RetornarItensDoMaterial(itensCorETamanho.ToList());
-
-                        //    //    variant.items.AddRange(itens);
-                        //    //    variants.Add(variant);
-                        //    //} vV
-
-
-
-                        //}
-                        //variant.items.AddRange(items);
-                        //variants.Add(variant);
-                    }
-
-
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
             return variants;
 
         }
 
+            /*var itensPraSomar = new List<Item>();
+
+            foreach (var v in variants)
+            {
+                itensPraSomar.AddRange(v.items);
+            }
+            var SomaTotais = (from o in itensPraSomar
+                              group o by new { o.reference } into g
+                              select new
+                              {
+                                  materia_prima = g.Key.reference,
+                                  Total = g.ToList().FirstOrDefault().value,
+
+                              }).ToList();
+
+
+            foreach (var t in SomaTotais)
+            {
+                SomaTotalFicha += Convert.ToDecimal(t.Total);
+            }*/
+           
+        //}
+
+
+
+
+    
         private Variant CarregarVariante(Produto produto, decimal preco,
-                                            ProdutoDetalheView det, 
+                                            ProdutoDetalheView det,
                                             string IdCorEDescricaoTamanho,
                                             string IdTamanhoDescricao)
         {
             var variant = new Variant()
             {
 
-                name = IdCorEDescricaoTamanho ,
+                name = IdCorEDescricaoTamanho,
                 //description = string.Format("{0}-{1}", produto.Referencia, produto.Descricao),
                 notes = RetornarObservacao(produto),
 
-                value = (det.custo > 0) ? det.custo : preco, // VER COM ALEX
-                label = IdCorEDescricaoTamanho ,
+                value = Convert.ToDouble( (det.custo > 0) ? det.custo : preco), // VER COM ALEX
+                label = IdCorEDescricaoTamanho,
                 author = RetornarAutor(produto),
                 color = new Color()
                 {
@@ -566,7 +379,7 @@ namespace TemplateAudacesApi.Services
                 },
 
                 size = IdTamanhoDescricao,
-                
+
 
 
             };
@@ -660,7 +473,7 @@ namespace TemplateAudacesApi.Services
         private Garment RetornarProdutoAcabado(Produto produto)
         {
 
-            FichaTecnicaDoMaterialItemRepository  fichaTecnicaDoMaterialItemRepository = new FichaTecnicaDoMaterialItemRepository();
+            FichaTecnicaDoMaterialItemRepository fichaTecnicaDoMaterialItemRepository = new FichaTecnicaDoMaterialItemRepository();
             var FichaTecnicaDoMaterialRepository = new FichaTecnicaDoMaterialRepository();
             var precoService = new PrecoService();
             var grupoDeProduto = GrupoProdutoRepository.GetById(2);//VER COM ALEX;
@@ -668,47 +481,55 @@ namespace TemplateAudacesApi.Services
             var detalhe = produtoDetalheRepository.GetListViewByProduto(produto.Id, 1);
             var fornecedor = Utils.RetornarFornecedorDoProduto(produto);
             var FichaTecnicaService = new FichaTecnicaService();
-           // var fichaTecnica = FichaTecnicaService.RetornarFichaTecnica(produto);
+            // var fichaTecnica = FichaTecnicaService.RetornarFichaTecnica(produto);
             var fichaTecnicaMaterial = FichaTecnicaDoMaterialRepository.GetByProduto(produto.Id);
-            var itensDaFichaDoProduto = fichaTecnicaDoMaterialItemRepository.GetAllViewByFichaTecnica(fichaTecnicaMaterial.Id);
-            var itensFichaRelacao = FichaTecnicaService.RetornarItensDaFichaRelacao(fichaTecnicaMaterial);
-          
 
-            Colecao colecao = null;
-            if (produto.IdColecao.HasValue)
-                colecao = Utils.RetornarColecao(produto.IdColecao.Value);
 
-            
-            ICollection<Color> colors = RetornarCores(detalhe);
-            ICollection<Size> sizes = RetornarTamanhos(detalhe);
-
-           
-            decimal PrecoVenda = precoService.RetornarPrecoDeVendaProdutoAcabado(produto);
-
-            var item = new Garment()
+            if (fichaTecnicaMaterial != null && fichaTecnicaMaterial.Id > 0)
             {
-                type = "finished_product",
-                name = produto.Referencia,
-                uid = produto.Referencia,
-                reference = produto.Referencia,
-                description = (!string.IsNullOrEmpty(produto.DescricaoAlternativa)) ? produto.DescricaoAlternativa : produto.Referencia + "-" + produto.Descricao,
-                value = Convert.ToDouble(fichaTecnicaMaterial.Total),
-                measure_unit = unidadeDeMedida?.Id + "-" + unidadeDeMedida?.Descricao,
-                product_group = grupoDeProduto?.Id + "-" + grupoDeProduto?.Descricao,
-                notes = RetornarObservacao(produto),
-                supplier = (fornecedor != null) ? fornecedor?.Id + "-" + fornecedor?.RazaoSocial : "",
-                last_modified = produto.DataAlteracao.ToShortDateString(),
-                //colors = colors,
-                //sizes = sizes,
-                collection = (colecao != null) ? colecao?.Descricao : "",
-                author = RetornarAutor(produto),
-                responsible = RetornarResponsavel(produto),
-                variants = RetornarVariantsDeProdutoAcabado(produto, PrecoVenda, itensFichaRelacao)
-
-            };
+                var itensDaFichaDoMaterialItem = fichaTecnicaDoMaterialItemRepository.GetAllViewByFichaTecnica(fichaTecnicaMaterial.Id).ToList();
+                var itensFichaRelacao = FichaTecnicaService.RetornarItensDaFichaRelacao(fichaTecnicaMaterial);
 
 
-            return item;
+                Colecao colecao = null;
+                if (produto.IdColecao.HasValue)
+                    colecao = Utils.RetornarColecao(produto.IdColecao.Value);
+
+
+                //ICollection<Color> colors = RetornarCores(detalhe);
+                //ICollection<Size> sizes = RetornarTamanhos(detalhe);
+
+
+                // decimal PrecoVenda = precoService.RetornarPrecoDeVendaProdutoAcabado(produto);
+                decimal SomaTotalFicha = 0;
+                var item = new Garment()
+                {
+
+                    type = "finished_product",
+                    name = produto.Referencia,
+                    uid = produto.Referencia,
+                    reference = produto.Referencia,
+                    description = (!string.IsNullOrEmpty(produto.DescricaoAlternativa)) ? produto.DescricaoAlternativa : produto.Referencia + "-" + produto.Descricao,
+                   
+                    measure_unit = unidadeDeMedida?.Id + "-" + unidadeDeMedida?.Descricao,
+                    product_group = grupoDeProduto?.Id + "-" + grupoDeProduto?.Descricao,
+                    notes = RetornarObservacao(produto),
+                    supplier = (fornecedor != null) ? fornecedor?.Id + "-" + fornecedor?.RazaoSocial : "",
+                    last_modified = produto.DataAlteracao.ToShortDateString(),
+
+                    collection = (colecao != null) ? colecao?.Descricao : "",
+                    author = RetornarAutor(produto),
+                    responsible = RetornarResponsavel(produto),
+                    variants = RetornarVariantsDeProdutoAcabado(produto,  itensFichaRelacao, itensDaFichaDoMaterialItem, ref SomaTotalFicha),
+
+
+                };
+            
+                item.value = Convert.ToDouble(SomaTotalFicha);
+
+                return item;
+            }
+            return null;
         }
 
 
@@ -774,42 +595,6 @@ namespace TemplateAudacesApi.Services
 
         }
 
-        private Item RetornarProdutoItem(Produto produto)
-        {
-            var precoService = new PrecoService();
-            var grupoDeProduto = GrupoProdutoRepository.GetById(produto.IdGrupo);
-            var unidadeDeMedida = UniMedidaRepository.GetById(produto.IdUniMedida);
-            var detalhe = produtoDetalheRepository.GetListViewByProduto(produto.Id, 1);
-
-
-            var fornecedor = Utils.RetornarFornecedorDoProduto(produto);
-
-            ICollection<Color> colors = RetornarCores(detalhe);
-            ICollection<Size> sizes = RetornarTamanhos(detalhe);
-
-            decimal PrecoVenda = (produto.TipoItem == 1) ? precoService.RetornarPrecoDeVendaProdutoAcabado(produto) : precoService.RetornarPrecoDoMaterial(produto);
-
-            var item = new Item()
-            {
-                type = produto.TipoItem == 0 ? "finished_product" : "raw_material",
-                uid = produto.Referencia,
-                name = produto.Descricao,
-                reference = produto.Referencia,
-                description = (!string.IsNullOrEmpty(produto.DescricaoAlternativa)) ? produto.DescricaoAlternativa : produto.Descricao,
-                value = PrecoVenda.ToString(),
-                measure_unit = unidadeDeMedida?.Id + "-" + unidadeDeMedida?.Descricao,
-                product_group = grupoDeProduto?.Id + "-" + grupoDeProduto?.Descricao,
-                notes = produto.Obs,
-                supplier = fornecedor?.Id + "-" + fornecedor?.RazaoSocial,
-                last_modified = produto.DataAlteracao.ToShortDateString(),
-                colors = colors,
-                sizes = sizes,
-
-            };
-            return item;
-        }
-
-
         public IEnumerable<Object> GetListPorFiltros(int tipoItem, string referencia, string descricao, string colecao)
         {
             List<Object> lstGarment = new List<Object>();
@@ -819,7 +604,8 @@ namespace TemplateAudacesApi.Services
                 foreach (var item in lstProduto)
                 {
                     var garment = RetornarProduto(item);
-                    lstGarment.Add(garment);
+                    if (garment != null)
+                         lstGarment.Add(garment);
                 }
             }
             return lstGarment;

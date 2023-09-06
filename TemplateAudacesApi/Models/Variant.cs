@@ -18,7 +18,7 @@ namespace TemplateAudacesApi.Models
 
         public string name { get; set; }
         public string description { get; set; }
-        public decimal value { get; set; }
+        public double value { get; set; }
         public Garment garment { get; set; }
         public string author { get; set; }
         public string notes { get; set; }
@@ -56,10 +56,20 @@ namespace TemplateAudacesApi.Models
 
 
                             if (elements[0] == "TAMANHO")
+                            {
                                 tamanho = elements[1];
+                                 if (string.IsNullOrEmpty(tamanho))
+                                {
+                                    tamanho = custom_fields.size.value;
+                                }
+                            }
                         }
                     }
-                }else
+                }else if(custom_fields != null && custom_fields.size != null && !string.IsNullOrEmpty(custom_fields.size.value))
+                  {
+                        tamanho = custom_fields.size.value;
+                 }
+                else
                 {
                     lines = name.Split(new[] { "-" }, StringSplitOptions.None);
                     
@@ -91,18 +101,26 @@ namespace TemplateAudacesApi.Models
                             elements[1].Replace("-", "- ").Replace("Tamanho", " Tamanho"));
 
 
-                        if (elements[0] == "COR")
+                        if (elements[0] == "COR")//codigo junto com descricao
                             cor = elements[1];
                     }
-                }
-                else
+                }else if (name.Contains('-'))
                 {
                     lines = name.Split(new[] { "-" }, StringSplitOptions.None);
-                    if (lines.Length == 3)
-                    {
+
+                    if (lines.Length ==2 || lines.Length == 3)
+                    { //codigo - descricao
                         cor = lines[0] + "-" + lines[1];
                     }
+                   
+                }               
+                else if (custom_fields != null && custom_fields.color != null && !string.IsNullOrEmpty(custom_fields.color.value))
+                {
+                    //retorna o codigo
+                    cor = custom_fields.color.value;
+                    
                 }
+                
                 return cor;
             }
               

@@ -12,10 +12,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>07/24/2023 11:31:28</publishTime>
     </File>
     <File Include="docker-compose.override.yml">
-      <publishTime>07/24/2023 10:51:03</publishTime>
+      <publishTime>07/24/2023 12:33:34</publishTime>
     </File>
     <File Include="Dockerfile">
-      <publishTime>07/24/2023 12:01:16</publishTime>
+      <publishTime>08/15/2023 11:11:58</publishTime>
     </File>
   </ItemGroup>
 </Project>

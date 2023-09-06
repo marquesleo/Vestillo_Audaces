@@ -1,4 +1,5 @@
-﻿I have this problem.And resolve it now.
+﻿Configuracao no docker
+I have this problem.And resolve it now.
 First, login your docker account.
 Second, use this command:docker images,
 this command can show you all images you have, then you chose an image to push.

@@ -12,7 +12,7 @@ namespace TemplateAudacesApi.Models
         public string name { get; set; }
         public string reference { get; set; }
         public string description { get; set; }
-        public string value { get; set; }
+        public double value { get; set; }
         public string measure_unit { get; set; }
         public string last_modified { get; set; }
         public string collection { get; set; }
@@ -36,7 +36,7 @@ namespace TemplateAudacesApi.Models
         public string designer { get; set; }
         public string date_register { get; set; }
         public string usage { get; set; }
-        public string composicao { get; set; }
-        public string Tamanho { get; set; }
+        //public string composicao { get; set; }
+        //public string Tamanho { get; set; }
     }
 }

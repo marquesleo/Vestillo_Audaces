@@ -48,6 +48,20 @@ namespace TemplateAudacesApi.Services
             }
         }
 
+
+        public List<ProdutoDetalhe> RetornarDetalhesDoProduto(int produtoId)
+        {
+            try
+            {
+               return produtoDetalheRepository.GetListByProduto(produtoId, 1).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public void ExcluirDetalhes(Produto produto)
         {
             try

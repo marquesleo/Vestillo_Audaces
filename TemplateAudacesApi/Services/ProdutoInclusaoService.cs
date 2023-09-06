@@ -20,50 +20,13 @@ namespace TemplateAudacesApi.Services
             }
         }
 
-        private GradeDeProdutoService _produtoDetalheService;
-        private GradeDeProdutoService gradeDetalheService
-        {
-            get
-            {
-                if (_produtoDetalheService == null)
-                    _produtoDetalheService = new GradeDeProdutoService();
-
-                return _produtoDetalheService;
-            }
-        }
-
-        private ComposicaoService _fornecedorService;
-        private ComposicaoService fornecedorService
-        {
-            get
-            {
-                if (_fornecedorService == null)
-                    _fornecedorService = new ComposicaoService();
-                return _fornecedorService;
-            }
-        }
-
-
-        private ContadorCodigoRepository _contadorCodigoRepository;
-        private ContadorCodigoRepository contadorCodigoRepository
-        {
-            get
-            {
-                if (_contadorCodigoRepository == null)
-                    _contadorCodigoRepository = new ContadorCodigoRepository();
-                return _contadorCodigoRepository;
-            }
-        }
-
-
-
         public Produto IncluirProdutoAcabado(Garment garment, ref Colaborador fornecedor, string referencia,string descricao)
         {
             Produto produto = new Produto();
             Colecao colecao = null;
             try
             {
-                //GrupProduto grupo = Utils.RetornarGrupo(garment.product_group);//VER COM ALEX
+                
                 UniMedida uniMedida = Utils.RetornarUnidade("1-TU");//VER COM ALEX
                 colecao = Utils.RetornarColecao(garment.collection);
                 var variant = garment.variants[0];
@@ -79,7 +42,7 @@ namespace TemplateAudacesApi.Services
                 produto.IdUniMedida = uniMedida.Id;
                 produto.IdGrupo = 1;
                 produto.IdAlmoxarifado = 1;
-                produto.PrecoVenda = variant.value;
+                produto.PrecoVenda = Convert.ToDecimal(variant.value);
                 produto.Obs= variant.notes;
                 produto.DataAlteracao = Convert.ToDateTime(garment.last_modified);
                 produto.IdColecao =  colecao?.Id;
@@ -103,7 +66,7 @@ namespace TemplateAudacesApi.Services
                     produto.Obs += ";autor:" + garment.author;
                 }
 
-                produto.IdEmpresa = 1;
+                produto.IdEmpresa = Vestillo.Lib.Funcoes.GetIdEmpresaLogada;
                 produtoRepository.Save(ref produto);
 
             }
@@ -122,7 +85,7 @@ namespace TemplateAudacesApi.Services
             produto.DescricaoAlternativa = variant.description;
             produto.DataAlteracao = DateTime.Now;
             produto.Obs = variant.notes;
-            produto.PrecoVenda = variant.value;
+            produto.PrecoVenda = Convert.ToDecimal( variant.value);
             if (!string.IsNullOrEmpty(garment.responsible))
             {
                 if (!string.IsNullOrEmpty(produto.Obs))
