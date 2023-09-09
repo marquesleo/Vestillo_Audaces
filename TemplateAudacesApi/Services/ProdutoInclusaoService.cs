@@ -27,7 +27,7 @@ namespace TemplateAudacesApi.Services
             try
             {
                 
-                UniMedida uniMedida = Utils.RetornarUnidade("1-TU");//VER COM ALEX
+                UniMedida uniMedida = Utils.RetornarUnidade("UN");//VER COM ALEX
                 colecao = Utils.RetornarColecao(garment.collection);
                 var variant = garment.variants[0];
                 produto.Referencia = referencia;
@@ -42,7 +42,8 @@ namespace TemplateAudacesApi.Services
                 produto.IdUniMedida = uniMedida.Id;
                 produto.IdGrupo = 1;
                 produto.IdAlmoxarifado = 1;
-                produto.PrecoVenda = Convert.ToDecimal(variant.value);
+                produto.PrecoVenda = 0;
+                
                 produto.Obs= variant.notes;
                 produto.DataAlteracao = Convert.ToDateTime(garment.last_modified);
                 produto.IdColecao =  colecao?.Id;
@@ -85,7 +86,7 @@ namespace TemplateAudacesApi.Services
             produto.DescricaoAlternativa = variant.description;
             produto.DataAlteracao = DateTime.Now;
             produto.Obs = variant.notes;
-            produto.PrecoVenda = Convert.ToDecimal( variant.value);
+            produto.PrecoVenda = 0;
             if (!string.IsNullOrEmpty(garment.responsible))
             {
                 if (!string.IsNullOrEmpty(produto.Obs))

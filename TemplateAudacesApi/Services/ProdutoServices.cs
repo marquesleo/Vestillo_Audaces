@@ -500,7 +500,7 @@ namespace TemplateAudacesApi.Services
                 //ICollection<Size> sizes = RetornarTamanhos(detalhe);
 
 
-                // decimal PrecoVenda = precoService.RetornarPrecoDeVendaProdutoAcabado(produto);
+              
                 decimal SomaTotalFicha = 0;
                 var item = new Garment()
                 {

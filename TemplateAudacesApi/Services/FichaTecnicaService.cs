@@ -645,9 +645,9 @@ namespace TemplateAudacesApi.Services
                     itemFichaTecnicaDoMaterial.DestinoId = 1;
 
                     itemFichaTecnicaDoMaterial.quantidade = itemFicha.quantidade;//tenho q ver;
-
+                    itemFichaTecnicaDoMaterial.percentual_custo = 100;
                     itemFichaTecnicaDoMaterial.preco = Convert.ToDecimal(itemFicha.valor);
-                    itemFichaTecnicaDoMaterial.valor = Convert.ToDecimal(itemFicha.valor);
+                    itemFichaTecnicaDoMaterial.valor = itemFichaTecnicaDoMaterial.quantidade * itemFichaTecnicaDoMaterial.preco;
                     itemFichaTecnicaDoMaterial.sequencia = itemFicha.sequencia;
 
 
@@ -694,9 +694,9 @@ namespace TemplateAudacesApi.Services
                             itemFichaTecnicaDoMaterial.DestinoId = 1;
 
                             itemFichaTecnicaDoMaterial.quantidade = itemFicha.quantidade;//tenho q ver;
-
+                            itemFichaTecnicaDoMaterial.percentual_custo = 100;
                             itemFichaTecnicaDoMaterial.preco = Convert.ToDecimal(itemFicha.valor);
-                            itemFichaTecnicaDoMaterial.valor = Convert.ToDecimal(itemFicha.valor);
+                            itemFichaTecnicaDoMaterial.valor = itemFichaTecnicaDoMaterial.quantidade * itemFichaTecnicaDoMaterial.preco;
                             itemFichaTecnicaDoMaterial.sequencia = itemFicha.sequencia;
 
 
@@ -794,7 +794,7 @@ namespace TemplateAudacesApi.Services
                         else if (material.cost > 0)
                             valor = material.cost;
                         else
-                            valor = Convert.ToDecimal(variant.value);
+                            valor = 0;
 
 
                         ItemDaFichaTecnica.valor = Convert.ToDouble(valor);
@@ -837,7 +837,7 @@ namespace TemplateAudacesApi.Services
                     else if (material.cost > 0)
                         valor = material.cost;
                     else
-                        valor = Convert.ToDecimal(variant.value);
+                        valor = 0;
                     itemPraGravar.valor = valor;
                     lstTodasVariantesFormadas.Add(itemPraGravar);
 

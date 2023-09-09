@@ -5,9 +5,12 @@ services:
     environment:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ConnectionStrings__MyConnectionString=teste
+      - parametros__empresa=1
     ports:
       - "80"
       - "443"
+    network_mode: host
+
     volumes:
       - ~/.aspnet/https:/root/.aspnet/https:ro
       - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
