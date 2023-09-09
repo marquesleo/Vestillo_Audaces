@@ -285,6 +285,8 @@ namespace TemplateAudacesApi.Services
                              item.last_modified = produtoItem.DataAlteracao.ToString();
                              item.date_register = produtoItem.DataCadastro.ToString();
                              item.value = (itemDaFicha.CustoCalculado > 0) ? Convert.ToDouble(itemDaFicha.CustoCalculado) : Convert.ToDouble(itemDaFicha.preco);
+                             item.amount = itemDaFicha.quantidade;
+                             item.cost = item.value;
                              item.product_group = grupo?.Id + "-" + grupo?.Descricao;
                              item.supplier = fornecedor?.Id + "-" + fornecedor?.RazaoSocial;
                              item.measure_unit = uniMedida?.Id + "-" + uniMedida?.Descricao;
@@ -309,14 +311,13 @@ namespace TemplateAudacesApi.Services
                         item.name = produtoItem.Referencia + "|" + produtoItem.Descricao + "|" + variantMateria.name + "|";
                             
                          }
-                    if (!variant.items.Any(p => p.name == item.name))
+                        if (!variant.items.Any(p => p.name == item.name))
                              variant.items.Add(item);
-                     }
+                          }
 
 
 
-                     variant.value = variant.items.Sum(p => p.value);
-
+             
                      if (!variants.Any(p => p.name == variant.name))
                      {
                          variants.Add(variant);

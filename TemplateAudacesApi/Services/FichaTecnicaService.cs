@@ -660,8 +660,9 @@ namespace TemplateAudacesApi.Services
                         var combinacao = (from obj in lstTodasVariantesFormadas
                                           where
                                                      itemFicha.IdMateriaPrima == obj.uidMateriaPrima &&
-                                                     minhaCor.Cor == obj.corProduto &&
-                                                     itemFicha.descricaoToda == obj.descricaoToda
+                                                     minhaCor.Cor == obj.corProduto 
+                                                     //&&
+                                                     //itemFicha.descricaoToda == obj.descricaoToda
                                           select obj).ToList();
 
                         //se existem itens repetidos pode trazer mais itens, entao agrupo pela cor e tamanho 
@@ -798,8 +799,11 @@ namespace TemplateAudacesApi.Services
 
 
                         ItemDaFichaTecnica.valor = Convert.ToDouble(valor);
-                        lstItemFichaTecnica.Add(ItemDaFichaTecnica);
-                        item += 1;
+                        if (!lstItemFichaTecnica.Any(p => p.IdMateriaPrima == material.uid))
+                        {
+                            lstItemFichaTecnica.Add(ItemDaFichaTecnica);
+                            item += 1;
+                        }
                     }
 
                 }
@@ -902,7 +906,7 @@ namespace TemplateAudacesApi.Services
                 List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
                 fichaVestilo.DataAlteracao = Convert.ToDateTime(garment.last_modified);
                 fichaVestilo.Observacao = produto.Obs;
-                fichaVestilo.Total = Convert.ToDecimal(garment.variants.Sum(p => p.value));
+                fichaVestilo.Total = Convert.ToDecimal(garment.variants[0].value);
                 FichaTecnicaDoMaterialRepository.Save(ref fichaVestilo); //salvei a ficha
 
                 fichaTecnicaDoMaterialRepositoryItem.ExcluirRelacao(fichaVestilo.Id);//exclui relacao

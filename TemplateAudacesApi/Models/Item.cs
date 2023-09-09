@@ -13,6 +13,8 @@ namespace TemplateAudacesApi.Models
         public string reference { get; set; }
         public string description { get; set; }
         public double value { get; set; }
+        public decimal amount { get; set; }
+        public double cost { get; set; }
         public string measure_unit { get; set; }
         public string last_modified { get; set; }
         public string collection { get; set; }
