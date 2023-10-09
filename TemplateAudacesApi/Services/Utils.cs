@@ -55,6 +55,18 @@ namespace TemplateAudacesApi.Services
             }
         }
 
+        private static SegmentoRepository _SegmentoRepository;
+        private static SegmentoRepository SegmentoRepository
+        {
+            get
+            {
+                if (_SegmentoRepository == null)
+                    _SegmentoRepository = new SegmentoRepository();
+                return _SegmentoRepository;
+
+            }
+        }
+
         private static GrupProdutoRepository _GrupoProdutoRepository;
         private static GrupProdutoRepository GrupoProdutoRepository
         {
@@ -78,6 +90,19 @@ namespace TemplateAudacesApi.Services
                 return _CorRepository;
             }
         }
+
+        private static DestinosRepository _DestinosRepository;
+        private static DestinosRepository DestinosRepository
+        {
+            get
+            {
+                if (_DestinosRepository == null)
+                    _DestinosRepository = new DestinosRepository();
+
+                return _DestinosRepository;
+            }
+        }
+
 
         private static TamanhoRepository _TamanhoRepository;
         private static TamanhoRepository TamanhoRepository
@@ -165,7 +190,6 @@ namespace TemplateAudacesApi.Services
                     if (vet != null && vet.Any())
                     {
                         codigo = vet[0];
-                        descricao = vet[1];
                         grupo = GrupoProdutoRepository.GetById(Convert.ToInt32(codigo));
                     }
 
@@ -182,6 +206,38 @@ namespace TemplateAudacesApi.Services
 
             return grupo;
         }
+
+        public static Segmento RetornarSegmento(string descricao)
+        {
+            Segmento segmento = null;
+
+            string codigo = string.Empty;
+            if (!string.IsNullOrWhiteSpace(descricao))
+            {
+                if (descricao.Contains("-"))
+                {
+                    var vet = descricao.Split('-');
+                    if (vet != null && vet.Any())
+                    {
+                        codigo = vet[0];
+                        segmento = lstSegmento.FirstOrDefault(p => p.Id == Convert.ToInt32(codigo));
+
+                    }
+
+                }
+                else
+                {
+                    if (lstSegmento != null && lstSegmento.Any())
+                    {
+                        segmento = lstSegmento.FirstOrDefault(p => p.Descricao.Contains(descricao));
+                    }
+
+                }
+            }
+
+            return segmento;
+        }
+
 
         public static Cor RetornarCor(string descricao)
         {
@@ -242,6 +298,21 @@ namespace TemplateAudacesApi.Services
             }
         }
 
+        private static List<Destinos> _lstDestinos;
+        public static List<Destinos> lstDestinos
+        {
+            get
+            {
+                if (_lstDestinos == null)
+                {
+                    _lstDestinos = new List<Destinos>();
+                    _lstDestinos = DestinosRepository.GetAll().ToList();
+
+                }
+                return _lstDestinos;
+            }
+        }
+
         private static List<Colecao> _lstColecao;
         public static List<Colecao> lstColecao
         {
@@ -254,6 +325,22 @@ namespace TemplateAudacesApi.Services
                 return _lstColecao;
             }
            
+        }
+
+        private static List<Segmento> _lstSegmento;
+        public static List<Segmento> lstSegmento
+        {
+            get
+            {
+                if (_lstSegmento == null)
+                {
+                    _lstSegmento = new List<Segmento>();
+                    _lstSegmento = SegmentoRepository.GetAll().ToList();
+
+                }
+                return _lstSegmento;
+            }
+
         }
 
         public static Cor RetornarCor(int idCor)
@@ -273,6 +360,26 @@ namespace TemplateAudacesApi.Services
             }
 
             return cor;
+        }
+
+
+        public static Segmento RetornarSegmento(int idSegmento)
+        {
+            Segmento segmento = new Segmento();
+
+
+            if (idSegmento > 0)
+            {
+                segmento = lstSegmento.Find(p => p.Id == idSegmento);
+                if (segmento == null || segmento.Id == 0)
+                {
+                    segmento = SegmentoRepository.GetById(Convert.ToInt32(idSegmento));
+                    lstSegmento.Add(segmento);
+                }
+
+            }
+
+            return segmento;
         }
 
 
@@ -304,9 +411,9 @@ namespace TemplateAudacesApi.Services
             Colecao colecao = null;
           
             string codigo = string.Empty;
+
             if (!string.IsNullOrWhiteSpace(descricao))
             {
-
                 colecao = lstColecao.Find(p => p.Descricao.Contains(descricao));
                 if (colecao != null && colecao.Id != 0)
                 {
@@ -435,6 +542,51 @@ namespace TemplateAudacesApi.Services
             return tamanho;
         }
 
+
+        public static Destinos RetornarDestino(string descricao)
+        {
+            Destinos destinos = new Destinos();
+
+            string codigo = string.Empty;
+            if (!string.IsNullOrWhiteSpace(descricao))
+            {
+                if (descricao.Contains("-"))
+                {
+                    var vet = descricao.Split('-');
+                    if (vet != null && vet.Any())
+                    {
+                        codigo = vet[0];
+                        descricao = vet[1];
+                        destinos = lstDestinos.FirstOrDefault(p => p.Id == Convert.ToInt32(codigo));
+                    }
+
+                }
+                else
+                {
+                    destinos = lstDestinos.FirstOrDefault(p => p.Descricao.Contains(descricao));
+
+                }
+            }
+
+            return destinos;
+        }
+        public static Destinos RetornarDestino(int idDestino)
+        {
+            Destinos destinos = new Destinos();
+
+            if (idDestino > 0)
+            {
+                destinos = lstDestinos.FirstOrDefault(p => p.Id == idDestino);
+                if (destinos == null || destinos.Id == 0)
+                {
+                    destinos = DestinosRepository.GetById(idDestino);
+                    lstDestinos.Add(destinos);
+                }
+            }
+            
+            return destinos;
+
+        }
 
         public static Colecao RetornarColecao(int codigo)
         {

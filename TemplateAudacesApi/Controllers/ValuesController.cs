@@ -128,19 +128,14 @@ namespace TemplateAudacesApi.Controllers
 
                 if (reference == "FICHA001" || uid == "FICHAMODELO")
                 {
-                    items.Add(retornarFichaModelo());
+                    var FichaModeloService = new Services.FichaModeloService();
+                    items.Add(FichaModeloService.retornarFichaModelo());
                     return items;
                 }
                 else
                 {
-
-               
-                
-                
-                if (!string.IsNullOrWhiteSpace(type) &&  type.Equals("activity"))
-                    throw new Exception("Rotina de Buscar por activity não implementada ainda!");
-
-
+                     if (!string.IsNullOrWhiteSpace(type) &&  type.Equals("activity"))
+                          throw new Exception("Rotina de Buscar por activity não implementada ainda!");
 
                 
                 if (!string.IsNullOrEmpty(uid) && string.IsNullOrEmpty(type))
@@ -154,7 +149,6 @@ namespace TemplateAudacesApi.Controllers
                 //busca pelo grupo
                 if (!string.IsNullOrEmpty(reference) && !string.IsNullOrEmpty(type) && type.Equals("group"))
                 {
-
                     var lstGrupos = ProdutoServices.GetProdutosByGrupo(reference,description);
                     if (lstGrupos != null && lstGrupos.Any())
                         items.AddRange(lstGrupos);
@@ -171,9 +165,6 @@ namespace TemplateAudacesApi.Controllers
                 //busca so pelo produto acabado
                 if (!string.IsNullOrEmpty(type) && type.Equals("finished_product"))
                 {
-                    
-                    
-                    
                     var lstProdutos = ProdutoServices.GetListPorFiltros(0, reference, description, collection);
                     if (lstProdutos != null)
                         items.AddRange(lstProdutos);
@@ -187,7 +178,7 @@ namespace TemplateAudacesApi.Controllers
                     if (lstProdutos != null && lstProdutos.Any())
                         items.AddRange(lstProdutos);
                 }
-                }
+               }
             }
             catch (Exception ex)
             {
@@ -284,39 +275,8 @@ namespace TemplateAudacesApi.Controllers
 
         }
 
-        private object retornarFichaModelo()
-        {
-           
-            var produto =    new Garment()
-            {
-                name = "FICHAMODELO",
-                uid = "FICHAMODELO",
-                description = "UTILIZAR ESSE MODELO PARA FICHA MODELO",
-          
-            };
+       
 
-            var customFieldsCores = new CustomFields();
-            customFieldsCores.name = "COR";
-            customFieldsCores.type = "string";
-            var lstCores = new List<string>();
-            Services.Utils.lstCor.ForEach(c => lstCores.Add(c.Id + "-" + c.Descricao));
-            customFieldsCores.options = lstCores;
-            customFieldsCores.editable = "true";
-            
-            var customFieldsTamanho = new CustomFields();
-            customFieldsTamanho.name = "TAMANHO";
-            customFieldsTamanho.type = "string";
-            var lstTamanho = new List<string>();
-            Services.Utils.lstTamanho.ForEach(t => lstTamanho.Add(t.Id + "-" + t.Descricao));
-
-            customFieldsTamanho.options = lstTamanho;
-            customFieldsTamanho.editable = "true";
-            
-            produto.custom_fields.Add(customFieldsCores);
-            produto.custom_fields.Add(customFieldsTamanho);
-
-            return produto;
-        }
 
         [HttpPost]
         [Route("v1/garment")]
@@ -351,6 +311,36 @@ namespace TemplateAudacesApi.Controllers
 
         }
 
+        private void ValidarCamposObrigatorios(Garment garment)
+        {
+            try
+            {
+                var variant = garment.variants[0];
+
+                variant.CarregarCamposCustomizaveis();
+                if (string.IsNullOrEmpty(variant.description))
+                    throw new Exception("Descrição deve ser preenchida.");
+
+                if (string.IsNullOrEmpty(variant.Referencia))
+                    throw new Exception("Referência deve ser preenchida.");
+
+                if (string.IsNullOrEmpty(variant.Destino))
+                    throw new Exception("Destino deve ser preenchido.");
+
+                if (string.IsNullOrEmpty(variant.Grupo))
+                    throw new Exception("Grupo deve ser preenchido.");
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+
         private void ValidarProdutoParaGravacao(Garment value, string uid)
         {
             StringBuilder erro = new StringBuilder();
@@ -365,6 +355,7 @@ namespace TemplateAudacesApi.Controllers
             if (value.variants.Any(p => p.materials.Any(m => m.amount == 0)))
                 erro.AppendLine("Algum dos itens está com a quantidade igual a zero!");
 
+            ValidarCamposObrigatorios(value);
 
             if (string.IsNullOrEmpty(uid) && RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(value))
                 erro.AppendLine($"Produto: { value.name } ja cadastrado!");
@@ -381,7 +372,7 @@ namespace TemplateAudacesApi.Controllers
         {
             string referencia = string.Empty;
             string descricao = string.Empty;
-            var produtoService = new TemplateAudacesApi.Services.ProdutoServices();
+            var produtoService = new Services.ProdutoServices();
 
             Produto produto = produtoService.RetornarProduto(value, ref referencia, ref descricao);
 

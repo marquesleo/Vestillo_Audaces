@@ -2,98 +2,128 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace TemplateAudacesApi.Models
 {
     [Serializable]
     public class Variant
     {
-        [JsonProperty("Variante principal")]
-        public VariantePrincipal VariantePrincipal { get; set; }
-
+        public Variant()
+        {
+            CarregarCamposCustomizaveis();
+        }
 
         public string name { get; set; }
         public string description { get; set; }
-        public double value { get; set; }
+        public decimal value { get; set; }
         public Garment garment { get; set; }
-        public string author { get; set; }
         public string notes { get; set; }
         public List<Material> materials { get; set; } = new List<Material>();
         public ICollection<Measure> measures { get; set; }
         public ICollection<Activity> activity { get; set; }
         public string label { get; set; }
-        public Object color { get; set; }
+        [JsonPropertyName("Cor")]
+        public Object Cor { get; set; }
+
+        public Object Color { get; set; }
+
         public string size { get; set; }
         public string composition { get; set; }
-        public List<Item> items { get; set; } = new List<Item>();
+       public List<Item> items { get; set; } = new List<Item>();
         public Item item { get; set; }
-        public Material material { get; set; }
-        public CustomFields custom_fields { get; set; }
-        //public string NomeDaCorDoProdutoAcabado { get; set; }
+        //public Material material { get; set; }
+        public object custom_fields { get; set; }
 
-        public string TamanhoVariant
+        [Newtonsoft.Json.JsonIgnore]
+        public string Ano { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public string Colecao { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public string MinhaCor { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public string Grupo { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public string Referencia { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public string Segmento { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public string MeuTamanho { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public string Destino { get; set; }
+
+        public void CarregarCamposCustomizaveis()
         {
-            get
+            if (custom_fields != null)
             {
-                string tamanho = string.Empty;
-                string[] lines = null;
-                if (name.Contains(':'))
+                var temp = System.Text.Json.JsonSerializer.Serialize(custom_fields);
+                var doc = JsonDocument.Parse(temp);
+                foreach (var itemObject in doc.RootElement.EnumerateObject())
                 {
-                    lines = name.Split(new[] { " - " }, StringSplitOptions.None);
-
-                    foreach (string line in lines)
+                    try
                     {
-                        if (line.Contains(':'))
+                        string customName = itemObject.Name;
+                        JsonElement valueObject = itemObject.Value.GetProperty("value");
+                        switch (customName.ToUpper())
                         {
-                            string[] elements = line.Split(new[] { ": " }, StringSplitOptions.None);
-                            string formattedLine = string.Join(":",
-                                elements[0],
-                                elements[1].Replace("-", "- ").Replace("Tamanho", " Tamanho"));
+                            case "ANO":
+                                Ano = valueObject.GetString();
+                                break;
+
+                            case "COLECAO":
+                                Colecao = valueObject.GetString();
+                                break;
+                            case "COR":
+                                MinhaCor = valueObject.GetString();
+                                break;
+                            case "GRUPO":
+                                Grupo = valueObject.GetString();
+                                break;
+                            case "REFERENCIA":
+                                Referencia = valueObject.GetString();
+                                break;
+                            case "SEGMENTO":
+                                Segmento = valueObject.GetString();
+                                break;
+                            case "TAMANHO":
+                                MeuTamanho = valueObject.GetString();
+                                break;
+                            case "SIZE":
+                                MeuTamanho = valueObject.GetString();
+                                break;
+                            case "DESTINO":
+                                Destino = valueObject.GetString();
+                                break;
+
+                        };
 
 
-                            if (elements[0] == "TAMANHO")
-                            {
-                                tamanho = elements[1];
-                                 if (string.IsNullOrEmpty(tamanho))
-                                {
-                                    tamanho = custom_fields.size.value;
-                                }
-                            }
-                        }
                     }
-                }else if(custom_fields != null && custom_fields.size != null && !string.IsNullOrEmpty(custom_fields.size.value))
-                  {
-                        tamanho = custom_fields.size.value;
-                 }
-                else
-                {
-                    lines = name.Split(new[] { "-" }, StringSplitOptions.None);
-                    
-                    if (lines.Length == 3)
+                    catch (Exception ex)
                     {
-                        tamanho = lines[2];
+
+                        throw;
                     }
                 }
-
-                return tamanho;
             }
+
+
         }
 
-        public string CorDaVariant
+        public string RetornarTamanhoVariant()
         {
-            get
-            {
-                string cor = string.Empty;
-                string[] lines = null;
-                if (name.Contains(':'))
-                {
-                    lines = name.Split(new[] { " - " }, StringSplitOptions.None);
 
-                    foreach (string line in lines)
+            string tamanho = this.MeuTamanho;
+         
+            string[] lines = null;
+            if (name.Contains(':'))
+            {
+                lines = name.Split(new[] { " - " }, StringSplitOptions.None);
+
+                foreach (string line in lines)
+                {
+                    if (line.Contains(':'))
                     {
                         string[] elements = line.Split(new[] { ": " }, StringSplitOptions.None);
                         string formattedLine = string.Join(":",
@@ -101,29 +131,68 @@ namespace TemplateAudacesApi.Models
                             elements[1].Replace("-", "- ").Replace("Tamanho", " Tamanho"));
 
 
-                        if (elements[0] == "COR")//codigo junto com descricao
-                            cor = elements[1];
+                        if (elements[0].ToUpper() == "TAMANHO")
+                        {
+                            tamanho = elements[1];
+                            if (string.IsNullOrEmpty(tamanho))
+                            {
+                                tamanho = this.MeuTamanho;
+                            }
+                        }
                     }
-                }else if (name.Contains('-'))
-                {
-                    lines = name.Split(new[] { "-" }, StringSplitOptions.None);
-
-                    if (lines.Length ==2 || lines.Length == 3)
-                    { //codigo - descricao
-                        cor = lines[0] + "-" + lines[1];
-                    }
-                   
-                }               
-                else if (custom_fields != null && custom_fields.color != null && !string.IsNullOrEmpty(custom_fields.color.value))
-                {
-                    //retorna o codigo
-                    cor = custom_fields.color.value;
-                    
                 }
-                
-                return cor;
             }
-              
+            
+            else
+            {
+                lines = name.Split(new[] { "-" }, StringSplitOptions.None);
+
+                if (lines.Length == 3)
+                {
+                    tamanho = lines[2];
+                }
+            }
+
+            return tamanho;
+
+        }
+
+        public string RetornarCorDaVariant()
+        {
+            
+            string cor = this.MinhaCor;
+            string[] lines = null;
+            if (name.Contains(':'))
+            {
+                lines = name.Split(new[] { " - " }, StringSplitOptions.None);
+
+                foreach (string line in lines)
+                {
+                    string[] elements = line.Split(new[] { ": " }, StringSplitOptions.None);
+                    string formattedLine = string.Join(":",
+                        elements[0],
+                        elements[1].Replace("-", "- ").Replace("Tamanho", " Tamanho"));
+
+
+                    if (elements[0].ToUpper() == "COR")//codigo junto com descricao
+                        cor = elements[1];
+                }
+            }
+            else if (name.Contains('-'))
+            {
+                lines = name.Split(new[] { "-" }, StringSplitOptions.None);
+
+                if (lines.Length == 2 || lines.Length == 3)
+                { //codigo - descricao
+                    cor = lines[0] + "-" + lines[1];
+                }
+
+            }
+          
+
+            return cor;
+
+
         }
 
 

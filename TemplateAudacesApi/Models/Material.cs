@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TemplateAudacesApi.Models
@@ -32,12 +33,15 @@ namespace TemplateAudacesApi.Models
         public string um { get; set; }
         public string desc { get; set; }
         public object color { get; set; }
+        [JsonPropertyName("Cor")]
+        public object cor {get; set; }
         public string variant { get; set; }
         public CustomFields custom_fields { get; set; }
         public ICollection<Image> images { get; set; }
         public List<Variant> variants { get; set; } = new List<Variant>();
         public string NomeDaCorDoProdutoAcabado { get; set; }
 
+        [JsonIgnore]
         public string produto
         {
             get

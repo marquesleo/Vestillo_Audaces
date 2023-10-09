@@ -28,27 +28,34 @@ namespace TemplateAudacesApi.Services
             {
                 
                 UniMedida uniMedida = Utils.RetornarUnidade("UN");//VER COM ALEX
-                colecao = Utils.RetornarColecao(garment.collection);
+                
                 var variant = garment.variants[0];
+                colecao = Utils.RetornarColecao(variant.Colecao);
                 produto.Referencia = referencia;
                 produto.Descricao = descricao;
                 produto.IdAlmoxarifado = 1;
                 produto.Ncm = "012345678";
+                produto.IdTipoproduto = 1;
                 produto.Origem = 0;
                 produto.DescricaoAlternativa = variant.description;
                 produto.DataCadastro = DateTime.Now;
                 produto.Ativo = true;
                 produto.TipoItem = 0;
                 produto.IdUniMedida = uniMedida.Id;
-                produto.IdGrupo = 1;
+                var grupo = Utils.RetornarGrupo(variant.Grupo);
+                produto.IdGrupo = (grupo != null && grupo.Id != 0) ? grupo.Id : 1;
                 produto.IdAlmoxarifado = 1;
                 produto.PrecoVenda = 0;
                 
                 produto.Obs= variant.notes;
-                produto.DataAlteracao = Convert.ToDateTime(garment.last_modified);
+               
                 produto.IdColecao =  colecao?.Id;
                 produto.QtdPacote = 1;
                 produto.TempoPacote = 1;
+                if (!string.IsNullOrEmpty(variant.Ano))
+                produto.Ano = Convert.ToInt32(variant.Ano.ToString());
+                var segmento = Utils.RetornarSegmento(variant.Segmento);
+                produto.IdSegmento = segmento?.Id;
 
                 if (!string.IsNullOrEmpty(garment.responsible))
                 {
@@ -59,13 +66,13 @@ namespace TemplateAudacesApi.Services
 
 
                 }
-                if (!string.IsNullOrEmpty(garment.author))
-                {
-                    if (!string.IsNullOrEmpty(produto.Obs))
-                        produto.Obs += " \n ";
+                //if (!string.IsNullOrEmpty(garment.author))
+                //{
+                //    if (!string.IsNullOrEmpty(produto.Obs))
+                //        produto.Obs += " \n ";
 
-                    produto.Obs += ";autor:" + garment.author;
-                }
+                //    produto.Obs += ";autor:" + garment.author;
+                //}
 
                 produto.IdEmpresa = Vestillo.Lib.Funcoes.GetIdEmpresaLogada;
                 produtoRepository.Save(ref produto);
@@ -83,10 +90,20 @@ namespace TemplateAudacesApi.Services
         {
             var variant = garment.variants[0];
             produto.Descricao = descricao;
+            var grupo = Utils.RetornarGrupo(variant.Grupo);
+            var colecao = Utils.RetornarColecao(variant.Colecao);
+           
             produto.DescricaoAlternativa = variant.description;
             produto.DataAlteracao = DateTime.Now;
             produto.Obs = variant.notes;
             produto.PrecoVenda = 0;
+            produto.IdGrupo = grupo.Id;
+            produto.IdColecao = colecao.Id;
+            produto.Ano = Convert.ToInt32(variant.Ano.ToString());
+            var segmento = Utils.RetornarSegmento(variant.Segmento);
+            produto.IdSegmento = segmento?.Id;
+
+
             if (!string.IsNullOrEmpty(garment.responsible))
             {
                 if (!string.IsNullOrEmpty(produto.Obs))
@@ -94,16 +111,16 @@ namespace TemplateAudacesApi.Services
 
                 produto.Obs += "responsavel:" + garment.responsible;
             }
-            if (!string.IsNullOrEmpty(garment.author))
-            {
-                if (!string.IsNullOrEmpty(produto.Obs))
-                    produto.Obs += " \n ";
+            //if (!string.IsNullOrEmpty(garment.author))
+            //{
+            //    if (!string.IsNullOrEmpty(produto.Obs))
+            //        produto.Obs += " \n ";
 
-                produto.Obs += ";autor:" + garment.author;
-            } 
+            //    produto.Obs += ";autor:" + garment.author;
+            //} 
 
-            var colecao = Utils.RetornarColecao(garment.collection);
-            produto.IdColecao = colecao?.Id;
+           // var colecao = Utils.RetornarColecao(garment.collection);
+         //   produto.IdColecao = colecao?.Id;
             produtoRepository.Save(ref produto);
                                               
             return produto;

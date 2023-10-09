@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TemplateAudacesApi.Models
@@ -21,22 +22,25 @@ namespace TemplateAudacesApi.Models
         public string measure_unit { get; set; }
         public string last_modified { get; set; }
         public string filename { get; set; }
-        public int revision { get; set; }
-        public string author { get; set; }
-        public string collection { get; set; }
+       //public int revision { get; set; }
+        //public string author { get; set; }
+      //  public string collection { get; set; }
         public string notes { get; set; }
-        public string product_group { get; set; }
+        //public string product_group { get; set; }
         public string supplier { get; set; }
         public string usage { get; set; }
         public Color color { get; set; } = new Color();
-        public ICollection<Color> colors { get; set; } = new List<Color>();
-        public ICollection<Image> images { get; set; } = new List<Image>();
+       // public ICollection<Color> colors { get; set; } = new List<Color>();
+       // public ICollection<Image> images { get; set; } = new List<Image>();
         public string currency { get; set; }
         public ICollection<string> composition { get; set; }
         public string responsible { get; set; }
         public List<CustomFields> custom_fields { get; set; } = new List<CustomFields>();
-        public ICollection<Size> sizes { get; set; } = new List<Size>();
-        public ICollection<Price> prices { get; set; } = new List<Price>();
+        [JsonPropertyName("Cor")]
+        public CustomFields Cor { get; set; } 
+
+        public Size sizes { get; set; }
+        // public ICollection<Price> prices { get; set; } = new List<Price>();
         public List<Variant> variants { get; set; } = new List<Variant>();
 
 
