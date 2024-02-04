@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -36,10 +37,14 @@ namespace TemplateAudacesApi.Models
         [JsonPropertyName("Cor")]
         public object cor {get; set; }
         public string variant { get; set; }
-        public CustomFields custom_fields { get; set; }
+        public object custom_fields { get; set; }
+        //public CustomFields Destinos { get; set; }
         public ICollection<Image> images { get; set; }
         public List<Variant> variants { get; set; } = new List<Variant>();
+        [JsonIgnore]
         public string NomeDaCorDoProdutoAcabado { get; set; }
+        [JsonIgnore]
+        public string Destino { get; set; }
 
         [JsonIgnore]
         public string produto
@@ -49,6 +54,41 @@ namespace TemplateAudacesApi.Models
                 return uid + "-" + description + "-" + variant;
             }
         }
+
+        public void CarregarCamposCustomizaveis()
+        {
+            if (custom_fields != null)
+            {
+                var temp = System.Text.Json.JsonSerializer.Serialize(custom_fields);
+                var doc = JsonDocument.Parse(temp);
+                foreach (var itemObject in doc.RootElement.EnumerateObject())
+                {
+                    try
+                    {
+                        string customName = itemObject.Name;
+                        JsonElement valueObject = itemObject.Value.GetProperty("value");
+                        switch (customName.ToUpper())
+                        {              
+                                                          
+                            case "DESTINOS":
+                                Destino = valueObject.GetString();
+                                break;
+
+                        };
+
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw;
+                    }
+                }
+            }
+
+
+        }
+
 
         public ICollection<Size> sizes { get; set; } = new List<Size>();
         public ICollection<Color> colors { get; set; } = new List<Color>();

@@ -20,7 +20,10 @@ namespace TemplateAudacesApi.Services
             }
         }
 
-        public Produto IncluirProdutoAcabado(Garment garment, ref Colaborador fornecedor, string referencia,string descricao)
+        public Produto IncluirProdutoAcabado(Garment garment, 
+                                            ref Colaborador fornecedor, 
+                                            string referencia,
+                                            string descricao)
         {
             Produto produto = new Produto();
             Colecao colecao = null;
@@ -46,34 +49,18 @@ namespace TemplateAudacesApi.Services
                 produto.IdGrupo = (grupo != null && grupo.Id != 0) ? grupo.Id : 1;
                 produto.IdAlmoxarifado = 1;
                 produto.PrecoVenda = 0;
-                
-                produto.Obs= variant.notes;
+
+               
                
                 produto.IdColecao =  colecao?.Id;
                 produto.QtdPacote = 1;
                 produto.TempoPacote = 1;
+
+
                 if (!string.IsNullOrEmpty(variant.Ano))
                 produto.Ano = Convert.ToInt32(variant.Ano.ToString());
                 var segmento = Utils.RetornarSegmento(variant.Segmento);
                 produto.IdSegmento = segmento?.Id;
-
-                if (!string.IsNullOrEmpty(garment.responsible))
-                {
-                    if (!string.IsNullOrEmpty(produto.Obs))
-                        produto.Obs += " \n ";
-
-                    produto.Obs += ";responsavel:" + garment.responsible;
-
-
-                }
-                //if (!string.IsNullOrEmpty(garment.author))
-                //{
-                //    if (!string.IsNullOrEmpty(produto.Obs))
-                //        produto.Obs += " \n ";
-
-                //    produto.Obs += ";autor:" + garment.author;
-                //}
-
                 produto.IdEmpresa = Vestillo.Lib.Funcoes.GetIdEmpresaLogada;
                 produtoRepository.Save(ref produto);
 
@@ -86,16 +73,18 @@ namespace TemplateAudacesApi.Services
 
         }
 
-        public Produto AlterarProdutoAcabado(Garment garment, Produto produto,string descricao)
+        public Produto AlterarProdutoAcabado(Garment garment, 
+                                             Produto produto,
+                                             string descricao)
         {
             var variant = garment.variants[0];
             produto.Descricao = descricao;
             var grupo = Utils.RetornarGrupo(variant.Grupo);
             var colecao = Utils.RetornarColecao(variant.Colecao);
-           
+
             produto.DescricaoAlternativa = variant.description;
             produto.DataAlteracao = DateTime.Now;
-            produto.Obs = variant.notes;
+
             produto.PrecoVenda = 0;
             produto.IdGrupo = grupo.Id;
             produto.IdColecao = colecao.Id;
@@ -103,28 +92,14 @@ namespace TemplateAudacesApi.Services
             var segmento = Utils.RetornarSegmento(variant.Segmento);
             produto.IdSegmento = segmento?.Id;
 
+           
 
-            if (!string.IsNullOrEmpty(garment.responsible))
-            {
-                if (!string.IsNullOrEmpty(produto.Obs))
-                    produto.Obs += " \n ";
-
-                produto.Obs += "responsavel:" + garment.responsible;
-            }
-            //if (!string.IsNullOrEmpty(garment.author))
-            //{
-            //    if (!string.IsNullOrEmpty(produto.Obs))
-            //        produto.Obs += " \n ";
-
-            //    produto.Obs += ";autor:" + garment.author;
-            //} 
-
-           // var colecao = Utils.RetornarColecao(garment.collection);
-         //   produto.IdColecao = colecao?.Id;
             produtoRepository.Save(ref produto);
-                                              
+
             return produto;
         }
+
+       
 
         public Produto IncluirProdutoMaterial(Material material)
         {

@@ -20,12 +20,18 @@ namespace TemplateAudacesApi.Models
         public decimal value { get; set; }
         public Garment garment { get; set; }
         public string notes { get; set; }
+        //[JsonPropertyName("Observação")]
+        //public string observacao { get; set; } 
         public List<Material> materials { get; set; } = new List<Material>();
         public ICollection<Measure> measures { get; set; }
         public ICollection<Activity> activity { get; set; }
         public string label { get; set; }
         [JsonPropertyName("Cor")]
         public Object Cor { get; set; }
+
+
+        [JsonPropertyName("Destinos")]
+        public Object Destinos { get; set; }
 
         public Object Color { get; set; }
 
@@ -92,7 +98,7 @@ namespace TemplateAudacesApi.Models
                             case "SIZE":
                                 MeuTamanho = valueObject.GetString();
                                 break;
-                            case "DESTINO":
+                            case "DESTINOS":
                                 Destino = valueObject.GetString();
                                 break;
 

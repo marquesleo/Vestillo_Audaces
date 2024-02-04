@@ -324,13 +324,19 @@ namespace TemplateAudacesApi.Controllers
                 if (string.IsNullOrEmpty(variant.Referencia))
                     throw new Exception("Referência deve ser preenchida.");
 
-                if (string.IsNullOrEmpty(variant.Destino))
-                    throw new Exception("Destino deve ser preenchido.");
-
+               
                 if (string.IsNullOrEmpty(variant.Grupo))
                     throw new Exception("Grupo deve ser preenchido.");
 
-
+                if (variant.materials != null && variant.materials.Any())
+                {
+                    foreach (var item in variant.materials)
+                    {
+                        item.CarregarCamposCustomizaveis();
+                        if (string.IsNullOrEmpty(item.Destino))
+                            throw new Exception("Destino deve ser preenchido.");
+                    }
+                }
 
             }
             catch (Exception ex)
@@ -344,6 +350,7 @@ namespace TemplateAudacesApi.Controllers
         private void ValidarProdutoParaGravacao(Garment value, string uid)
         {
             StringBuilder erro = new StringBuilder();
+            string referencia = string.Empty;
 
             if (string.IsNullOrEmpty(value.name))
                 erro.AppendLine("Campo 'name' está em branco.");
@@ -357,8 +364,8 @@ namespace TemplateAudacesApi.Controllers
 
             ValidarCamposObrigatorios(value);
 
-            if (string.IsNullOrEmpty(uid) && RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(value))
-                erro.AppendLine($"Produto: { value.name } ja cadastrado!");
+            if (string.IsNullOrEmpty(uid) && RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(value, ref referencia))
+                erro.AppendLine($"Produto de referência: { referencia } ja cadastrado!");
 
 
 
@@ -368,9 +375,9 @@ namespace TemplateAudacesApi.Controllers
         }
 
 
-        private bool RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(Garment value)
+        private bool RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(Garment value, ref string referencia)
         {
-            string referencia = string.Empty;
+           
             string descricao = string.Empty;
             var produtoService = new Services.ProdutoServices();
 

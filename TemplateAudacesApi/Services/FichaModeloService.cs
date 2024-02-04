@@ -24,7 +24,7 @@ namespace TemplateAudacesApi.Services
             CustomFields customFieldGrupo = RetornarGrupoDeProdutoVestillo();
             CustomFields customFieldReferencia = RetornarCampoReferencia();
             CustomFields customAnoVestillo = RetornarAnoVestillo();
-            CustomFields customFieldDestino = RetornarDetinoDoVestillo();
+           // CustomFields customFieldDestino = RetornarDetinoDoVestillo();
             produto.custom_fields.Add(customFieldsCores);
             produto.custom_fields.Add(customFieldsTamanho);
             produto.custom_fields.Add(customFieldsColecoes);
@@ -32,7 +32,7 @@ namespace TemplateAudacesApi.Services
             produto.custom_fields.Add(customFieldGrupo);
             produto.custom_fields.Add(customFieldReferencia);
             produto.custom_fields.Add(customAnoVestillo);
-            produto.custom_fields.Add(customFieldDestino);
+           // produto.custom_fields.Add(customFieldDestino);
             return produto;
         }
 
@@ -106,7 +106,7 @@ namespace TemplateAudacesApi.Services
         public static CustomFields RetornarDetinoDoVestillo()
         {
             var customFieldsCores = new CustomFields();
-            customFieldsCores.name = "DESTINO";
+            customFieldsCores.name = "Destinos";
             customFieldsCores.type = "string";
             var lstDestino = new List<string>();
             Services.Utils.lstDestinos.ForEach(c => lstDestino.Add(c.Id + "-" + c.Descricao));

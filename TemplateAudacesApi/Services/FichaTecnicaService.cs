@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
 using TemplateAudacesApi.Models;
 using Vestillo.Business.Models;
 using Vestillo.Business.Repositories;
-using Vestillo.Business.Service;
 
 namespace TemplateAudacesApi.Services
 {
@@ -107,6 +104,22 @@ namespace TemplateAudacesApi.Services
             }
         }
 
+        private string retornarObservacaoDoProdutoAudaces(Garment garment)
+        {
+            var variant = garment.variants[0];
+            string observacao = variant.notes;
+            if (!string.IsNullOrEmpty(garment.responsible))
+            {
+                if (!string.IsNullOrEmpty(observacao))
+                    observacao += " \n ";
+
+                observacao += "responsavel:" + garment.responsible;
+            }
+
+            return observacao;
+        }
+
+
         /// <summary>
         /// Inclui a ficha tecnica pelo produto
         /// </summary>
@@ -119,6 +132,7 @@ namespace TemplateAudacesApi.Services
             Colaborador fornecedor = null;
             string referencia = string.Empty;
             string descricao = string.Empty;
+         
             try
             {
                 produtoRepository.BeginTransaction();
@@ -128,15 +142,23 @@ namespace TemplateAudacesApi.Services
                 if (produto == null || produto.Id == 0)
                 {
                     //inclui um novo produto,detalhe, fornecedor caso nao tenha
-                    produto = produtoInclusaoService.IncluirProdutoAcabado(garment, ref fornecedor, referencia, descricao);
+                    produto = produtoInclusaoService.IncluirProdutoAcabado(garment,
+                                                    ref fornecedor, 
+                                                    referencia,
+                                                    descricao);
                 }
                 else
                 {
                     //altera o produto acabado
                     produto = produtoInclusaoService.AlterarProdutoAcabado(garment, produto, descricao);
                 }
+                var observacao =  retornarObservacaoDoProdutoAudaces(garment);
+
+                IncluirObservacao(observacao, produto);
+
 
                 var fichaTecnicaMaterial = FichaTecnicaDoMaterialRepository.GetByProduto(produto.Id);
+              
                 if (fichaTecnicaMaterial != null && fichaTecnicaMaterial.Id > 0)
                 {
                     fichaVestiloMaterial = AlterarFicha(garment, fichaTecnicaMaterial, produto);
@@ -155,6 +177,19 @@ namespace TemplateAudacesApi.Services
             }
             return fichaVestiloMaterial;
         }
+
+        private void IncluirObservacao(string observacao, Produto produto)
+        {
+            var observacaoDoProdutoRepository = new ObservacaoProdutoRepository();
+            var observacaoDoProduto = observacaoDoProdutoRepository.GetByProduto(produto.Id);
+            if (observacaoDoProduto != null) 
+                     observacaoDoProdutoRepository.Delete(observacaoDoProduto.Id);
+
+           var novaObservacao = new ObservacaoProduto();
+            novaObservacao.ProdutoId = produto.Id;
+            novaObservacao.Observacao = observacao;
+            observacaoDoProdutoRepository.Save(ref novaObservacao);
+         }
 
         public FichaTecnica RetornarFichaTecnica(Produto produto)
         {
@@ -355,6 +390,9 @@ namespace TemplateAudacesApi.Services
 
                 FichaTecnicaRepository.Save(ref fichaTecnica);
                 FichaTecnicaDoMaterialRepository.Save(ref fichaDoMaterial); //salvei a ficha
+
+               
+
             }
             catch (Exception ex)
             {
@@ -381,13 +419,7 @@ namespace TemplateAudacesApi.Services
                         inclusao = true;
 
                     }   
-                 
-
                      GravarFichaTecnica(garment, ficha, produto, inclusao);
-
-                    //List<Models.Ficha> lstFicha = RetornarListaASerGravada(ficha, out sequencia, lstItemPraGravar);
-
-                    //                    GravarFichaDeMaterialItemERelacao(produto, ficha, lstFichaTecnicaMaterialItem, lstFicha);
 
                 }
 
@@ -541,6 +573,7 @@ namespace TemplateAudacesApi.Services
             public short sequencia { get; set; }
             public decimal quantidade { get; set; }
             public double valor { get; set; }
+            public string Destino { get; set; }
             public List<Models.ItemPraGravar> variacoes { get; set; } = new List<Models.ItemPraGravar>();
         }
 
@@ -639,7 +672,7 @@ namespace TemplateAudacesApi.Services
                     var itemFichaTecnicaDoMaterial = new FichaTecnicaDoMaterialItem();
                     itemFichaTecnicaDoMaterial.FichaTecnicaId = ficha.Id;
                     itemFichaTecnicaDoMaterial.MateriaPrimaId = produtoMaterial.Id;
-                    var destinos = Utils.RetornarDestino(garment.variants[0].Destino);
+                    var destinos = Utils.RetornarDestino(itemFicha.Destino);
                     itemFichaTecnicaDoMaterial.DestinoId = destinos.Id;
                   
 
@@ -768,6 +801,7 @@ namespace TemplateAudacesApi.Services
                         ItemDaFichaTecnica.IdMateriaPrima = material.uid.Trim();
                         ItemDaFichaTecnica.sequencia = Convert.ToInt16(item);
                         ItemDaFichaTecnica.quantidade = material.amount;
+                        ItemDaFichaTecnica.Destino = material.Destino;
 
                         decimal valor = 0;
                         if (material.total > 0)
@@ -810,6 +844,7 @@ namespace TemplateAudacesApi.Services
                     var itemPraGravar = new Models.ItemPraGravar();
                     
                     itemPraGravar.uidMateriaPrima = material.uid;
+                    itemPraGravar.Destino = material.Destino;
                     itemPraGravar.corProduto = variant.MinhaCor.Trim();
                     itemPraGravar.item = item;
                     itemPraGravar.tamanhoProduto = (variant.MeuTamanho != null) ? variant.MeuTamanho : variant.size.Trim();
@@ -884,9 +919,11 @@ namespace TemplateAudacesApi.Services
         {
             try
             {
+
+               
+
                 List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
                 fichaVestilo.DataAlteracao = Convert.ToDateTime(garment.last_modified);
-                fichaVestilo.Observacao = produto.Obs;
                 fichaVestilo.Total = Convert.ToDecimal(garment.variants[0].value);
                 FichaTecnicaDoMaterialRepository.Save(ref fichaVestilo); //salvei a ficha
 
