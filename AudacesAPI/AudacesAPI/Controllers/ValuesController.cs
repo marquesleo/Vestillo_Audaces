@@ -60,7 +60,7 @@ namespace TemplateAudacesApi.Controllers
         {
             _httpClientFactory = httpClientFactory;
             _config = configuration;
-            //SetarPadroes();
+            SetarPadroes();
         }
 
         private void SetarPadroes()
@@ -107,30 +107,21 @@ namespace TemplateAudacesApi.Controllers
         }
 
         [HttpGet, Route("v1/query")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IEnumerable<Object> Query([FromQuery] string uid
-            , [FromQuery] string reference
-            , [FromQuery] string type
-            , [FromQuery] string product_group
-            , [FromQuery] string supplier
-            , [FromQuery] string description
-            , [FromQuery] string collection)
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+     public IEnumerable<Object> Query(                                                                                                                                                                                           
+         [FromQuery] string? uid = null,                                                                                                                                                                                         
+         [FromQuery] string? reference = null,                                                                                                                                                                                   
+         [FromQuery] string? type = null,                                                                                                                                                                                        
+         [FromQuery] string? product_group = null,                                                                                                                                                                               
+         [FromQuery] string? supplier = null,                                                                                                                                                                                    
+         [FromQuery] string? description = null,                                                                                                                                                                                 
+         [FromQuery] string? collection = null) 
         {
             List<Object> items = new List<Object>();
-
-            //busca so pelo uid
-
-
             try
             {
-
-
-                
-                
                 if (!string.IsNullOrWhiteSpace(type) &&  type.Equals("activity"))
                     throw new Exception("Rotina de Buscar por activity não implementada ainda!");
-
-
 
                 
                 if (!string.IsNullOrEmpty(uid) && string.IsNullOrEmpty(type))
@@ -161,9 +152,6 @@ namespace TemplateAudacesApi.Controllers
                 //busca so pelo produto acabado
                 if (!string.IsNullOrEmpty(type) && type.Equals("finished_product"))
                 {
-                    
-                    
-                    
                     var lstProdutos = ProdutoServices.GetListPorFiltros(0, reference, description, collection);
                     if (lstProdutos != null)
                         items.AddRange(lstProdutos);
@@ -183,89 +171,7 @@ namespace TemplateAudacesApi.Controllers
 
                 throw ex;
             }
-            /*if (type == "raw_material")
-            {
-               
-                items.Add(new Material
-                {
-                    type = "raw_material",
-                    uid = "BTN-ID1",
-                    name = "Button 1",
-                    reference = "BTN1",
-                    description = "Small button",
-                    value =  10.49,
-                    measure_unit = "UN",
-                    product_group = "Buttons",
-                    supplier = "ACME INC",
-                    notes = "A small plastic button"
-                });
-            }
-            else if (type == "finished_product")
-            {
-                items.Add(new Garment
-                {
-                    type         = "finished_product",
-                    uid          = "039292",
-                    name         = "POLO_SHIRT 3",
-                    reference    = "039292",
-                    description  = "MENS POLO SHIRT",
-                    value        = 15,
-                    product_group= "Shirts",
-                    collection   = "HIGHSTIL SUMMER 2017",
-                    notes        = "Lyle & Scott 2",
-                });
-            }
-            else if (type == "activity")
-            {
-                items.Add(new Activity
-                {
-                    type        = "activity",
-                    uid         = "ACT001",
-                    name        = "Wash",
-                    reference   = "LV001",
-                    description = "Wash the whole fabric",
-                    value       = 0.5,
-                    measure_unit= "min",
-                    time        = 30,
-                    notes       = "Repeated two times",
-                    sector      = "SCT1",
-                    machine     = "MC1"
-                });
-            }
-            else if (type == "generic")
-            {
-                items.Add(new Generic
-                {
-                    type       = "generic",
-                    uid        = "CLN001",
-                    reference  = "CLNABC",
-                    name       = "cliente ABC",
-                    endereco   = "Rua João Paulo 400",
-                    telefone   = "011 987654321",
-                    description= "cliente de São Paulo"
-                });
-            }
-            else if (type == "measure")
-            {
-                items.Add(new Measure
-                {
-                    type      = "measure",
-                    uid       = "MSR001",
-                    name      = "gola",
-                    reference = "MSRGola",
-                    notes     = "Testeeeee",
-                    value     = "1.5",
-                    measure_unit = "mm",
-                    last_modified = "2018-09-07T12:31Z",
-                    values = new MeasureValues
-                    {
-                        P = 1.2,
-                        M = 1.5,
-                        G = 1.8,
-                        order = "P;M;G"
-                    }
-                });
-            }*/
+            
             if (!items.Any())
                 return null;
 

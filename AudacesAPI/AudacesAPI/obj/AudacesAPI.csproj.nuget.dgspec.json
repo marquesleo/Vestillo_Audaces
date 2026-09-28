@@ -1,37 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Fontes\\VesilloAudaces\\AudacesAPI\\AudacesAPI\\AudacesAPI.csproj": {}
+    "/Users/leomarquesilva/Vestillo_Audaces/AudacesAPI/AudacesAPI/AudacesAPI.csproj": {}
   },
   "projects": {
-    "C:\\Fontes\\VesilloAudaces\\AudacesAPI\\AudacesAPI\\AudacesAPI.csproj": {
+    "/Users/leomarquesilva/Vestillo_Audaces/AudacesAPI/AudacesAPI/AudacesAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Fontes\\VesilloAudaces\\AudacesAPI\\AudacesAPI\\AudacesAPI.csproj",
+        "projectUniqueName": "/Users/leomarquesilva/Vestillo_Audaces/AudacesAPI/AudacesAPI/AudacesAPI.csproj",
         "projectName": "AudacesAPI",
-        "projectPath": "C:\\Fontes\\VesilloAudaces\\AudacesAPI\\AudacesAPI\\AudacesAPI.csproj",
-        "packagesPath": "C:\\Users\\leo_m\\.nuget\\packages\\",
-        "outputPath": "C:\\Fontes\\VesilloAudaces\\AudacesAPI\\AudacesAPI\\obj\\",
+        "projectPath": "/Users/leomarquesilva/Vestillo_Audaces/AudacesAPI/AudacesAPI/AudacesAPI.csproj",
+        "packagesPath": "/Users/leomarquesilva/.nuget/packages/",
+        "outputPath": "/Users/leomarquesilva/Vestillo_Audaces/AudacesAPI/AudacesAPI/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\leo_m\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 18.2.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/leomarquesilva/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net6.0"
+          "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\DevExpress 18.2\\Components\\System\\Components\\Packages": {},
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net6.0": {
-            "targetAlias": "net6.0",
+          "net9.0": {
+            "targetAlias": "net9.0",
             "projectReferences": {}
           }
         },
@@ -39,11 +32,17 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
+        "net9.0": {
+          "targetAlias": "net9.0",
           "dependencies": {
             "Dapper": {
               "target": "Package",
@@ -68,10 +67,25 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.11, 9.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.osx-arm64",
+              "version": "[9.0.11, 9.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.11, 9.0.11]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -80,7 +94,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.120\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

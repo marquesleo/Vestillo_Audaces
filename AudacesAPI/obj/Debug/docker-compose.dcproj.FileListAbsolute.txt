@@ -27,3 +27,4 @@
 /Users/leonardomsilva/FONTES/Vestillo_Audaces/AudacesAPI/obj/Debug/docker-compose.dcproj.AssemblyReference.cache
 /Users/leonardomsilva/FONTES/Vestillo_Audaces/AudacesAPI/obj/Debug/docker-compose.dcproj.CoreCompileInputs.cache
 /Users/leonardomsilva/FONTES/Vestillo_Audaces/AudacesAPI/obj/Debug/docker-compose.dcproj.CopyComplete
+/Users/leomarquesilva/Vestillo_Audaces/AudacesAPI/obj/Debug/docker-compose.dcproj.CoreCompileInputs.cache
