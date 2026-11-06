@@ -20,9 +20,10 @@ namespace TemplateAudacesApi.Services
                 IEnumerable<ModuloSistema> modulosUsuario = null;
 
                 var user = usuarioService.GetByLogin(usuario);
+                var cript = new Vestillo.Lib.Cripto();
                 
                            
-                if (user != null && user.Senha==senha)
+                if (user != null && user.Senha==cript.Decrypt(senha))
                     return user;
                  
 

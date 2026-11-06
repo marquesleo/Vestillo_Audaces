@@ -11,8 +11,6 @@ namespace TemplateAudacesApi.Models
     {
         [JsonProperty("Variante principal")]
         public VariantePrincipal VariantePrincipal { get; set; }
-
-
         public string name { get; set; }
         public string description { get; set; }
         public decimal value { get; set; }
@@ -23,8 +21,8 @@ namespace TemplateAudacesApi.Models
         public ICollection<Measure> measures { get; set; }
         public ICollection<Activity> activity { get; set; }
         public string label { get; set; }
-        public Object color { get; set; }
-        public string size { get; set; }
+        public string cor { get; set; }
+        public string tamanho { get; set; }
         public string composition { get; set; }
         public List<Item> items { get; set; } = new List<Item>();
         public Item item { get; set; }

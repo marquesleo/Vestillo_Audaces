@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TemplateAudacesApi.Models;
 using TemplateAudacesApi.Utils;
-using Vestillo.Business.Service;
-using Microsoft.Extensions.Configuration;
 using Vestillo.Business.Models;
 
 namespace TemplateAudacesApi.Controllers
@@ -73,7 +65,7 @@ namespace TemplateAudacesApi.Controllers
 
         [HttpPost]
         [Route("v1/user/login")]
-        [Consumes("application/x-www-form-urlencoded")]
+        //[Consumes("application/x-www-form-urlencoded")]
         public ActionResult<LoginRetorno> Login([FromForm] string username, [FromForm] string password)
         {
             if (username == null || password == null)
@@ -106,8 +98,8 @@ namespace TemplateAudacesApi.Controllers
             return Ok("1.6");
         }
 
-        [HttpGet, Route("v1/query")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet, Route("v1/query")] 
+      //  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
      public IEnumerable<Object> Query(                                                                                                                                                                                           
          [FromQuery] string? uid = null,                                                                                                                                                                                         
          [FromQuery] string? reference = null,                                                                                                                                                                                   
@@ -186,8 +178,8 @@ namespace TemplateAudacesApi.Controllers
 
         [HttpPost]
         [Route("v1/garment")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public StatusRetorno Garment([FromBody] Garment value, [FromQuery] string uid)
+       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public StatusRetorno Garment([FromBody] GarmentRequest value, [FromQuery] string uid)
         {
             StatusRetorno ret = null;
 
@@ -223,7 +215,6 @@ namespace TemplateAudacesApi.Controllers
             if (string.IsNullOrEmpty(value.name))
                 erro.AppendLine("Campo 'name' está em branco.");
 
-
             if (value.variants == null || !value.variants.Any())
                 erro.AppendLine("Ficha Técnica sem itens");
 
@@ -240,9 +231,41 @@ namespace TemplateAudacesApi.Controllers
                 throw new Exception(erro.ToString());
 
         }
+        
+        private void ValidarProdutoParaGravacao(GarmentRequest value, string uid)
+        {
+            StringBuilder erro = new StringBuilder();
+
+            if (string.IsNullOrEmpty(value.name))
+                erro.AppendLine("Campo 'name' está em branco.");
+
+            if (value.variants == null || !value.variants.Any())
+                erro.AppendLine("Ficha Técnica sem itens");
+
+            if (value.variants.Any(p => p.materials.Any(m => m.amount == 0)))
+                erro.AppendLine("Algum dos itens está com a quantidade igual a zero!");
+
+
+            if (string.IsNullOrEmpty(uid) || RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(value))
+                erro.AppendLine($"Produto: { value.name } ja cadastrado!");
+
+            if (erro.Length > 0)
+                throw new Exception(erro.ToString());
+        }
 
 
         private bool RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(Garment value)
+        {
+            string referencia = string.Empty;
+            string descricao = string.Empty;
+            var produtoService = new TemplateAudacesApi.Services.ProdutoServices();
+
+            Produto produto = produtoService.RetornarProduto(value, ref referencia, ref descricao);
+
+            return (produto != null && produto.Id > 0);
+        }
+        
+        private bool RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(GarmentRequest value)
         {
             string referencia = string.Empty;
             string descricao = string.Empty;

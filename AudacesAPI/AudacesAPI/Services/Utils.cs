@@ -104,6 +104,10 @@ namespace TemplateAudacesApi.Services
                 {
                     FornecedorPreco = produto.Fornecedor.FirstOrDefault();
                 }
+
+                if (FornecedorPreco == null || FornecedorPreco.IdFornecedor == 0)
+                    return new Colaborador();
+                
                 var fornecedor = ColaboradorRepository.GetById(FornecedorPreco.IdFornecedor);
                 return fornecedor;
             }

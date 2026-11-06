@@ -84,15 +84,62 @@ namespace TemplateAudacesApi.Services
             }
         }
 
-
-
-      
+     
 
         /// <summary>
         /// Inclui a ficha tecnica pelo produto
         /// </summary>
         /// <param name="garment"></param>
         public FichaTecnicaDoMaterial Incluir(Garment garment)
+        {
+            FichaTecnicaDoMaterial fichaVestilo = null;
+            Produto produto = null;
+            Colaborador fornecedor = null;
+            string referencia = string.Empty;
+            string descricao = string.Empty;
+            try
+            {
+                produtoRepository.BeginTransaction();
+                //retorna pela referencia o produto
+                produto = new ProdutoServices().RetornarProduto(garment, ref referencia,ref descricao);
+
+                if (produto == null || produto.Id == 0)
+                {
+                    //inclui um novo produto,detalhe, fornecedor caso nao tenha
+                    produto = produtoInclusaoService.IncluirProdutoAcabado(garment, ref fornecedor, referencia,descricao);
+                }
+                else
+                {
+                    //altera o produto acabado
+                    produto = produtoInclusaoService.AlterarProdutoAcabado(garment, produto,descricao);
+                }
+
+                fichaVestilo = RetornarFichaTecnica(produto);
+
+                if (fichaVestilo != null && fichaVestilo.Id > 0)
+                {
+                    AlterarFicha(garment, fichaVestilo, produto);
+                }
+                else
+                {
+                    fichaVestilo = IncluirNovaFicha(garment, produto);
+                }
+                produtoRepository.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                ExcluirRelacaoQuandoDaProblema(produto);
+                produtoRepository.RollbackTransaction();
+                throw ex;
+            }
+            return fichaVestilo;
+        }
+        
+        /// <summary>
+        /// Inclui a ficha tecnica pelo produto
+        /// </summary>
+        /// <param name="garment"></param>
+        public FichaTecnicaDoMaterial Incluir(GarmentRequest garment)
         {
             FichaTecnicaDoMaterial fichaVestilo = null;
             Produto produto = null;
@@ -219,7 +266,76 @@ namespace TemplateAudacesApi.Services
                             produtoMaterial,
                             produtoFornecedorPreco,
                             material.amount,
-                            material.cost,
+                            Convert.ToDecimal( material.cost),
+                            sequencia
+                            );
+                        sequencia += 1;
+
+                        lstFichaTecnicaMaterialItem.Add(fichaTecnicaDoMaterialItem);
+
+
+                    }
+                }
+                ComposicaoService.gradeDetalheService.lstDetalhe.Clear();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            return lstFichaTecnicaMaterialItem;
+        }
+
+        
+          private List<FichaTecnicaDoMaterialItem> IncluirItensFichaTecnica(GarmentRequest garment,
+                                         FichaTecnicaDoMaterial fichaTecnicaDoMaterial,
+                                         Produto produto)
+        {
+            List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
+
+            try
+            {
+
+                ComposicaoService.ExcluirGradeDeProduto(produto);
+                foreach (var variant in garment.variants)
+                {
+                    short sequencia = 1;
+                    foreach (var material in variant.materials)
+                    {
+                        Produto produtoMaterial = null;
+                        ProdutoFornecedorPreco produtoFornecedorPreco = null;
+
+                        produtoMaterial = produtoRepository.GetByReferencia(material.uid);//peguei o item do material pelo codigo
+
+                        //if (produtoMaterial != null && produtoMaterial.Id > 0)
+                        //ComposicaoService.ExcluirFornecedoresDoProduto(produtoMaterial);//excluo a relacao de fornecedor e produto caso tenha
+
+                        if (produtoMaterial == null || produtoMaterial.Id == 0)
+                            //inclui o item
+                            produtoMaterial = produtoInclusaoService.IncluirProdutoMaterial(material);
+
+                        string cor = RetornarCor(variant, material);
+                        string tamanho = RetornarTamanho(variant, material);
+
+                        ComposicaoService.GravarGradeDeProduto(produto, cor, tamanho);
+                       
+                        //relaciona o produto, fornecedor, tamanho e cor e a grade do produto
+                        produtoFornecedorPreco = ComposicaoService.GravarItemDaComposicao(material.supplier, produtoMaterial, cor,
+                                                                                 tamanho,
+                                                                                 Convert.ToDecimal(material.cost), false);//incluo a relacao de produto e fornecedor*/
+
+
+
+
+
+
+                        //vai montando a ficha
+                        FichaTecnicaDoMaterialItem fichaTecnicaDoMaterialItem = IncluirFichaTecnicaMaterialItem(produto,
+                            fichaTecnicaDoMaterial,
+                            produtoMaterial,
+                            produtoFornecedorPreco,
+                            Convert.ToDecimal(material.amount),
+                            Convert.ToDecimal( material.cost),
                             sequencia
                             );
                         sequencia += 1;
@@ -241,25 +357,41 @@ namespace TemplateAudacesApi.Services
 
         private String RetornarCor(Variant variant, Material material)
         {
-            if (material.color != null &&  material.color.GetType().FullName == "System.Text.Json.JsonElement")
+            if (material.color != null && material.color.GetType().FullName == "System.Text.Json.JsonElement")
             {
-                
 
                 if (!string.IsNullOrEmpty(material.color.ToString()))
                 {
                     var vet = material.color.ToString().Split(":");
                     return vet[0].ToString();
                 }
-                 
-
             }
-            if (variant.custom_fields != null && variant.custom_fields.color != null)
+
+           /* if (variant.custom_fields != null && variant.custom_fields.color != null)
             {
                 return variant.custom_fields.color.value;
-            }
+            }*/
             
+            return "";
+        }
+        
+        private String RetornarCor(VariantRequest variant, MaterialRequest material)
+        {
+            if (material.color != null && material.color.GetType().FullName == "System.Text.Json.JsonElement")
+            {
 
+                if (!string.IsNullOrEmpty(material.color.ToString()))
+                {
+                    var vet = material.color.ToString().Split(":");
+                    return vet[0].ToString();
+                }
+            }
 
+            /* if (variant.custom_fields != null && variant.custom_fields.color != null)
+             {
+                 return variant.custom_fields.color.value;
+             }*/
+            
             return "";
         }
 
@@ -268,10 +400,25 @@ namespace TemplateAudacesApi.Services
             if (!string.IsNullOrEmpty(material.size))
                 return material.size.ToString();
 
-            if (!string.IsNullOrEmpty(variant.size))
+            if (!string.IsNullOrEmpty(variant.tamanho))
             {
-                return variant.size;
+                return variant.tamanho;
             }
+
+
+            return "";
+        }
+        
+        private String RetornarTamanho(VariantRequest variant, MaterialRequest material)
+        {
+           /* tem que ver onde pega o size */
+           /* if (!string.IsNullOrEmpty(material.size))
+                return material.size.ToString();
+
+            if (!string.IsNullOrEmpty(variant.tamanho))
+            {
+                return variant.tamanho;
+            }*/
 
 
             return "";
@@ -347,8 +494,68 @@ namespace TemplateAudacesApi.Services
             return ficha;
         }
 
+        private FichaTecnicaDoMaterial IncluirNovaFicha(GarmentRequest garment, Produto produto)
+        {
+            var ficha = new FichaTecnicaDoMaterial();
+            List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
+            try
+            {
+                ficha.EmpresaId = Vestillo.Lib.Funcoes.GetIdEmpresaLogada;
+                ficha.ProdutoId = produto.Id;
+                ficha.Ativo = true;
+                ficha.DataAlteracao = Convert.ToDateTime(garment.last_modified);
+                ficha.Observacao = produto.Obs;
+                ficha.UserId = 1;
+                ficha.Total = Convert.ToDecimal(garment.variants.Sum(p => p.value));
+                ficha.possuiquebra = false;
+
+                FichaTecnicaDoMaterialRepository.Save(ref ficha); //salvei a ficha
+
+                //inclui itens da ficha
+                if (garment.variants != null && garment.variants.Any() && garment.variants[0].materials != null && garment.variants[0].materials.Any())
+                {
+                    lstFichaTecnicaMaterialItem = IncluirItensFichaTecnica(garment, ficha, produto);
+                }
+
+            }
+
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return ficha;
+        }
 
         private void AlterarFicha(Garment garment, FichaTecnicaDoMaterial fichaVestilo, Produto produto)
+        {
+            try
+            {
+                List<FichaTecnicaDoMaterialItem> lstFichaTecnicaMaterialItem = new List<FichaTecnicaDoMaterialItem>();
+                fichaVestilo.DataAlteracao = Convert.ToDateTime(garment.last_modified);
+                fichaVestilo.Observacao = produto.Obs;
+                fichaVestilo.Total = 0;
+                FichaTecnicaDoMaterialRepository.Save(ref fichaVestilo); //salvei a ficha
+
+                fichaTecnicaDoMaterialRepositoryItem.ExcluirRelacao(fichaVestilo.Id);//exclui relacao
+                var fichatecnicaRelacaoRepository = new FichaTecnicaDoMaterialRelacaoRepository();
+                fichatecnicaRelacaoRepository.ExcluirRelacao(fichaVestilo.Id);
+
+                if (garment.variants != null && garment.variants.Any())
+                {
+                    //inclui itens da ficha
+                    lstFichaTecnicaMaterialItem = IncluirItensFichaTecnica(garment, fichaVestilo, produto);
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        
+        private void AlterarFicha(GarmentRequest garment, FichaTecnicaDoMaterial fichaVestilo, Produto produto)
         {
             try
             {
@@ -411,8 +618,9 @@ namespace TemplateAudacesApi.Services
             if (fichatecnica != null)
                 return fichatecnicaRelacaoRepository.GetAllViewByFichaTecnica(fichatecnica.Id).ToList();
             else
-                throw new Exception($"Produto:{produto.Referencia}, não possui ficha tecnica");
-          
+              //  throw new Exception($"Produto:{produto.Referencia}, não possui ficha tecnica");*/
+            return null;
+
         }
 
         //public List<Item> RetornarItensDaFichaTecnica(Produto produto, List<Color> colors, List<Size> size)

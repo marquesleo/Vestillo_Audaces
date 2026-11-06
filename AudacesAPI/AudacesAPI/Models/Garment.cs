@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace TemplateAudacesApi.Models
 {
-    public class Garment :  Interface.IProdutoAcabado
+    public class Garment 
     {
         public Garment()
         {
@@ -28,20 +26,70 @@ namespace TemplateAudacesApi.Models
         public string product_group { get; set; }
         public string supplier { get; set; }
         public string usage { get; set; }
-        public Color color { get; set; } = new Color();
-        public ICollection<Color> colors { get; set; } = new List<Color>();
+       
         public ICollection<Image> images { get; set; } = new List<Image>();
         public string currency { get; set; }
         public ICollection<string> composition { get; set; }
         public string responsible { get; set; }
-        public CustomFields custom_fields { get; set; } = new CustomFields();
-        public ICollection<Size> sizes { get; set; } = new List<Size>();
+        
+        [JsonPropertyName("tamanho")]
+        public CustomFields Tamanho { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Catálogo")]
+        public CustomFields Catalogo { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Cor")]
+        public CustomFields Cor { get; set; } = new CustomFields();
+       
+        [JsonPropertyName("Entrega")]
+        public CustomFields Entrega { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Almoxarifado")]
+        public CustomFields Almoxarifado { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Subgrupo")]
+        public CustomFields Subgrupo { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Família")]
+        public CustomFields Familia { get; set; } = new CustomFields();
+       
+        [JsonPropertyName("Segmento")]
+        public CustomFields Segmento { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Ano")]
+        public CustomFields Ano { get; set; } = new CustomFields();
+       
+        [JsonPropertyName("Categoria")]
+        public CustomFields Categoria { get; set; } = new CustomFields();
+      
+        [JsonPropertyName("SubCategoria")]
+        public CustomFields SubCategoria { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Griffe")]
+        public CustomFields Griffe { get; set; } = new CustomFields();
+      
+        [JsonPropertyName("Origem")]
+        public CustomFields Origem { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Estilista")]
+        public CustomFields Estilista { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Modelista")]
+        public CustomFields Modelista { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("NCM")]
+        public CustomFields NCM { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Descrição somente para FE-e")]
+        public CustomFields DescFe { get; set; } = new CustomFields();
+        
+        [JsonPropertyName("Referência do cliente")]
+        public CustomFields RefCli { get; set; } = new CustomFields();
+    
         public ICollection<Price> prices { get; set; } = new List<Price>();
         public List<Variant> variants { get; set; } = new List<Variant>();
-        public List<Variation> variations { get; set; } 
+      
         public ICollection<Item> items { get; set; } = new List<Item>();
-        public string color_1 { get; set; }
-        public string color_2 { get; set; }
-        public string instance_uid { get; set; }
+       
     }
 }

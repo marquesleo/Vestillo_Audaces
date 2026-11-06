@@ -22,21 +22,23 @@
     <None Remove="biblioteca\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="biblioteca\" />
     <Folder Include="Models\" />
     <Folder Include="Utils\" />
     <Folder Include="Services\" />
-    <Folder Include="biblioteca\" />
   </ItemGroup>
- 
   <ItemGroup>
-    <Reference Include="Vestillo.Lib">
-      <HintPath>..\..\..\..\Downloads\DllVestillo\Vestillo.Lib.dll</HintPath>
-    </Reference>
     <Reference Include="Vestillo.Business">
       <HintPath>biblioteca\Vestillo.Business.dll</HintPath>
     </Reference>
     <Reference Include="Vestillo.Connection">
       <HintPath>biblioteca\Vestillo.Connection.dll</HintPath>
+    </Reference>
+    <Reference Include="Vestillo.Core">
+      <HintPath>biblioteca\Vestillo.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Vestillo.Lib">
+      <HintPath>biblioteca\Vestillo.Lib.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace TemplateAudacesApi.Models
 {
@@ -12,12 +8,13 @@ namespace TemplateAudacesApi.Models
         public string type { get; set; }
         public string value { get; set; }
         public string editable { get; set; }
-        public List<string> options { get; set; } = new List<string>();
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<string> options { get; set; } 
 
-        [JsonPropertyName("ref")]
-        public Ref referencia { get; set; }
-        public Size size { get; set; }
-        public Color color { get; set; }
+        //[JsonPropertyName("ref")]
+        //public Ref referencia { get; set; }
+        //public Size size { get; set; }
+       // public Color color { get; set; }
         
          
 
