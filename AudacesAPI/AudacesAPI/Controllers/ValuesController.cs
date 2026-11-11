@@ -161,7 +161,7 @@ namespace TemplateAudacesApi.Controllers
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
             
             if (!items.Any())
@@ -198,6 +198,8 @@ namespace TemplateAudacesApi.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine("===== ERRO v1/garment =====");
+                Console.WriteLine(ex.ToString());
                 ret = new StatusRetorno()
                 {
                     status = "bad request",

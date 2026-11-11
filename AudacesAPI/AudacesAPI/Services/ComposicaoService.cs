@@ -85,7 +85,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -106,7 +106,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
             return produtoFornecedorPreco;
         }
@@ -203,7 +203,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
         }
 

@@ -111,7 +111,7 @@ namespace TemplateAudacesApi.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
 
             return produto;
@@ -145,7 +145,7 @@ namespace TemplateAudacesApi.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
 
             return produto;
@@ -164,7 +164,7 @@ namespace TemplateAudacesApi.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
 
             return null;
@@ -188,7 +188,7 @@ namespace TemplateAudacesApi.Services
 
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
 
             return lstGrupo;
@@ -257,7 +257,7 @@ namespace TemplateAudacesApi.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -308,7 +308,7 @@ namespace TemplateAudacesApi.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
 
             return variants;
@@ -361,7 +361,7 @@ namespace TemplateAudacesApi.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
 
             return variants;

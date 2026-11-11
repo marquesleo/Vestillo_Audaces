@@ -26,18 +26,29 @@
     <Folder Include="Utils\" />
     <Folder Include="Services\" />
   </ItemGroup>
+  <PropertyGroup>
+    <VestilloLibDir>$(MSBuildThisFileDirectory)../../biblioteca/</VestilloLibDir>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Vestillo.Business">
-      <HintPath>..\..\biblioteca\Vestillo.Business.dll</HintPath>
+      <HintPath>$(VestilloLibDir)Vestillo.Business.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Vestillo.Connection">
-      <HintPath>..\..\biblioteca\Vestillo.Connection.dll</HintPath>
+      <HintPath>$(VestilloLibDir)Vestillo.Connection.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Vestillo.Core">
-      <HintPath>..\..\biblioteca\Vestillo.Core.dll</HintPath>
+      <HintPath>$(VestilloLibDir)Vestillo.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Vestillo.Lib">
-      <HintPath>..\..\biblioteca\Vestillo.Lib.dll</HintPath>
+      <HintPath>$(VestilloLibDir)Vestillo.Lib.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
 </Project>

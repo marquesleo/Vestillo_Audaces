@@ -277,7 +277,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
         }
         public static GrupProduto RetornarGrupo(int codigo)

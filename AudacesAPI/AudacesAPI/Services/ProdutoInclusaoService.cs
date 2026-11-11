@@ -113,7 +113,7 @@ namespace TemplateAudacesApi.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
 
             return produto;
@@ -227,12 +227,13 @@ namespace TemplateAudacesApi.Services
                     produto.Obs += ";autor:" + garment.author;
                 }
 
+                produto.CSTNfce = "AA";
                 produto.IdEmpresa = 1;
                 produtoRepository.Save(ref produto);
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
 
             return produto;

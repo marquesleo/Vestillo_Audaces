@@ -31,7 +31,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
             return null;
         }

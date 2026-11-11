@@ -130,7 +130,7 @@ namespace TemplateAudacesApi.Services
             {
                 ExcluirRelacaoQuandoDaProblema(produto);
                 produtoRepository.RollbackTransaction();
-                throw ex;
+                throw;
             }
             return fichaVestilo;
         }
@@ -179,7 +179,7 @@ namespace TemplateAudacesApi.Services
             {
                 ExcluirRelacaoQuandoDaProblema(produto);
                 produtoRepository.RollbackTransaction();
-                throw ex;
+                throw;
             }
             return fichaVestilo;
         }
@@ -211,7 +211,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
             
         }
@@ -281,7 +281,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
             return lstFichaTecnicaMaterialItem;
         }
@@ -350,7 +350,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
             return lstFichaTecnicaMaterialItem;
         }
@@ -551,7 +551,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
         }
         
@@ -579,7 +579,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -604,7 +604,7 @@ namespace TemplateAudacesApi.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
             return itens;
         }
@@ -665,7 +665,7 @@ namespace TemplateAudacesApi.Services
             catch (Exception ex)
             {
 
-                throw ex;
+                throw;
             }
             return itens;
         }
