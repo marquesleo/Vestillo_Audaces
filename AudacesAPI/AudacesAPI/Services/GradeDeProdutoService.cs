@@ -36,7 +36,7 @@ namespace TemplateAudacesApi.Services
                     detalhe.IdProduto = produto.Id;
                     detalhe.IdTamanho = tamanho.Id;
                     detalhe.custo = produto.Custo;
-
+                    
                     produtoDetalheRepository.Save(ref detalhe);
                     lstDetalhe.Add(detalhe);
                 }

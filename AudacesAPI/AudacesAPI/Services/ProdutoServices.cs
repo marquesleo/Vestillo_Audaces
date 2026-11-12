@@ -1,4 +1,5 @@
 ﻿using TemplateAudacesApi.Models;
+using TemplateAudacesApi.Utils;
 using Vestillo.Business.Models;
 using Vestillo.Business.Repositories;
 using Vestillo.Business.Service;
@@ -117,30 +118,16 @@ namespace TemplateAudacesApi.Services
             return produto;
         }
         
-        public Produto RetornarProduto(GarmentRequest garment, ref string referencia, ref string descricao)
+        public Produto RetornarProduto(GarmentRequest garment, ref string referencia)
         {
-            const string erro = "Referência no formato 00000-DESCRICAO, Não declarado";
             var produto = new Produto();
             referencia = string.Empty;
             try
             {
                 var variant = garment.variants[0];
-                if (string.IsNullOrEmpty(variant.description))
-                    throw new Exception(erro);
-
-                var vetProduto = variant.description.Split("-");
-
-                if (vetProduto != null && vetProduto.Length == 2)
-                {
-                    referencia = vetProduto[0].Trim();
-                    descricao = vetProduto[1].Trim();
-                    produto = produtoRepository.GetByReferencia(referencia);
-                }
-                else
-                {
-                    //terei que ver
-                }
-
+                referencia = UtilService.GetCustomFieldString(variant.custom_fields, "ref");
+                       
+               produto = produtoRepository.GetByReferencia(referencia);
               
             }
             catch (Exception ex)

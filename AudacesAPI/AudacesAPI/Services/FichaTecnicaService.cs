@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TemplateAudacesApi.Models;
+using TemplateAudacesApi.Utils;
 using Vestillo.Business.Models;
 using Vestillo.Business.Repositories;
 using Vestillo.Business.Service;
@@ -143,24 +144,25 @@ namespace TemplateAudacesApi.Services
         {
             FichaTecnicaDoMaterial fichaVestilo = null;
             Produto produto = null;
+            bool inclusao = true;
             Colaborador fornecedor = null;
             string referencia = string.Empty;
-            string descricao = string.Empty;
+            
             try
             {
                 produtoRepository.BeginTransaction();
                 //retorna pela referencia o produto
-                produto = new ProdutoServices().RetornarProduto(garment, ref referencia,ref descricao);
+                produto = new ProdutoServices().RetornarProduto(garment, ref referencia);
 
                 if (produto == null || produto.Id == 0)
                 {
                     //inclui um novo produto,detalhe, fornecedor caso nao tenha
-                    produto = produtoInclusaoService.IncluirProdutoAcabado(garment, ref fornecedor, referencia,descricao);
+                    produto = produtoInclusaoService.IncluirProdutoAcabado(garment, ref fornecedor, referencia);
                 }
                 else
                 {
                     //altera o produto acabado
-                    produto = produtoInclusaoService.AlterarProdutoAcabado(garment, produto,descricao);
+                    produto = produtoInclusaoService.AlterarProdutoAcabado(garment, produto);
                 }
 
                 fichaVestilo = RetornarFichaTecnica(produto);
@@ -177,7 +179,7 @@ namespace TemplateAudacesApi.Services
             }
             catch (Exception ex)
             {
-                ExcluirRelacaoQuandoDaProblema(produto);
+               // ExcluirRelacaoQuandoDaProblema(produto);
                 produtoRepository.RollbackTransaction();
                 throw;
             }
@@ -377,22 +379,14 @@ namespace TemplateAudacesApi.Services
         
         private String RetornarCor(VariantRequest variant, MaterialRequest material)
         {
-            if (material.color != null && material.color.GetType().FullName == "System.Text.Json.JsonElement")
+            if (material.custom_fields != null)
             {
+                var cor = UtilService.GetCustomFieldString(material.custom_fields, "cor");
 
-                if (!string.IsNullOrEmpty(material.color.ToString()))
-                {
-                    var vet = material.color.ToString().Split(":");
-                    return vet[0].ToString();
-                }
+                return cor;
             }
-
-            /* if (variant.custom_fields != null && variant.custom_fields.color != null)
-             {
-                 return variant.custom_fields.color.value;
-             }*/
-            
-            return "";
+            return string.Empty;
+           
         }
 
         private String RetornarTamanho(Variant variant, Material material)
@@ -411,14 +405,13 @@ namespace TemplateAudacesApi.Services
         
         private String RetornarTamanho(VariantRequest variant, MaterialRequest material)
         {
-           /* tem que ver onde pega o size */
-           /* if (!string.IsNullOrEmpty(material.size))
-                return material.size.ToString();
-
-            if (!string.IsNullOrEmpty(variant.tamanho))
+            if (material.custom_fields != null)
             {
-                return variant.tamanho;
-            }*/
+                var tamanho = UtilService.GetCustomFieldString(material.custom_fields, "tamanho");
+
+                return tamanho;
+            }
+            return string.Empty;
 
 
             return "";
@@ -454,7 +447,7 @@ namespace TemplateAudacesApi.Services
             fichatecnicarRelacao.Cor_Produto_Id = Convert.ToInt32(produtoFornecedorPreco.IdCor);
             fichatecnicarRelacao.cor_materiaprima_Id = Convert.ToInt32(produtoFornecedorPreco.IdCor);
             fichatecnicarRelacao.Tamanho_Materiaprima_Id = Convert.ToInt32(produtoFornecedorPreco.IdTamanho);
-            fichatecnicarRelacao.Tamanho_Produto_Id = Convert.ToInt32(produtoFornecedorPreco.IdTamanho); ;
+            fichatecnicarRelacao.Tamanho_Produto_Id = Convert.ToInt32(produtoFornecedorPreco.IdTamanho); 
 
             fichatecnicaRelacaoRepository.Save(ref fichatecnicarRelacao);
 

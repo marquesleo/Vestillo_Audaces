@@ -119,8 +119,7 @@ namespace TemplateAudacesApi.Services
             return produto;
         }
 
-        public Produto IncluirProdutoAcabado(GarmentRequest garment, ref Colaborador fornecedor, string referencia,
-            string descricao)
+        public Produto IncluirProdutoAcabado(GarmentRequest garment, ref Colaborador fornecedor, string referencia)
         {
             Produto produto = new Produto();
             Colecao colecao = null;
@@ -175,27 +174,27 @@ namespace TemplateAudacesApi.Services
                 if (categoria.Id > 0)
                     produto.IdCategoria = categoria.Id;
 
-                if (produto.IdCatalogo > 0)
+                if (catologo != null && catologo.Id > 0)
                     produto.IdCatalogo = catologo.Id;
-                if (produto.IdEmpresa > 0)
+                if (entrega != null && entrega.Id > 0)
                     produto.IdEmtrega = entrega.Id;
-                if (produto.IdEstilista > 0)
+                if (estilista != null && estilista.Id > 0)
                     produto.IdEstilista = estilista.Id;
-                if (produto.IdFamilia > 0)
+                if (familia != null && familia.Id > 0)
                     produto.IdFamilia = familia.Id;
-                if (produto.IdGriffe > 0)
+                if (griffe != null && griffe.Id > 0)
                     produto.IdGriffe = griffe.Id;
-                if (produto.IdGrupo > 0)
+                if (grupo != null && grupo.Id > 0)
                     produto.IdGrupo = grupo.Id;
-                if (produto.IdModelista > 0)
+                if (modelista != null && modelista.Id > 0)
                     produto.IdModelista = modelista.Id;
-                if (produto.IdSegmento > 0)
+                if (segmento != null && segmento.Id > 0)
                     produto.IdSegmento = segmento.Id;
-                if (produto.IdSubCategoria > 0)
+                if (subCategoria != null && subCategoria.Id > 0)
                     produto.IdSubCategoria = subCategoria.Id;
-                if (produto.IdSubGrupo > 0)
+                if (subGrupo != null && subGrupo.Id > 0)
                     produto.IdSubGrupo = subGrupo.Id;
-                
+
                 produto.IdAlmoxarifado = almoxarifado.Id;
                 produto.IdUniMedida = uniMedida.Id;
                 produto.DataCadastro = DateTime.Now;
@@ -270,20 +269,101 @@ namespace TemplateAudacesApi.Services
             return produto;
         }
 
-        public Produto AlterarProdutoAcabado(GarmentRequest garment, Produto produto, string descricao)
+        public Produto AlterarProdutoAcabado(GarmentRequest garment, Produto produto)
         {
+            var colecao = Utils.RetornarColecao(garment.collection);
             var variant = garment.variants[0];
-            produto.Descricao = descricao;
+            var refe = UtilService.GetCustomFieldString(variant.custom_fields, "ref");
+            var unidadeDedida = UtilService.GetCustomFieldString(variant.custom_fields, "um");
+            var ncm = UtilService.GetCustomFieldString(variant.custom_fields, "NCM");
+            var origem = UtilService.GetCustomFieldString(variant.custom_fields, "Origem");
+            var idAlmoxarifado = UtilService.GetCustomFieldString(variant.custom_fields, "Almoxarifado");
+            var refDoCliente = UtilService.GetCustomFieldString(variant.custom_fields, "Referência do cliente");
+            var ano = UtilService.GetCustomFieldString(variant.custom_fields, "Ano");
+            var customCategoria = UtilService.GetCustomFieldString(variant.custom_fields, "Categoria");
+            var customCatologo = UtilService.GetCustomFieldString(variant.custom_fields, "Catálogo");
+            var customEntrega = UtilService.GetCustomFieldString(variant.custom_fields, "Entrega");
+            var customEstilista = UtilService.GetCustomFieldString(variant.custom_fields, "Estilista");
+            var customFamilia = UtilService.GetCustomFieldString(variant.custom_fields, "Família");
+            var customGriffe = UtilService.GetCustomFieldString(variant.custom_fields, "Griffe");
+            var customGroup = UtilService.GetCustomFieldString(variant.custom_fields, "group");
+            var customModelista = UtilService.GetCustomFieldString(variant.custom_fields, "Modelista");
+            var customSegmento = UtilService.GetCustomFieldString(variant.custom_fields, "Segmento");
+            var customSubCategoria = UtilService.GetCustomFieldString(variant.custom_fields, "SubCategoria");
+            var customSubgrupo = UtilService.GetCustomFieldString(variant.custom_fields, "Subgrupo");
+            var customFornecedor = UtilService.GetCustomFieldString(variant.custom_fields, "supplier");
+            var custoDescNFe =
+                UtilService.GetCustomFieldString(variant.custom_fields, "Descrição somente para FE-e");
+            Almoxarifado almoxarifado = CacheService.BuscarAlmoxarifado(idAlmoxarifado);
+            Categoria categoria = CacheService.BuscaCategoria(customCategoria);
+            UniMedida uniMedida = Utils.RetornarUnidade(unidadeDedida);
+            Catalogo catologo = CacheService.BuscarCatalogo(customCatologo);
+            Entrega entrega = CacheService.BuscaEntrega(customEntrega);
+            Estilista estilista = CacheService.BuscarEstilista(customEstilista);
+            Familia familia = CacheService.BuscarFamilia(customFamilia);
+            Griffe griffe = CacheService.BuscarGriffe(customGriffe);
+            GrupProduto grupo = CacheService.BuscarGrupo(customGroup);
+            Modelista modelista = CacheService.BuscarModelista(customModelista);
+            Segmento segmento = CacheService.BuscarSegmento(customSegmento);
+            SubCategoria subCategoria = CacheService.BuscaSubCategoria(customSubCategoria);
+            SubGrupo subGrupo = CacheService.BuscarSubGrupo(customSubgrupo);
+            var fornecedor = CacheService.BuscarFornecedor(customFornecedor);
+
+
+            produto.Referencia = refe;
+            produto.Descricao = variant.description;
+            produto.DescricaoNFE = custoDescNFe;
+            produto.Ncm = ncm;
+            produto.Origem = Convert.ToInt32(origem.Split('-')[0].Trim());
             produto.DescricaoAlternativa = variant.description;
-            produto.DataAlteracao = DateTime.Now;
-            produto.Obs = variant.notes;
+            produto.Ano = !string.IsNullOrEmpty(ano) ? Convert.ToInt32(ano) : 0;
+            if (categoria.Id > 0)
+                produto.IdCategoria = categoria.Id;
+
+            if (catologo != null && catologo.Id > 0)
+                produto.IdCatalogo = catologo.Id;
+            if (entrega != null && entrega.Id > 0)
+                produto.IdEmtrega = entrega.Id;
+            if (estilista != null && estilista.Id > 0)
+                produto.IdEstilista = estilista.Id;
+            if (familia != null && familia.Id > 0)
+                produto.IdFamilia = familia.Id;
+            if (griffe != null && griffe.Id > 0)
+                produto.IdGriffe = griffe.Id;
+            if (grupo != null && grupo.Id > 0)
+                produto.IdGrupo = grupo.Id;
+            if (modelista != null && modelista.Id > 0)
+                produto.IdModelista = modelista.Id;
+            if (segmento != null && segmento.Id > 0)
+                produto.IdSegmento = segmento.Id;
+            if (subCategoria != null && subCategoria.Id > 0)
+                produto.IdSubCategoria = subCategoria.Id;
+            if (subGrupo != null && subGrupo.Id > 0)
+                produto.IdSubGrupo = subGrupo.Id;
+            
+
+
+            produto.IdAlmoxarifado = almoxarifado.Id;
+            produto.IdUniMedida = uniMedida.Id;
+            produto.DataCadastro = DateTime.Now;
+            produto.Ativo = true;
+            produto.TipoItem = 0;
+
+            produto.ReferenciaCli = refDoCliente;
+
             produto.PrecoVenda = Convert.ToDecimal(variant.value);
+            produto.Obs = "";
+            produto.DataAlteracao = Convert.ToDateTime(garment.last_modified);
+            produto.IdColecao = colecao?.Id;
+            produto.QtdPacote = 1;
+            produto.TempoPacote = 1;
+
             if (!string.IsNullOrEmpty(garment.responsible))
             {
                 if (!string.IsNullOrEmpty(produto.Obs))
                     produto.Obs += " \n ";
 
-                produto.Obs += "responsavel:" + garment.responsible;
+                produto.Obs += ";responsavel:" + garment.responsible;
             }
 
             if (!string.IsNullOrEmpty(garment.author))
@@ -294,8 +374,9 @@ namespace TemplateAudacesApi.Services
                 produto.Obs += ";autor:" + garment.author;
             }
 
-
-            produto.Colecao = garment.collection;
+            produto.CSTNfce = "AA";
+            produto.IdEmpresa = 1;
+            
             produtoRepository.Save(ref produto);
 
             return produto;
@@ -328,22 +409,29 @@ namespace TemplateAudacesApi.Services
         public Produto IncluirProdutoMaterial(MaterialRequest material)
         {
             //verificar onde pega unidade
-            UniMedida uniMedida = Utils.RetornarUnidade("");
-
+            var uniMedida = Utils.RetornarUnidade(material.um);
+            var grupo = CacheService.BuscarGrupo(material.group);
+            
             var produto = new Produto();
-            produto.Descricao = material.uid;
+            produto.Descricao = material.desc;
             produto.Referencia = material.uid;
             produto.Obs = material.obs;
             produto.TipoItem = 1;
             produto.DescricaoAlternativa = material.desc;
+            
+            if (grupo != null && grupo.Id > 0)
+            produto.IdGrupo = grupo.Id;
 
-            produto.IdGrupo = 1; //ver com alex
+            if (uniMedida != null && uniMedida.Id > 0)
+                produto.IdUniMedida = uniMedida.Id;
+
             produto.IdAlmoxarifado = 1;
+            
             produto.Ncm = "012345678";
             produto.Origem = 0;
             produto.DataCadastro = DateTime.Now;
             produto.Ativo = true;
-            produto.IdUniMedida = uniMedida.Id;
+         
             produtoRepository.Save(ref produto);
 
             return produto;

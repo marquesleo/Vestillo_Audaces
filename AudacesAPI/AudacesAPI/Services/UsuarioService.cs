@@ -23,7 +23,7 @@ namespace TemplateAudacesApi.Services
                 var cript = new Vestillo.Lib.Cripto();
                 
                            
-                if (user != null && user.Senha==cript.Decrypt(senha))
+                if (user != null && user.Senha==cript.Encrypt(senha))
                     return user;
                  
 

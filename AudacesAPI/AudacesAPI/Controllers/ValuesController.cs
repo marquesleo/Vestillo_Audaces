@@ -65,7 +65,7 @@ namespace TemplateAudacesApi.Controllers
 
         [HttpPost]
         [Route("v1/user/login")]
-        //[Consumes("application/x-www-form-urlencoded")]
+        [Consumes("application/x-www-form-urlencoded")]
         public ActionResult<LoginRetorno> Login([FromForm] string username, [FromForm] string password)
         {
             if (username == null || password == null)
@@ -99,7 +99,7 @@ namespace TemplateAudacesApi.Controllers
         }
 
         [HttpGet, Route("v1/query")] 
-      //  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+      [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
      public IEnumerable<Object> Query(                                                                                                                                                                                           
          [FromQuery] string? uid = null,                                                                                                                                                                                         
          [FromQuery] string? reference = null,                                                                                                                                                                                   
@@ -178,8 +178,8 @@ namespace TemplateAudacesApi.Controllers
 
         [HttpPost]
         [Route("v1/garment")]
-       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public StatusRetorno Garment([FromBody] GarmentRequest value, [FromQuery] string uid)
+       [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public StatusRetorno Garment([FromBody] GarmentRequest value, [FromQuery] string? uid)
         {
             StatusRetorno ret = null;
 
@@ -246,10 +246,7 @@ namespace TemplateAudacesApi.Controllers
 
             if (value.variants.Any(p => p.materials.Any(m => m.amount == 0)))
                 erro.AppendLine("Algum dos itens está com a quantidade igual a zero!");
-
-
-            if (string.IsNullOrEmpty(uid) || RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(value))
-                erro.AppendLine($"Produto: { value.name } ja cadastrado!");
+                     
 
             if (erro.Length > 0)
                 throw new Exception(erro.ToString());
@@ -270,10 +267,10 @@ namespace TemplateAudacesApi.Controllers
         private bool RetornarSejaExisteProdutoCadastradoNaInclusaoDaFicha(GarmentRequest value)
         {
             string referencia = string.Empty;
-            string descricao = string.Empty;
+            
             var produtoService = new TemplateAudacesApi.Services.ProdutoServices();
 
-            Produto produto = produtoService.RetornarProduto(value, ref referencia, ref descricao);
+            Produto produto = produtoService.RetornarProduto(value, ref referencia);
 
             return (produto != null && produto.Id > 0);
         }
